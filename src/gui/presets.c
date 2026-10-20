@@ -16,18 +16,26 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/darktable.h"
 #include "common/debug.h"
 #include "common/file_location.h"
 #include "common/presets.h"
 #include "develop/blend.h"
 #include "develop/develop.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/guides.h"
+#endif
 #include "gui/presets.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "libs/modulegroups.h"
+#endif
 #ifdef GDK_WINDOWING_QUARTZ
 #include "osx/osx.h"
 #endif
@@ -54,6 +62,7 @@ const char *dt_gui_presets_aperture_value_str[]
     = { "f/0", "f/0.95", "f/1.0", "f/1.2", "f/1.4", "f/1.8",  "f/2", "f/2.4", "f/2.8", "f/4", "f/5.6",
         "f/8",   "f/11",  "f/16",  "f/22",  "f/32",  "f/45", "f/64",  "f/90", "f/128", "f/+" };
 
+#ifndef DARKTABLE_ENGINE_ONLY
 // format string and corresponding flag stored into the database
 static const char *_gui_presets_format_value_str[5]
     = { N_("non-raw"), N_("raw"), N_("HDR"), N_("monochrome"), N_("color") };
@@ -75,6 +84,7 @@ void _insert_text_event(GtkEditable *editable,
     }
   }
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 // this is also called for non-gui applications linking to
 // libdarktable!  so beware, don't use any darktable.gui stuff here
@@ -141,6 +151,7 @@ void dt_gui_presets_add_with_blendop(const char *name,
   sqlite3_finalize(stmt);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _menuitem_delete_preset(GtkMenuItem *menuitem,
                                     dt_iop_module_t *module)
 {
@@ -1841,6 +1852,7 @@ GtkMenu *dt_gui_presets_popup_menu_show_for_module(dt_iop_module_t *module)
 
   return menu;
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 void dt_gui_presets_update_mml(const char *name,
                                const dt_dev_operation_t op,
