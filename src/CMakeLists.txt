@@ -1,4 +1,6 @@
 add_subdirectory(external)
+option(DARKTABLE_ENGINE_ONLY
+  "Experimental incomplete split: omit selected UI sources and GTK dependencies" OFF)
 if(USE_AI)
   find_package(ONNXRuntime QUIET)
   if(NOT ONNXRuntime_FOUND)
@@ -242,6 +244,47 @@ endif(WIN32)
 
 set(SOURCES ${SOURCE_FILES} ${HEADER_FILES})
 
+if(DARKTABLE_ENGINE_ONLY)
+  add_definitions(-DDARKTABLE_ENGINE_ONLY)
+  list(REMOVE_ITEM SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/bauhaus/bauhaus.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/common/act_on.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/libs/lib.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/develop/blend_gui.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/develop/imageop_gui.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/button.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/culling.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/drawingarea.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/expander.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/gradientslider.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/icon.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/paint.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/paint_cell.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/range.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/resetlabel.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/sidepanel.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/stylemenu.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/thumbnail.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/thumbnail_btn.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/thumbtable.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtgtk/togglebutton.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/about.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/accelerators.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/color_picker_proxy.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/workspace.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/gtk.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/gtkentry.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/guides.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/hist_dialog.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/import_metadata.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/metadata_tags.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/preferences.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/splash.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/welcome.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/styles_dialog.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/views/view.c")
+endif()
+
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "ppc64le")
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ppc64le)
 endif()
@@ -314,11 +357,26 @@ include_directories(SYSTEM ${Glib_INCLUDE_DIRS})
 list(APPEND LIBS ${Glib_LIBRARIES})
 
 # GTK3 pulls in ATK, GDK, GDK-PIXBUF, CAIRO, GLIB, PANGO
-find_package(GTK3 3.24.15 REQUIRED)
-add_definitions("-DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_3_24")
-#add_definitions("-DGDK_VERSION_MAX_ALLOWED=GDK_VERSION_MIN_REQUIRED")
-include_directories(SYSTEM ${GTK3_INCLUDE_DIRS})
-list(APPEND LIBS ${GTK3_LIBRARIES})
+if(NOT DARKTABLE_ENGINE_ONLY)
+  find_package(GTK3 3.24.15 REQUIRED)
+  add_definitions("-DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_3_24")
+  #add_definitions("-DGDK_VERSION_MAX_ALLOWED=GDK_VERSION_MIN_REQUIRED")
+  include_directories(SYSTEM ${GTK3_INCLUDE_DIRS})
+  list(APPEND LIBS ${GTK3_LIBRARIES})
+else()
+  find_path(CAIRO_INCLUDE_DIR cairo.h PATH_SUFFIXES cairo REQUIRED)
+  find_path(GDK_PIXBUF_INCLUDE_DIR gdk-pixbuf/gdk-pixbuf.h
+    PATH_SUFFIXES gdk-pixbuf-2.0 REQUIRED)
+  include_directories(SYSTEM ${CAIRO_INCLUDE_DIR})
+  include_directories(SYSTEM ${GDK_PIXBUF_INCLUDE_DIR})
+  # GTK3 used to pull these in transitively; the engine links them directly.
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(DT_ENGINE_DEPS REQUIRED IMPORTED_TARGET cairo gobject-2.0 gdk-pixbuf-2.0)
+  list(APPEND LIBS PkgConfig::DT_ENGINE_DEPS)
+  find_package(Intl REQUIRED)
+  include_directories(SYSTEM ${Intl_INCLUDE_DIRS})
+  list(APPEND LIBS ${Intl_LIBRARIES})
+endif()
 
 # Check for libxml2 / broken cmake module can't be included in the foreach() below
 find_package(LibXml2 2.6 REQUIRED)
@@ -852,7 +910,12 @@ include_directories(SYSTEM ${Pugixml_INCLUDE_DIRS})
 list(APPEND LIBS ${Pugixml_LIBRARIES})
 
 if(NOT SOURCE_PACKAGE)
-  add_definitions(-Werror -Wfatal-errors )
+  if(DARKTABLE_ENGINE_ONLY)
+    # report every engine/UI boundary violation per translation unit
+    add_definitions(-Werror)
+  else()
+    add_definitions(-Werror -Wfatal-errors )
+  endif()
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
