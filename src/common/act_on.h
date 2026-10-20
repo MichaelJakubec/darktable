@@ -39,6 +39,22 @@ typedef enum dt_act_on_algorithm_t
   DT_ACT_ON_SELECTION
 } dt_act_on_algorithm_t;
 
+#ifdef DARKTABLE_ENGINE_ONLY
+// The engine has no hover/selection context. Callers must pass explicit image
+// ids; an act-on request resolves to an empty image list.
+static inline GList *dt_act_on_get_images(const gboolean only_visible,
+                                          const gboolean force,
+                                          const gboolean ordered)
+{
+  (void)only_visible; (void)force; (void)ordered;
+  return NULL;
+}
+
+static inline void dt_act_on_reset_cache(const gboolean only_visible)
+{
+  (void)only_visible;
+}
+#else
 // get the algorithm used to get the act_on images
 dt_act_on_algorithm_t dt_act_on_get_algorithm();
 
@@ -61,6 +77,7 @@ void dt_act_on_reset_cache(const gboolean only_visible);
 
 // set the right class for the widget
 void dt_act_on_set_class(GtkWidget *widget);
+#endif // DARKTABLE_ENGINE_ONLY
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

@@ -45,6 +45,7 @@ GtkWidget *dt_bauhaus_toggle_from_params(dt_iop_module_t *self, const char *para
 #define DT_IOP_SECTION_FOR_PARAMS(...)                     \
        &DT_IOP_SECTION_FOR_PARAMS_DECL(__VA_ARGS__)
 
+#ifndef DARKTABLE_ENGINE_ONLY
 GtkWidget *dt_iop_togglebutton_new(dt_iop_module_t *self, const char *section, const gchar *label, const gchar *ctrl_label,
                                    GCallback callback, gboolean local, guint accel_key, GdkModifierType mods,
                                    DTGTKCairoPaintIconFunc paint, GtkWidget *box);
@@ -52,6 +53,7 @@ GtkWidget *dt_iop_togglebutton_new(dt_iop_module_t *self, const char *section, c
 GtkWidget *dt_iop_button_new(dt_iop_module_t *self, const gchar *label,
                              GCallback callback, gboolean local, guint accel_key, GdkModifierType mods,
                              DTGTKCairoPaintIconFunc paint, gint paintflags, GtkWidget *box);
+#endif
 
 /* returns up or !up depending on the masks_updown preference */
 gboolean dt_mask_scroll_increases(int up);

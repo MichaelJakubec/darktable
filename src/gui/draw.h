@@ -653,6 +653,7 @@ static inline void dt_cairo_perceptual_gradient(cairo_pattern_t *grad,
   cairo_pattern_add_color_stop_rgba(grad, 1.0, 1.0, 1.0, 1.0, alpha);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline GdkPixbuf *dt_draw_paint_to_pixbuf
   (GtkWidget *widget,
    const guint pixbuf_size,
@@ -688,6 +689,7 @@ static inline GdkPixbuf *dt_draw_paint_to_pixbuf
   cairo_surface_destroy(cst);
   return pixbuf;
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

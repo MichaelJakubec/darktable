@@ -22,8 +22,10 @@
 #include "common/opencl.h"
 #include "develop/pixelpipe.h"
 #include "develop/masks.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
 #include "dtgtk/gradientslider.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "common/imagebuf.h"
 #include "common/gaussian.h"
@@ -242,6 +244,7 @@ typedef struct dt_blendop_cl_global_t
 } dt_blendop_cl_global_t;
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 typedef struct dt_iop_gui_blendif_colorstop_t
 {
   float stoppoint;
@@ -273,6 +276,7 @@ typedef struct dt_iop_gui_blendif_filter_t
   GtkWidget *polarity;
   GtkBox *box;
 } dt_iop_gui_blendif_filter_t;
+#endif
 
 extern const dt_introspection_type_enum_tuple_t dt_develop_blend_colorspace_names[];
 extern const dt_introspection_type_enum_tuple_t dt_develop_blend_mode_names[];
@@ -288,6 +292,7 @@ extern const dt_introspection_type_enum_tuple_t dt_develop_invert_mask_names[];
 #define DEVELOP_MASKS_NB_SHAPES 5
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 /** blend gui data */
 typedef struct dt_iop_gui_blend_data_t
 {
@@ -357,6 +362,7 @@ typedef struct dt_iop_gui_blend_data_t
   int control_button_pressed;
   dt_pthread_mutex_t lock;
 } dt_iop_gui_blend_data_t;
+#endif
 
 
 /** global init of blendops */
@@ -498,6 +504,7 @@ void dt_develop_blendif_rgb_jzczhz_blend(dt_dev_pixelpipe_iop_t *piece,
                                          const dt_dev_pixelpipe_display_mask_t request_mask_display);
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 /** gui related stuff */
 void dt_iop_gui_init_blending(GtkWidget *iopw, dt_iop_module_t *module);
 void dt_iop_gui_update_blending(dt_iop_module_t *module);
@@ -510,6 +517,7 @@ void dt_iop_gui_blending_reload_defaults(dt_iop_module_t *module);
 gboolean blend_color_picker_apply(dt_iop_module_t *module,
                                   GtkWidget *picker,
                                   dt_dev_pixelpipe_t *pipe);
+#endif
 
 #ifdef HAVE_OPENCL
 /** apply blend for opencl modules*/

@@ -29,6 +29,12 @@
 #include "control/settings.h"
 #include "develop/imageop.h"
 
+#ifdef DARKTABLE_ENGINE_ONLY
+typedef guint dt_modifier_mask_t;
+#else
+typedef GdkModifierType dt_modifier_mask_t;
+#endif
+
 G_BEGIN_DECLS
 
 typedef struct dt_dev_history_item_t
@@ -103,7 +109,7 @@ typedef struct dt_dev_proxy_exposure_t
   float (*get_exposure)(struct dt_iop_module_t *exp);
   float (*get_effective_exposure)(struct dt_iop_module_t *exp);
   float (*get_black)(struct dt_iop_module_t *exp);
-  void (*handle_event)(int, gdouble, GdkModifierType, const gboolean);
+  void (*handle_event)(int, gdouble, dt_modifier_mask_t, const gboolean);
 } dt_dev_proxy_exposure_t;
 
 struct dt_dev_pixelpipe_t;
@@ -498,7 +504,7 @@ float dt_dev_exposure_get_effective_exposure(dt_develop_t *dev);
 float dt_dev_exposure_get_black(dt_develop_t *dev);
 
 void dt_dev_exposure_handle_event(int n_press, gdouble delta,
-                                  GdkModifierType state,
+                                  dt_modifier_mask_t state,
                                   const gboolean is_blackpoint);
 
 /*

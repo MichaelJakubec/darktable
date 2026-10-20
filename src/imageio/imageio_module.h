@@ -23,7 +23,7 @@
 #include "common/metadata_export.h"
 #include "common/action.h"
 #include <gmodule.h>
-#include <gtk/gtk.h>
+#include "common/gtk_types.h"
 #include <inttypes.h>
 #ifdef USE_LUA
 #include "lua/call.h"

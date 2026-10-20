@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include "common/gtk_types.h"
 #include <string.h>
 #include <librsvg/rsvg.h>
 

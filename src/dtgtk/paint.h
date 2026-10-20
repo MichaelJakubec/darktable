@@ -19,7 +19,7 @@
 #pragma once
 
 #include <cairo.h>
-#include <gtk/gtk.h>
+#include <glib.h>
 
 G_BEGIN_DECLS
 

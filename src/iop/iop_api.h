@@ -23,10 +23,10 @@
 
 #include "common/introspection.h"
 
-#include <cairo/cairo.h>
-#include <gtk/gtk.h>
 #include <glib.h>
 #include <stdint.h>
+#include <cairo/cairo.h>
+#include "common/gtk_types.h"
 
 #ifdef HAVE_OPENCL
 #include <CL/cl.h>

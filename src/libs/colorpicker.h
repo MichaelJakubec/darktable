@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include "common/gtk_types.h"
 #include <inttypes.h>
 
 typedef enum dt_lib_colorpicker_size_t
@@ -62,6 +62,7 @@ typedef struct dt_colorpicker_sample_t
   lib_colorpicker_stats lab;
   // in scope profile with current statistic
   int label_rgb[4];
+#ifndef DARKTABLE_ENGINE_ONLY
   // in display profile with current statistic
   GdkRGBA swatch;
 
@@ -69,6 +70,7 @@ typedef struct dt_colorpicker_sample_t
   GtkWidget *container;
   GtkWidget *color_patch;
   GtkWidget *output_label;
+#endif
 } dt_colorpicker_sample_t;
 
 

@@ -21,8 +21,10 @@
 #include "common/darktable.h"
 #include "common/opencl.h"
 #include "develop/pixelpipe.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
 #include "dtgtk/gradientslider.h"
+#endif
 #include "gui/gtk.h"
 
 #include <assert.h>
@@ -648,7 +650,15 @@ void dt_masks_set_edit_mode(struct dt_iop_module_t *module,
 void dt_masks_set_edit_mode_single_form(struct dt_iop_module_t *module,
                                         const dt_mask_id_t formid,
                                         const dt_masks_edit_mode_t value);
+#ifdef DARKTABLE_ENGINE_ONLY
+// engine modules have no GUI widgets to refresh after a mask change
+static inline void dt_masks_iop_update(struct dt_iop_module_t *module)
+{
+  (void)module;
+}
+#else
 void dt_masks_iop_update(struct dt_iop_module_t *module);
+#endif
 void dt_masks_iop_combo_populate(GtkWidget *w,
                                  struct dt_iop_module_t **m);
 void dt_masks_iop_use_same_as(struct dt_iop_module_t *module,

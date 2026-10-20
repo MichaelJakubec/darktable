@@ -23,7 +23,7 @@
 #include "common/action.h"
 #include "control/settings.h"
 
-#include <gtk/gtk.h>
+#include "common/gtk_types.h"
 #include <inttypes.h>
 #ifdef _OPENMP
 #include <omp.h>
@@ -33,7 +33,7 @@
 #include "control/crawler.h"
 #include "control/progress.h"
 #include "libs/lib.h"
-#include <gtk/gtk.h>
+#include "common/gtk_types.h"
 
 #ifdef _WIN32
 #include <shobjidl.h>
@@ -89,7 +89,15 @@ void dt_control_queue_redraw_center(void);
     Use this function if you need to redraw a specific widget
     if your current thread context is not gtk main thread.
 */
+#ifdef DARKTABLE_ENGINE_ONLY
+// The engine creates no widgets, so there is never anything to redraw.
+static inline void dt_control_queue_redraw_widget(GtkWidget *widget)
+{
+  (void)widget;
+}
+#else
 void dt_control_queue_redraw_widget(GtkWidget *widget);
+#endif
 
 /** \brief request redraw of the navigation widget.
     This redraws the wiget of the navigation module.

@@ -22,6 +22,70 @@
 #include "common/darktable.h"
 #include "common/dtpthread.h"
 
+#ifdef DARKTABLE_ENGINE_ONLY
+
+#include "common/gtk_types.h"
+#include <stdint.h>
+
+G_BEGIN_DECLS
+
+#define DT_PIXEL_APPLY_DPI(value) ((value) * darktable.gui->dpi_factor)
+
+// Engine-only builds never create GUI state, so darktable.gui is always NULL.
+// Only the toolkit-independent members that shared code tests behind a
+// darktable.gui check are declared here; toolkit objects are not available.
+typedef struct dt_gui_gtk_t
+{
+  struct dt_ui_t *ui;
+  cairo_surface_t *surface;
+  gboolean drawing_snapshot;
+  char *last_preset;
+  dt_atomic_int reset;
+  int32_t hide_tooltips;
+  gboolean grouping;
+  dt_imgid_t expanded_group_id;
+  gboolean show_overlays;
+  gboolean show_focus_peaking;
+  gboolean touchpad_gestures_enabled;
+  double overlay_red, overlay_blue, overlay_green, overlay_contrast;
+  double dpi, dpi_factor, ppd, ppd_thb;
+  gboolean have_pen_pressure;
+  int icon_size;
+  gint scroll_mask;
+  guint sidebar_scroll_mask;
+  cairo_filter_t filter_image;
+} dt_gui_gtk_t;
+
+// headless equivalents of GUI helpers that are no-ops when darktable.gui is NULL
+static inline void dt_gui_cursor_set_busy(void) {}
+static inline void dt_gui_cursor_clear_busy(void) {}
+static inline void dt_ui_notify_user(void) {}
+// same GLib-only implementation as gui/gtk.c
+static inline void dt_gui_process_events(void)
+{
+  unsigned max_iter = 1000;
+  while(g_main_context_iteration(NULL, FALSE) && --max_iter > 0)
+    continue;
+}
+// headless engine cannot ask the user: answer like "no"/"cancel"
+static inline gboolean dt_gui_show_standalone_yes_no_dialog(const char *title,
+                                                            const char *markup,
+                                                            const char *no_text,
+                                                            const char *yes_text)
+{
+  return FALSE;
+}
+static inline gboolean dt_gui_show_yes_no_dialog(const char *title,
+                                                 const char *wname,
+                                                 const char *format, ...)
+{
+  return FALSE;
+}
+
+G_END_DECLS
+
+#else
+
 #include <gtk/gtk.h>
 #include <stdint.h>
 
@@ -686,6 +750,8 @@ static inline GCallback G_CALLBACK(void *f) { return (GCallback)f; } // as a mac
 #endif // __cplusplus
 
 G_END_DECLS
+
+#endif // DARKTABLE_ENGINE_ONLY
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include "common/gtk_types.h"
 #include <inttypes.h>
 #include <sqlite3.h>
 #include "develop/imageop.h"
@@ -98,11 +98,14 @@ void dt_history_delete_on_image_ext(const dt_imgid_t imgid,
                                     const gboolean init_history);
 
 /** copy history from imgid and pasts on selected images, merge or overwrite... */
+#ifndef DARKTABLE_ENGINE_ONLY
+// lighttable copy/paste state lives in the GUI view manager
 gboolean dt_history_copy(const dt_imgid_t imgid);
 gboolean dt_history_copy_parts(const dt_imgid_t imgid);
 gboolean dt_history_paste(const dt_imgid_t imgid,
                           const gboolean merge,
                           const gboolean paste); // requires prior setup of copied history
+#endif
 
 static inline gboolean dt_history_module_skip_copy(const int flags)
 {

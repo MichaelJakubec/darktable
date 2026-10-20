@@ -18,7 +18,7 @@
 
 #include "common/module_api.h"
 #include <glib.h>
-#include <gtk/gtk.h>
+#include "common/gtk_types.h"
 
 #ifdef FULL_API_H
 

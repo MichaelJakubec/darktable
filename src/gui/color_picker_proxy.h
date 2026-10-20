@@ -27,7 +27,7 @@
   a single color picker is available in a module.
 */
 
-#include <gtk/gtk.h>
+#include "common/gtk_types.h"
 #include "common/darktable.h"
 #include "develop/imageop.h"
 
@@ -70,6 +70,28 @@ typedef struct dt_iop_color_picker_t
 } dt_iop_color_picker_t;
 
 
+#ifdef DARKTABLE_ENGINE_ONLY
+// The engine has no picker proxy (darktable.lib is NULL), which is the
+// "no active picker" state of the GUI implementation.
+static inline gboolean dt_iop_color_picker_is_visible(const dt_develop_t *dev)
+{
+  (void)dev;
+  return FALSE;
+}
+
+static inline void dt_iop_color_picker_reset(dt_iop_module_t *module,
+                                             const gboolean keep)
+{
+  (void)module; (void)keep;
+}
+
+static inline dt_iop_colorspace_type_t
+dt_iop_color_picker_get_active_cst(dt_iop_module_t *module)
+{
+  (void)module;
+  return IOP_CS_NONE;
+}
+#else
 gboolean dt_iop_color_picker_is_visible(const dt_develop_t *dev);
 
 //* reset current color picker if not keep-active or not keep */
@@ -82,6 +104,7 @@ void dt_iop_color_picker_set_cst(dt_iop_module_t *module,
 
 /* returns the active picker colorspace (if any) */
 dt_iop_colorspace_type_t dt_iop_color_picker_get_active_cst(dt_iop_module_t *module);
+#endif // DARKTABLE_ENGINE_ONLY
 
 /* global init: link signal */
 void dt_iop_color_picker_init();

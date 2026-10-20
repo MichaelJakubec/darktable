@@ -19,7 +19,7 @@
 #pragma once
 
 #include <gmodule.h>
-#include <gtk/gtk.h>
+#include "common/gtk_types.h"
 #include <glib.h>
 
 #include "common/darktable.h"

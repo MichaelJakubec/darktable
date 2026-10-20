@@ -19,7 +19,7 @@
 #pragma once
 
 #include <gmodule.h>
-#include <gtk/gtk.h>
+#include "common/gtk_types.h"
 #include <sched.h>
 #include <stdint.h>
 
@@ -34,7 +34,9 @@
 #endif
 
 #include "develop/pixelpipe.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/togglebutton.h"
+#endif
 
 #if defined(__SSE__)
 #include <xmmintrin.h> // needed for _mm_stream_ps
@@ -376,7 +378,15 @@ dt_iop_module_t *dt_iop_gui_duplicate(dt_iop_module_t *base,
 /* delete module instance */
 void dt_iop_gui_delete(dt_iop_module_t *module);
 
+#ifdef DARKTABLE_ENGINE_ONLY
+// engine modules never have a header widget, which is the GUI early-return case
+static inline void dt_iop_gui_update_header(dt_iop_module_t *module)
+{
+  (void)module;
+}
+#else
 void dt_iop_gui_update_header(dt_iop_module_t *module);
+#endif
 
 /** commits params and updates piece hash. */
 void dt_iop_commit_params(dt_iop_module_t *module,
@@ -400,10 +410,12 @@ GtkWidget *dt_iop_gui_get_widget(dt_iop_module_t *module);
 /** get the eventbox of plugin ui in expander */
 GtkWidget *dt_iop_gui_get_pluginui(dt_iop_module_t *module);
 /** create one of the header buttons */
+#ifndef DARKTABLE_ENGINE_ONLY
 GtkWidget *dt_iop_gui_header_button(dt_iop_module_t *module,
                                     DTGTKCairoPaintIconFunc paint,
                                     dt_action_element_t element,
                                     GtkWidget *header);
+#endif
 
 /** requests the focus for this plugin (to draw overlays over the center image) */
 void dt_iop_request_focus(dt_iop_module_t *module);

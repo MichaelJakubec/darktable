@@ -16,6 +16,18 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef DARKTABLE_ENGINE_ONLY
+#include <glib.h>
+
+// engine-only builds never create a splash screen; these match the GUI
+// implementation's behaviour when no splash screen exists
+static inline void dt_splash_screen_allow_create(const gboolean allow_create) {}
+static inline void dt_splash_screen_set_progress(const char *msg) {}
+static inline void dt_splash_screen_set_progress_percent(const char *msg,
+                                                         const double fraction,
+                                                         const double elapsed) {}
+static inline void dt_splash_screen_destroy(void) {}
+#else
 #include <gtk/gtk.h>
 
 void dt_splash_screen_create(const gboolean force);
@@ -25,6 +37,7 @@ void dt_splash_screen_set_progress_percent(const char *msg,
                                            const double fraction,
                                            const double elapsed);
 void dt_splash_screen_destroy();
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

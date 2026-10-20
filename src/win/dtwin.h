@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include <gio/gio.h>
 #include <windows.h>
 
 const wchar_t *dtwin_get_locale();

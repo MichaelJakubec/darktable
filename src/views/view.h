@@ -120,6 +120,34 @@ typedef enum dt_view_surface_value_t
   DT_VIEW_SURFACE_SMALLER
 } dt_view_surface_value_t;
 
+typedef enum dt_view_image_over_t
+{
+  DT_VIEW_ERR     = -1,
+  DT_VIEW_DESERT  =  0,
+  DT_VIEW_STAR_1  =  1,
+  DT_VIEW_STAR_2  =  2,
+  DT_VIEW_STAR_3  =  3,
+  DT_VIEW_STAR_4  =  4,
+  DT_VIEW_STAR_5  =  5,
+  DT_VIEW_REJECT  =  6,
+  DT_VIEW_GROUP   =  7,
+  DT_VIEW_AUDIO   =  8,
+  DT_VIEW_ALTERED =  9,
+  DT_VIEW_TAGS    = 10,
+  DT_VIEW_END     = 11, // placeholder for the end of the list
+} dt_view_image_over_t;
+
+#ifdef DARKTABLE_ENGINE_ONLY
+// engine-only builds have no views; darktable.view_manager is always NULL.
+typedef struct dt_view_t dt_view_t;
+typedef struct dt_view_manager_t dt_view_manager_t;
+// same result as views/view.c returns when darktable.view_manager is NULL
+static inline dt_view_type_flags_t dt_view_get_current(void)
+{
+  return DT_VIEW_LIGHTTABLE;
+}
+#else
+
 typedef struct dt_mouse_action_t
 {
   GdkModifierType mods;
@@ -153,22 +181,6 @@ typedef struct dt_view_t
   float hscroll_size, hscroll_lower, hscroll_viewport_size, hscroll_pos;
 } dt_view_t;
 
-typedef enum dt_view_image_over_t
-{
-  DT_VIEW_ERR     = -1,
-  DT_VIEW_DESERT  =  0,
-  DT_VIEW_STAR_1  =  1,
-  DT_VIEW_STAR_2  =  2,
-  DT_VIEW_STAR_3  =  3,
-  DT_VIEW_STAR_4  =  4,
-  DT_VIEW_STAR_5  =  5,
-  DT_VIEW_REJECT  =  6,
-  DT_VIEW_GROUP   =  7,
-  DT_VIEW_AUDIO   =  8,
-  DT_VIEW_ALTERED =  9,
-  DT_VIEW_TAGS    = 10,
-  DT_VIEW_END     = 11, // placeholder for the end of the list
-} dt_view_image_over_t;
 
 /** returns an uppercase string of file extension **plus** some flag information **/
 char* dt_view_extend_modes_str(const char * name,
@@ -640,6 +652,8 @@ void dt_view_print_settings(const dt_view_manager_t *vm,
                             dt_images_box *imgs);
 #endif
 
+#endif // DARKTABLE_ENGINE_ONLY
+
 /*
  * Paint buffer (size processed_width x processed_height) in cairo (as a surface)
  * on the viewport (size width x height).
@@ -652,6 +666,7 @@ typedef enum _window_t
   DT_WINDOW_SLIDESHOW
 } dt_window_t;
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_view_paint_buffer(cairo_t *cr,
                           const size_t width,
                           const size_t height,
@@ -682,6 +697,7 @@ void dt_view_paint_surface(cairo_t *cr,
                            int buf_width,
                            int buf_height,
                            dt_dev_zoom_pos_t buf_zoom_pos);
+#endif
 
 typedef dt_hash_t dt_view_context_t;
 
