@@ -21,7 +21,9 @@
 #include "control/conf.h"
 #include "control/control.h"
 #include "control/signal.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "imageio/imageio_common.h"
 #include "imageio/imageio_module.h"
 
@@ -107,6 +109,7 @@ static int dt_imageio_load_module_format(dt_imageio_module_format_t *module, con
   }
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(darktable.gui)
   {
     if(!module->gui_init || !module->module) goto api_h_error;
@@ -121,6 +124,7 @@ static int dt_imageio_load_module_format(dt_imageio_module_format_t *module, con
     dt_action_insert_sorted(&darktable.control->actions_format, &module->actions);
   }
   else
+#endif
   {
     module->gui_init = _default_format_gui_init;
   }
@@ -229,6 +233,7 @@ static int dt_imageio_load_module_storage(dt_imageio_module_storage_t *module, c
   }
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(darktable.gui)
   {
     if(!module->gui_init) goto api_h_error;
@@ -243,6 +248,7 @@ static int dt_imageio_load_module_storage(dt_imageio_module_storage_t *module, c
     dt_action_insert_sorted(&darktable.control->actions_storage, &module->actions);
   }
   else
+#endif
   {
     module->gui_init = _default_storage_nop;
   }

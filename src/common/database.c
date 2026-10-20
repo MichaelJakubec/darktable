@@ -4267,6 +4267,10 @@ dt_database_t *dt_database_init(const char *alternative,
   sqlite3_initialize();
 
 start:
+#ifdef DARKTABLE_ENGINE_ONLY
+  // the recovery paths that jump back here need the GUI
+  __attribute__((unused));
+#endif
   if(alternative == NULL)
   {
     /* migrate default database location to new default */
@@ -4506,6 +4510,16 @@ start:
       }
 
       gchar *data_snap = dt_database_get_most_recent_snap(dbfilename_data);
+#ifdef DARKTABLE_ENGINE_ONLY
+      // headless engine cannot ask how to recover: abort like the "close" answer
+      g_free(quick_check_text);
+      g_free(data_status);
+      g_free(data_snap);
+      dt_database_destroy(db);
+      db = NULL;
+      dt_print(DT_DEBUG_ALWAYS, "[init] database `%s' is corrupt and can't be opened! aborting", dbfilename_data);
+      goto error;
+#else
 
       GtkWidget *dialog;
       GtkDialogFlags dflags = GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT;
@@ -4613,6 +4627,7 @@ start:
       g_free(data_snap);
       g_free(dbname);
       goto start;
+#endif // DARKTABLE_ENGINE_ONLY
     }
   }
 
@@ -4680,6 +4695,16 @@ start:
     }
 
     gchar *data_snap = dt_database_get_most_recent_snap(dbfilename_library);
+#ifdef DARKTABLE_ENGINE_ONLY
+    // headless engine cannot ask how to recover: abort like the "close" answer
+    g_free(quick_check_text);
+    g_free(libdb_status);
+    g_free(data_snap);
+    dt_database_destroy(db);
+    db = NULL;
+    dt_print(DT_DEBUG_ALWAYS, "[init] database `%s' is corrupt and can't be opened! aborting", dbfilename_library);
+    goto error;
+#else
 
     GtkWidget *dialog;
     GtkDialogFlags dflags = GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT;
@@ -4784,6 +4809,7 @@ start:
     g_free(data_snap);
     g_free(dbname);
     goto start;
+#endif // DARKTABLE_ENGINE_ONLY
   }
   else
   {

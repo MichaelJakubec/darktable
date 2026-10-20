@@ -18,7 +18,9 @@
 
 #include "common/debug.h"
 #include "common/darktable.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/variables.h"
 #include "common/colorlabels.h"
 #include "common/darktable.h"
@@ -30,6 +32,7 @@
 #include "common/utility.h"
 #include "common/tags.h"
 #include "common/datetime.h"
+#include "common/math.h"
 #include "control/conf.h"
 
 #include <stdio.h>
@@ -778,6 +781,8 @@ static char *_get_base_value(dt_variables_params_t *params, char **variable)
         break;
     }
   }
+#ifndef DARKTABLE_ENGINE_ONLY
+  // colored label icons for the GUI image information panel
   else if((_has_prefix(variable, "LABELS.ICONS")
            || _has_prefix(variable, "LABELS_ICONS")
            || _has_prefix(variable, "LABELS.COLORICONS")
@@ -797,6 +802,7 @@ static char *_get_base_value(dt_variables_params_t *params, char **variable)
     }
     g_list_free(res);
   }
+#endif
   else if(_has_prefix(variable, "LABELS"))
   {
     // TODO: currently we concatenate all the color labels with a ','

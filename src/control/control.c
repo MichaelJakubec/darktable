@@ -16,7 +16,9 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/colorspaces.h"
 #include "common/darktable.h"
 #include "common/debug.h"
@@ -25,14 +27,18 @@
 #include "control/control.h"
 #include "develop/develop.h"
 #include "develop/imageop.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/draw.h"
 #include "gui/gtk.h"
 #include "imageio/imageio_common.h"
 #include "views/view.h"
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gdk/gdkkeysyms.h>
+#endif
 #include <glib/gstdio.h>
 #include <lcms2.h>
 #include <math.h>
@@ -42,6 +48,7 @@
 
 #define DT_CTL_LOG_HISTORY_SIZE 1000
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _action_process_accels_show(const gpointer target,
                                          const dt_action_element_t element,
                                          const dt_action_effect_t effect,
@@ -108,6 +115,7 @@ const dt_action_def_t dt_action_def_modifiers
       _action_process_modifiers,
       _action_elements_modifiers,
       NULL, TRUE };
+#endif
 
 void dt_control_init(const gboolean withgui)
 {
@@ -116,6 +124,7 @@ void dt_control_init(const gboolean withgui)
 
   if(!withgui) return;
 
+#ifndef DARKTABLE_ENGINE_ONLY
   s->actions_global = (dt_action_t){ DT_ACTION_TYPE_GLOBAL,
     "global",
     C_("accel", "global"),
@@ -248,6 +257,7 @@ void dt_control_init(const gboolean withgui)
   s->button_down_which = 0;
   s->mouse_over_id = NO_IMGID;
   s->lock_cursor_shape = FALSE;
+#endif
 }
 
 void dt_control_forbid_change_cursor()
@@ -260,6 +270,7 @@ void dt_control_allow_change_cursor()
   darktable.control->lock_cursor_shape = FALSE;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 // last cursor set by dt_control_change_cursor() or a direct call to
 // gdk_window_set_cursor() outside of functions below
 static GdkCursor* _prev_cursor = NULL;
@@ -340,6 +351,7 @@ void dt_control_change_cursor(const char *cursor_name)
 {
   _change_cursor_with_fallback(cursor_name, FALSE);
 }
+#endif
 
 /* Some implementation and how-to use notes about control->running
   It is declared as a global gint with states defined in dt_control_state_t and may only be
@@ -398,11 +410,13 @@ void dt_control_quit()
   dt_atomic_set_int(&dc->running, DT_CONTROL_STATE_CLEANUP);
   dt_pthread_mutex_unlock(&dc->cond_mutex);
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(g_atomic_int_get(&darktable.gui_running))
   {
     dt_gui_gtk_quit();
     gtk_main_quit();
   }
+#endif
 }
 
 void dt_control_shutdown()
@@ -474,6 +488,7 @@ void dt_control_cleanup(const gboolean withgui)
 //  gui functions:
 // ================================================================================
 
+#ifndef DARKTABLE_ENGINE_ONLY
 gboolean dt_control_configure(GtkWidget *da,
                               GdkEventConfigure *event,
                               gpointer user_data)
@@ -638,6 +653,7 @@ void dt_ctl_switch_mode()
                       : "lighttable";
   dt_ctl_switch_mode_to(mode);
 }
+#endif
 
 static void _control_log_redraw()
 {
@@ -689,6 +705,7 @@ static gboolean _dt_ctl_toast_message_timeout_callback(gpointer data)
   return FALSE;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_control_button_pressed(double x,
                                double y,
                                double pressure,
@@ -748,6 +765,7 @@ void dt_control_button_pressed(double x,
                                      pressure, which, type, state))
     if(type == GDK_2BUTTON_PRESS && which == 1) dt_ctl_switch_mode();
 }
+#endif
 
 static gboolean _redraw_center(gpointer user_data)
 {
@@ -928,6 +946,7 @@ void dt_control_navigation_redraw()
     DT_CONTROL_SIGNAL_RAISE(DT_SIGNAL_CONTROL_NAVIGATION_REDRAW);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _widget_queue_draw(void *widget)
 {
   gtk_widget_queue_draw((GtkWidget*)widget);
@@ -943,6 +962,7 @@ void dt_control_queue_redraw_widget(GtkWidget *widget)
     g_idle_add(_widget_queue_draw, (void*)widget);
   }
 }
+#endif
 
 void dt_control_hinter_message(const char *message)
 {

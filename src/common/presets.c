@@ -329,6 +329,10 @@ gboolean dt_presets_import_from_file(const char *preset_path)
 
 gboolean dt_presets_module_can_autoapply(const gchar *operation)
 {
+#ifdef DARKTABLE_ENGINE_ONLY
+  // no lib modules are loaded in the engine, so no lib vetoes auto-apply
+  (void)operation;
+#else
   for(const GList *lib_modules = darktable.lib->plugins;
       lib_modules;
       lib_modules = g_list_next(lib_modules))
@@ -339,6 +343,7 @@ gboolean dt_presets_module_can_autoapply(const gchar *operation)
       return dt_lib_presets_can_autoapply(lib_module);
     }
   }
+#endif
   return TRUE;
 }
 
@@ -482,6 +487,7 @@ char *dt_presets_get_multi_name(const char *name,
     return g_strdup(strlen(multi_name) > 0 ? multi_name : "");
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _menu_shell_insert_sorted(GtkWidget *menu_shell,
                                       GtkWidget *item,
                                       const gchar *name)
@@ -547,6 +553,7 @@ GtkWidget *dt_insert_preset_in_menu_hierarchy(const char *name,
   dt_gui_add_class(mi, "dt_transparent_background");
   return mi;
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

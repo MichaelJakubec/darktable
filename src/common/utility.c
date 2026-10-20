@@ -535,11 +535,14 @@ static cairo_surface_t *_util_get_svg_img(gchar *logo,
       g_object_unref(svg);
       return NULL;
     }
+#ifndef DARKTABLE_ENGINE_ONLY
     if(darktable.gui)
       surface = dt_cairo_image_surface_create_for_data(image_buffer,
                                                        CAIRO_FORMAT_ARGB32, final_width,
                                                        final_height, stride);
-    else // during startup we don't know ppd yet and darktable.gui isn't initialized yet.
+    else
+#endif
+    // during startup we don't know ppd yet and darktable.gui isn't initialized yet.
       surface = cairo_image_surface_create_for_data(image_buffer,
                                                     CAIRO_FORMAT_ARGB32,
                                                     final_width,

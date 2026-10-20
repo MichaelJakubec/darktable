@@ -36,7 +36,9 @@
 #ifdef HAVE_GPHOTO2
 #include "common/camera_control.h"
 #endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/action.h"
 #include "common/file_location.h"
 #include "common/film.h"
@@ -65,16 +67,18 @@
 #include "control/signal.h"
 #include "develop/blend.h"
 #include "develop/imageop.h"
+#include "gui/splash.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
 #include "gui/workspace.h"
-#include "gui/gtk.h"
 #include "gui/guides.h"
+#include "gui/welcome.h"
+#include "libs/lib.h"
+#endif
+#include "gui/gtk.h"
 #include "gui/presets.h"
 #include "gui/styles.h"
-#include "gui/splash.h"
-#include "gui/welcome.h"
 #include "imageio/imageio_module.h"
-#include "libs/lib.h"
 #include "lua/init.h"
 #include "views/view.h"
 #include "conf_gen.h"
@@ -419,6 +423,7 @@ gboolean dt_supported_image(const gchar *filename)
   return supported;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _is_directory(const gchar *input)
 {
   gboolean is_dir = FALSE;
@@ -430,7 +435,9 @@ static gboolean _is_directory(const gchar *input)
   }
   return is_dir;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _switch_to_new_filmroll(const gchar *input)
 {
   char *filename = dt_util_normalize_path(input);
@@ -456,6 +463,7 @@ static void _switch_to_new_filmroll(const gchar *input)
     free(filename);
   }
 }
+#endif
 
 dt_imgid_t dt_load_from_string(const gchar *input,
                                const gboolean open_image_in_dr,
@@ -479,7 +487,9 @@ dt_imgid_t dt_load_from_string(const gchar *input,
     if(dt_is_valid_filmid(filmid))
     {
       dt_film_open(filmid);
+#ifndef DARKTABLE_ENGINE_ONLY
       dt_ctl_switch_mode_to("lighttable");
+#endif
     }
     else
     {
@@ -513,11 +523,15 @@ dt_imgid_t dt_load_from_string(const gchar *input,
       }
       else
       {
+#ifndef DARKTABLE_ENGINE_ONLY
         if(open_image_in_dr)
         {
           dt_control_set_mouse_over_id(imgid);
           dt_ctl_switch_mode_to("darkroom");
         }
+#else
+        (void)open_image_in_dr;
+#endif
       }
     }
     else
@@ -1001,6 +1015,14 @@ int dt_init(int argc,
             lua_State *L)
 {
   const double start_wtime = dt_get_wtime();
+
+#ifdef DARKTABLE_ENGINE_ONLY
+  if(init_gui)
+  {
+    dt_print(DT_DEBUG_ALWAYS, "[dt_init] ERROR: this is an engine-only build without GUI support");
+    return 1;
+  }
+#endif
 
 #ifndef _WIN32
   if(getuid() == 0 || geteuid() == 0)
@@ -1580,6 +1602,7 @@ int dt_init(int argc,
   bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
   textdomain(GETTEXT_PACKAGE);
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(init_gui)
   {
     // I doubt that connecting to dbus for darktable-cli makes sense
@@ -1593,6 +1616,7 @@ int dt_init(int argc,
     // doesn't change as we progress through startup
     darktable.gui = (dt_gui_gtk_t *)calloc(1, sizeof(dt_gui_gtk_t));
   }
+#endif
 
 #ifdef _OPENMP
   omp_set_num_threads(darktable.num_openmp_threads);
@@ -1643,6 +1667,7 @@ int dt_init(int argc,
 
   // we need this REALLY early so that error messages can be shown,
   // however after gtk_disable_setlocale
+#ifndef DARKTABLE_ENGINE_ONLY
   if(init_gui)
   {
     gtk_init(&argc, &argv);
@@ -1685,6 +1710,7 @@ int dt_init(int argc,
     // select database
     has_workspace = dt_workspace_create(datadir);
   }
+#endif
 
   // now load darktablerc for the given library. Either darktablerc
   // for the default library or darktablerc-<label> for the other
@@ -1717,10 +1743,12 @@ int dt_init(int argc,
     dt_conf_set_bool("database/multiple_workspace", multiple_db);
   }
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(init_gui)
   {
     dt_splash_screen_create(FALSE);
   }
+#endif
   const int last_configure_version =
     dt_conf_get_int("performance_configuration_version_completed");
 
@@ -1824,15 +1852,22 @@ int dt_init(int argc,
 
   // we initialize grouping early because it's needed for collection init
   // idem for folder reachability
+#ifndef DARKTABLE_ENGINE_ONLY
   if(init_gui)
   {
     darktable.gui->grouping = dt_conf_get_bool("ui_last/grouping");
     dt_film_set_folder_status();
   }
+#endif
 
   // the update crawl needs to run after db and conf are up, but before LUA
   // starts any scripts
   GList *changed_xmp_files = NULL;
+#ifdef DARKTABLE_ENGINE_ONLY
+  (void)changed_xmp_files;
+  (void)last_configure_version;
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   if(init_gui)
   {
     if(dt_conf_get_bool("run_crawler_on_start") && !dt_gimpmode())
@@ -1848,6 +1883,7 @@ int dt_init(int argc,
       dt_splash_screen_allow_create(FALSE); // allow splash screen if a message is to be displayed
     }
   }
+#endif
 
   /* for every resourcelevel we have 4 ints defined, either absolute or a fraction
      0 cpu available
@@ -1916,7 +1952,9 @@ int dt_init(int argc,
   // Initialize the password storage engine
   darktable.pwstorage = dt_pwstorage_new();
 
+#ifndef DARKTABLE_ENGINE_ONLY
   darktable.guides = dt_guides_init();
+#endif
 
 #ifdef HAVE_GRAPHICSMAGICK
   dt_splash_screen_set_progress(_("initializing GraphicsMagick"));
@@ -1989,6 +2027,7 @@ int dt_init(int argc,
   // functions of the views depend on darktable.control->accels_* to
   // register their keyboard accelerators
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(init_gui)
   {
     dt_splash_screen_set_progress(_("initializing GUI"));
@@ -2007,6 +2046,7 @@ int dt_init(int argc,
         && !(dbfilename_from_command && !strcmp(dbfilename_from_command, ":memory:"));
 
   }
+#endif
 
   dt_splash_screen_set_progress(_("loading image formats"));
 
@@ -2043,6 +2083,7 @@ int dt_init(int argc,
              "[dt_init] writing CPU/GPU diff pfm files for module '%s' processing the pipeline",
       darktable.dump_diff_pipe);
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(init_gui)
   {
     dt_splash_screen_set_progress(_("loading views"));
@@ -2053,6 +2094,7 @@ int dt_init(int argc,
     darktable.lib = (dt_lib_t *)calloc(1, sizeof(dt_lib_t));
     dt_lib_init(darktable.lib);
   }
+#endif
 
 /* init lua last, since it's user made stuff it must be in the real environment */
 #ifdef USE_LUA
@@ -2060,6 +2102,7 @@ int dt_init(int argc,
   dt_lua_init(darktable.lua_state.state, lua_command);
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(init_gui)
   {
     dt_ctl_switch_mode_to("lighttable");
@@ -2134,6 +2177,7 @@ int dt_init(int argc,
     // for some reason this is needed on some systems to pick up the correctly themed cursor
     dt_control_change_cursor("default");
   }
+#endif
   free(config_info);
 
   // fire up a background job to perform sidecar writes
@@ -2214,12 +2258,16 @@ void dt_cleanup()
   if(perform_snapshot)
   {
     snaps_to_remove = dt_database_snaps_to_remove(darktable.db);
+#ifndef DARKTABLE_ENGINE_ONLY
     if(init_gui) dt_gui_process_events();
+#endif
   }
 
 #ifdef HAVE_PRINT
   dt_printers_abort_discovery();
+#ifndef DARKTABLE_ENGINE_ONLY
   if(init_gui) dt_gui_process_events();
+#endif
 #endif
 
 #ifdef USE_LUA
@@ -2229,6 +2277,7 @@ void dt_cleanup()
 
   // anything that asks user for input should be placed before this line
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(init_gui)
   {
     // hide main window and do rest of the cleanup in the background
@@ -2261,10 +2310,12 @@ void dt_cleanup()
 */
     dt_control_shutdown();
   }
+#endif
 #ifdef USE_LUA
   dt_lua_finalize();
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(init_gui)
   {
     dt_lib_cleanup(darktable.lib);
@@ -2283,6 +2334,7 @@ void dt_cleanup()
     darktable.gui = NULL;
   }
   else
+#endif
     dt_control_cleanup(FALSE);
 
 
@@ -2324,7 +2376,9 @@ void dt_cleanup()
   heif_deinit();
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_guides_cleanup(darktable.guides);
+#endif
 
   if(perform_maintenance)
   {
@@ -2357,10 +2411,12 @@ void dt_cleanup()
 
   dt_database_destroy(darktable.db);
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(init_gui)
   {
     dt_bauhaus_cleanup();
   }
+#endif
 
   if(darktable.noiseprofile_parser)
   {

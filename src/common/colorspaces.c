@@ -39,7 +39,9 @@
 
 #ifdef _WIN32
 #include <dwmapi.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gdk/gdkwin32.h>
+#endif
 #endif
 
 #if 0
@@ -2045,7 +2047,7 @@ void dt_colorspaces_set_display_profile
   }
   profile_source = g_strdup("osx color profile api");
 #endif
-#elif defined G_OS_WIN32
+#elif defined G_OS_WIN32 && !defined(DARKTABLE_ENGINE_ONLY)
   GtkWidget *widget = (profile_type == DT_COLORSPACE_DISPLAY2)
       ? darktable.develop->second_wnd
       : dt_ui_center(darktable.gui->ui);
@@ -2123,7 +2125,7 @@ void dt_colorspaces_set_display_profile
   {
     g_free(buffer);
   }
-#if defined G_OS_WIN32
+#if defined G_OS_WIN32 && !defined(DARKTABLE_ENGINE_ONLY)
 cleanup_and_return:
 #endif
   pthread_rwlock_unlock(&darktable.color_profiles->xprofile_lock);

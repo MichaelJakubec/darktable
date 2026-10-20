@@ -2882,12 +2882,14 @@ gboolean dt_collection_has_property(const dt_collection_properties_t property)
 
 gboolean dt_collection_hint_message_internal(void *message)
 {
+#ifndef DARKTABLE_ENGINE_ONLY
   GtkWidget *count = dt_view_filter_get_count(darktable.view_manager);
   if(count)
   {
     gtk_label_set_markup(GTK_LABEL(count), message);
     gtk_widget_set_tooltip_markup(count, message);
   }
+#endif
   g_free(message);
 
   dt_control_hinter_message("");

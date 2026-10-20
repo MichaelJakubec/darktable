@@ -26,9 +26,11 @@
 #include "control/conf.h"
 #include "control/control.h"
 #include "gui/gtk.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
 #include <gdk/gdkkeysyms.h>
 #include "bauhaus/bauhaus.h"
+#endif
 
 const char *dt_colorlabels_name[] = {
   "red", "yellow", "green", "blue", "purple",
@@ -319,6 +321,7 @@ const char *dt_colorlabels_to_string(int label)
   return dt_colorlabels_name[label];
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _action_process_color_label(gpointer target,
                                          const dt_action_element_t element,
                                          const dt_action_effect_t effect,
@@ -389,6 +392,7 @@ const dt_action_def_t dt_action_def_color_label
   = { N_("color label"),
       _action_process_color_label,
       _action_elements_color_label };
+#endif // DARKTABLE_ENGINE_ONLY
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

@@ -1793,7 +1793,12 @@ cairo_surface_t *dt_imageio_preview(const dt_imgid_t imgid,
   const int32_t stride =
     cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, dat.head.width);
 
+#ifdef DARKTABLE_ENGINE_ONLY
+  // no GUI pixel density to apply
+  cairo_surface_t *surface = cairo_image_surface_create_for_data
+#else
   cairo_surface_t *surface = dt_cairo_image_surface_create_for_data
+#endif
     (dat.buf, CAIRO_FORMAT_RGB24, dat.head.width, dat.head.height, stride);
 
   return surface;

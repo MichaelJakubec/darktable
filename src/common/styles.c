@@ -29,7 +29,9 @@
 #include "common/tags.h"
 #include "control/control.h"
 #include "develop/develop.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/styles.h"
 #include "imageio/imageio_common.h"
 
@@ -102,6 +104,7 @@ void dt_style_item_free(gpointer data)
   free(item);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _apply_style_shortcut_callback(dt_action_t *action)
 {
   GList *imgs = dt_act_on_get_images(TRUE, TRUE, FALSE);
@@ -118,6 +121,7 @@ static void _apply_style_shortcut_callback(dt_action_t *action)
     dt_control_apply_styles(imgs, styles, FALSE);
   }
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 static int32_t dt_styles_get_id_by_name(const char *name);
 
@@ -281,10 +285,12 @@ static gboolean dt_styles_create_style_header(const char *name,
   sqlite3_step(stmt);
   sqlite3_finalize(stmt);
 
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_action_t *stl = dt_action_section(&darktable.control->actions_global, N_("styles"));
   dt_action_register(stl, name, _apply_style_shortcut_callback, 0, 0);
 
   dt_gui_style_content_dialog("", -1);
+#endif
 
   g_free(iop_list_txt);
   return TRUE;
@@ -465,6 +471,7 @@ void dt_styles_update(const char *name,
   /* backup style to disk */
   dt_styles_save_to_file(newname, NULL, TRUE);
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(g_strcmp0(name, newname))
   {
     dt_action_t *old = dt_action_locate(&darktable.control->actions_global,
@@ -473,6 +480,7 @@ void dt_styles_update(const char *name,
   }
 
   dt_gui_style_content_dialog("", -1);
+#endif
 
   DT_CONTROL_SIGNAL_RAISE(DT_SIGNAL_STYLE_CHANGED);
 
@@ -651,6 +659,7 @@ gboolean dt_styles_create_from_image(const char *name,
   return FALSE;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_styles_create_from_list(const GList *list)
 {
   gboolean selected = FALSE;
@@ -665,6 +674,7 @@ void dt_styles_create_from_list(const GList *list)
 
   if(!selected) dt_control_log(_("no image selected!"));
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 void dt_styles_apply_style_item(dt_develop_t *dev,
                                 dt_style_item_t *style_item,
@@ -1031,8 +1041,10 @@ void dt_styles_apply_to_dev(const char *name, const dt_imgid_t imgid)
   /* record current history state : after change (needed for undo) */
   dt_dev_undo_end_record(darktable.develop);
 
+#ifndef DARKTABLE_ENGINE_ONLY
   // rebuild the accelerators (style might have changed order)
   dt_iop_connect_accels_all();
+#endif
 
   gchar *local_name = dt_util_localize_segmented_name(name, TRUE);
   dt_control_log(_("applied style `%s' on current image"), local_name);
@@ -1061,12 +1073,14 @@ void dt_styles_delete_by_name_adv(const char *name, const gboolean raise, const 
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
 
+#ifndef DARKTABLE_ENGINE_ONLY
     if(shortcut)
     {
       dt_action_t *old = dt_action_locate(&darktable.control->actions_global,
                                           (gchar *[]){"styles", (gchar *)name, NULL}, FALSE);
       dt_action_rename(old, NULL);
     }
+#endif
 
     if(raise)
       DT_CONTROL_SIGNAL_RAISE(DT_SIGNAL_STYLE_CHANGED);
@@ -1720,6 +1734,7 @@ static int32_t dt_styles_get_id_by_name(const char *name)
 
 void dt_init_styles_actions()
 {
+#ifndef DARKTABLE_ENGINE_ONLY
   GList *result = dt_styles_get_list("");
   if(result)
   {
@@ -1731,6 +1746,7 @@ void dt_init_styles_actions()
     }
     g_list_free_full(result, dt_style_free);
   }
+#endif
 }
 
 dt_style_t *dt_styles_get_by_name(const char *name)

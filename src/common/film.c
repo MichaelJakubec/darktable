@@ -166,7 +166,9 @@ gboolean dt_film_open(const dt_filmid_t id)
   // TODO: prefetch to cache using image_open
   dt_film_set_query(id);
   dt_control_queue_redraw_center();
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_view_manager_reset(darktable.view_manager);
+#endif
   return FALSE;
 }
 
@@ -327,6 +329,7 @@ dt_filmid_t dt_film_import(const char *dirname)
   return filmid;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean ask_and_delete(gpointer user_data)
 {
   GList *empty_dirs = (GList *)user_data;
@@ -381,6 +384,7 @@ static gboolean ask_and_delete(gpointer user_data)
 
   return FALSE;
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 void dt_film_remove_empty()
 {
@@ -422,7 +426,12 @@ void dt_film_remove_empty()
 
   // dispatch asking for deletion (and subsequent deletion) to the gui thread
   if(empty_dirs)
+#ifdef DARKTABLE_ENGINE_ONLY
+    // headless engine cannot ask; keep the directories
+    g_list_free_full(empty_dirs, g_free);
+#else
     g_idle_add(ask_and_delete, g_list_reverse(empty_dirs));
+#endif
 }
 
 gboolean dt_film_is_empty(const dt_filmid_t id)

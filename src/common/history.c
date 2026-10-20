@@ -1876,6 +1876,7 @@ dt_history_hash_t dt_history_hash_get_status(const dt_imgid_t imgid)
   return status;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 gboolean dt_history_copy(const dt_imgid_t imgid)
 {
   // note that this routine does not copy anything, it just setup the
@@ -1932,6 +1933,7 @@ gboolean dt_history_paste(const dt_imgid_t imgid,
   // indicate whether caller needs to ensure that the sidecar is synched
   return !sync && res;
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 gboolean dt_history_delete(const dt_imgid_t imgid,
                            const gboolean undo)

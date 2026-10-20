@@ -118,6 +118,7 @@ void dt_conf_set_string(const char *name, const char *val)
   if(_conf_set_if_not_overridden(name, str)) g_free(str);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_conf_set_folder_from_file_chooser(const char *name, GtkFileChooser *chooser)
 {
 
@@ -140,6 +141,7 @@ void dt_conf_set_folder_from_file_chooser(const char *name, GtkFileChooser *choo
   gchar *folder = gtk_file_chooser_get_current_folder(chooser);
   if(_conf_set_if_not_overridden(name, folder)) g_free(folder);
 }
+#endif
 
 static inline gboolean _conf_isnan(const double val)
 {
@@ -349,6 +351,7 @@ gboolean dt_conf_key_not_empty(const char *name)
   return strlen(val) != 0;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 gboolean dt_conf_get_folder_to_file_chooser(const char *name, GtkFileChooser *chooser)
 {
   const gchar *folder = dt_conf_get_string_const(name);
@@ -359,6 +362,7 @@ gboolean dt_conf_get_folder_to_file_chooser(const char *name, GtkFileChooser *ch
   }
   return FALSE;
 }
+#endif
 
 gboolean dt_conf_is_equal(const char *name, const char *value)
 {

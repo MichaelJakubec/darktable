@@ -16,6 +16,7 @@
 */
 
 #include "dtwin.h"
+#include <stdio.h>
 
 GList* win_image_find_duplicates(const char* filename)
 {

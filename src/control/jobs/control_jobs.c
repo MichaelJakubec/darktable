@@ -1041,6 +1041,7 @@ typedef enum _dt_delete_dialog_choice_t
   _DT_DELETE_DIALOG_CHOICE_ALL      = 1 << 5,
 } _dt_delete_dialog_choice_t;
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _delete_dialog_main_thread(gpointer user_data)
 {
   _dt_delete_modal_dialog_t* modal_dialog = (_dt_delete_modal_dialog_t*)user_data;
@@ -1107,11 +1108,19 @@ static gboolean _delete_dialog_main_thread(gpointer user_data)
   // Don't call again on next idle time
   return FALSE;
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 static gint _dt_delete_file_display_modal_dialog(const int send_to_trash,
                                                  const char *filename,
                                                  const char *error_message)
 {
+#ifdef DARKTABLE_ENGINE_ONLY
+  // headless engine cannot ask: stop processing like the "abort" answer
+  (void)send_to_trash;
+  (void)filename;
+  (void)error_message;
+  return _DT_DELETE_DIALOG_CHOICE_STOP;
+#else
   _dt_delete_modal_dialog_t modal_dialog;
   modal_dialog.send_to_trash = send_to_trash;
   modal_dialog.filename = filename;
@@ -1133,6 +1142,7 @@ static gint _dt_delete_file_display_modal_dialog(const int send_to_trash,
   pthread_cond_destroy(&modal_dialog.cond);
 
   return modal_dialog.dialog_result;
+#endif
 }
 
 static _dt_delete_status_t delete_file_from_disk
@@ -1606,6 +1616,7 @@ static inline gboolean _safe_history_job_on_imgid(dt_job_t *job, const dt_imgid_
     || darktable.develop->image_storage.id != imgid;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int32_t _control_paste_history_job_run(dt_job_t *job)
 {
   dt_stop_backthumbs_crawler(FALSE);
@@ -1676,6 +1687,7 @@ static int32_t _control_paste_history_job_run(dt_job_t *job)
   dt_start_backthumbs_crawler();
   return 0;
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 static int32_t _control_compress_history_job_run(dt_job_t *job)
 {
@@ -2187,7 +2199,9 @@ void dt_control_move_images()
 {
   // Open file chooser dialog
   gchar *dir = NULL;
+#ifndef DARKTABLE_ENGINE_ONLY
   GtkWidget *win = dt_ui_main_window(darktable.gui->ui);
+#endif
 
   dt_job_t *job = _control_generic_images_job_create
     (&_control_move_images_job_run, N_("move images"), 0, dir,
@@ -2200,6 +2214,7 @@ void dt_control_move_images()
     return;
   }
 
+#ifndef DARKTABLE_ENGINE_ONLY
   GtkFileChooserNative *filechooser = gtk_file_chooser_native_new(
         _("select directory"), GTK_WINDOW(win), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
         _("_select as destination"), _("_cancel"));
@@ -2212,6 +2227,7 @@ void dt_control_move_images()
                                          GTK_FILE_CHOOSER(filechooser));
   }
   g_object_unref(filechooser);
+#endif // headless engine has no directory chooser; dir stays NULL
 
   if(!dir || !g_file_test(dir, G_FILE_TEST_IS_DIR)) goto abort;
 
@@ -2244,7 +2260,9 @@ void dt_control_copy_images()
 {
   // Open file chooser dialog
   gchar *dir = NULL;
+#ifndef DARKTABLE_ENGINE_ONLY
   GtkWidget *win = dt_ui_main_window(darktable.gui->ui);
+#endif
   dt_job_t *job = _control_generic_images_job_create
     (&_control_copy_images_job_run, N_("copy images"), 0, dir,
      PROGRESS_CANCELLABLE, FALSE);
@@ -2256,6 +2274,7 @@ void dt_control_copy_images()
     return;
   }
 
+#ifndef DARKTABLE_ENGINE_ONLY
   GtkFileChooserNative *filechooser =
     gtk_file_chooser_native_new(_("select directory"),
                                 GTK_WINDOW(win), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
@@ -2271,6 +2290,7 @@ void dt_control_copy_images()
                                          GTK_FILE_CHOOSER(filechooser));
   }
   g_object_unref(filechooser);
+#endif // headless engine has no directory chooser; dir stays NULL
 
   if(!dir || !g_file_test(dir, G_FILE_TEST_IS_DIR))
     goto abort;
@@ -2410,6 +2430,7 @@ static void _add_history_job_data(const char *title,
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_control_paste_history(GList *imgs)
 {
   if(!dt_is_valid_imgid(darktable.view_manager->copy_paste.copied_imageid))
@@ -2432,7 +2453,9 @@ void dt_control_paste_history(GList *imgs)
   else
     g_list_free(imgs);
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_control_paste_parts_history(GList *imgs)
 {
   if(!dt_is_valid_imgid(darktable.view_manager->copy_paste.copied_imageid))
@@ -2465,6 +2488,7 @@ void dt_control_paste_parts_history(GList *imgs)
   else
     g_list_free(imgs);
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 void dt_control_compress_history(GList *imgs)
 {

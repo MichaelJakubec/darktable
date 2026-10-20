@@ -26,7 +26,9 @@
 #include "control/conf.h"
 #include "control/control.h"
 #include "gui/gtk.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 
 #define DT_RATINGS_UPGRADE -1
 #define DT_RATINGS_DOWNGRADE -2
@@ -277,6 +279,7 @@ void dt_ratings_apply_on_image(const dt_imgid_t imgid,
     dt_control_log(_("no images selected to apply rating"));
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 enum
 {
   DT_ACTION_EFFECT_SELECT = DT_ACTION_EFFECT_DEFAULT_KEY,
@@ -390,6 +393,7 @@ const dt_action_def_t dt_action_def_rating
   = { N_("rating"),
       _action_process_rating,
       _action_elements_rating };
+#endif // DARKTABLE_ENGINE_ONLY
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

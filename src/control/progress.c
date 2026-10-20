@@ -28,7 +28,9 @@
 #endif
 
 #ifdef _WIN32
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gdk/gdkwin32.h>
+#endif
 #ifndef ITaskbarList3_SetProgressValue
   #define ITaskbarList3_SetProgressValue(This,hwnd,ullCompleted,ullTotal) (This)->lpVtbl->SetProgressValue(This,hwnd,ullCompleted,ullTotal)
 #endif
@@ -102,7 +104,7 @@ static void _global_progress_start(dt_control_t *control, dt_progress_t *progres
 
 #endif // HAVE_UNITY
 
-#else // _WIN32
+#elif !defined(DARKTABLE_ENGINE_ONLY) // _WIN32
 /* Commented out for 5.4 because this code could cause a crash when importing
    a folder from the command line and there was not enough time before the planned
    release to figure out how to properly fix the code.
@@ -165,7 +167,7 @@ static void _global_progress_set(dt_control_t *control, dt_progress_t *progress,
 
 #endif // HAVE_UNITY
 
-#else // _WIN32
+#elif !defined(DARKTABLE_ENGINE_ONLY) // _WIN32
 
   if(control->progress_system.taskbarlist)
   {
@@ -230,7 +232,7 @@ static void _global_progress_end(dt_control_t *control, dt_progress_t *progress)
 
 #endif // HAVE_UNITY
 
-#else // _WIN32
+#elif !defined(DARKTABLE_ENGINE_ONLY) // _WIN32
 
   if(control->progress_system.taskbarlist)
   {
@@ -290,7 +292,7 @@ void dt_control_progress_init(void)
 
 #endif // HAVE_UNITY
 
-#else // _WIN32
+#elif !defined(DARKTABLE_ENGINE_ONLY) // _WIN32
 
   // initializing control->progress_system.taskbarlist in here doesn't work,
   // it seems to only succeed after dt_gui_gtk_init

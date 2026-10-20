@@ -61,6 +61,7 @@ typedef struct dt_control_crawler_result_t
   char *image_path, *xmp_path;
 } dt_control_crawler_result_t;
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _free_crawler_result(dt_control_crawler_result_t *entry)
 {
   g_free(entry->image_path);
@@ -105,6 +106,7 @@ static void _set_modification_time(char *filename,
   g_object_unref(gfile);
   if(info) g_clear_object(&info);
 }
+#endif
 
 // progress update intervals in seconds
 #define FAST_UPDATE 0.2
@@ -301,6 +303,7 @@ GList *dt_control_crawler_run(void)
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 /********************* the gui stuff *********************/
 
 typedef struct dt_control_crawler_gui_t
@@ -851,6 +854,7 @@ void dt_control_crawler_show_image_list(GList *images)
   g_signal_connect(dialog, "response",
                    G_CALLBACK(dt_control_crawler_response_callback), gui);
 }
+#endif
 
 /* backthumb crawler */
 

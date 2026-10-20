@@ -23,7 +23,9 @@
 
 #include <libintl.h>
 #include <locale.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <json-glib/json-glib.h>
 
 #ifdef __APPLE__
@@ -88,7 +90,9 @@ static void _set_locale(const char *ui_lang, const char *old_env, const gboolean
       g_free(full_locale);
     }
     g_setenv("LANGUAGE", ui_lang, TRUE);
+#ifndef DARKTABLE_ENGINE_ONLY
     if(gui) gtk_disable_setlocale();
+#endif
   }
   else if(old_env && *old_env)
     g_setenv("LANGUAGE", old_env, TRUE);
