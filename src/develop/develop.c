@@ -115,7 +115,9 @@ void dt_dev_init(dt_develop_t *dev,
       dev->full.ppd = darktable.gui->ppd;
       dev->full.dpi = darktable.gui->dpi;
       dev->full.dpi_factor = darktable.gui->dpi_factor;
+#ifndef DARKTABLE_ENGINE_ONLY
       dev->full.widget = dt_ui_center(darktable.gui->ui);
+#endif
     }
   }
 
@@ -438,6 +440,7 @@ static void _activate_pinned_dev(dt_develop_t *dev, dt_develop_t *new_pinned_dev
 
   dt_dev_process_preview2(new_pinned_dev);
 
+#ifndef DARKTABLE_ENGINE_ONLY
   // Update the pin button without re-firing its toggled callback, which would
   // call dt_dev_toggle_preview2_pinned and undo the pin.
   if(dev->preview2.pin_button)
@@ -449,6 +452,7 @@ static void _activate_pinned_dev(dt_develop_t *dev, dt_develop_t *new_pinned_dev
                                       G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, dev);
     gtk_widget_set_tooltip_text(dev->preview2.pin_button, _("unpin image"));
   }
+#endif
 
   dt_toast_log(_("image pinned"));
 }
@@ -501,6 +505,7 @@ static void _unpin_image(dt_develop_t *dev)
   dev->preview2.pipe->status = DT_DEV_PIXELPIPE_DIRTY;
   dev->preview2.pipe->changed |= DT_DEV_PIPE_SYNCH;
 
+#ifndef DARKTABLE_ENGINE_ONLY
   // Update the pin button without re-firing its toggled callback.
   if(dev->preview2.pin_button)
   {
@@ -511,6 +516,7 @@ static void _unpin_image(dt_develop_t *dev)
                                       G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, dev);
     gtk_widget_set_tooltip_text(dev->preview2.pin_button, _("pin current image"));
   }
+#endif
 
   dt_toast_log(_("image unpinned"));
 }
@@ -543,8 +549,10 @@ void dt_dev_toggle_preview2_pinned(dt_develop_t *dev)
     _unpin_image(dev);
 
   // Force a redraw of the second window
+#ifndef DARKTABLE_ENGINE_ONLY
   if(dev->preview2.widget)
     gtk_widget_queue_draw(dev->preview2.widget);
+#endif
 }
 
 void dt_dev_pin_image(dt_develop_t *dev, const dt_imgid_t imgid)
@@ -606,7 +614,11 @@ void dt_dev_process_image_job(dt_develop_t *dev,
     return;
   }
 
+#ifdef DARKTABLE_ENGINE_ONLY
+  if(port == &dev->preview2 && !port->widget)
+#else
   if(port == &dev->preview2 && !(port->widget && GTK_IS_WIDGET(port->widget)))
+#endif
   {
     return;
   }
@@ -1168,8 +1180,10 @@ static void _dev_auto_module_label(dt_develop_t *dev,
 
     g_free(preset_name);
 
+#ifndef DARKTABLE_ENGINE_ONLY
     if(dev->gui_attached)
       dt_iop_gui_update_header(module);
+#endif
   }
 }
 
@@ -1237,12 +1251,14 @@ static void _dev_add_history_item_ext(dt_develop_t *dev,
     module->enabled = TRUE;
     if(!no_image)
     {
+#ifndef DARKTABLE_ENGINE_ONLY
       if(module->off)
       {
         DT_ENTER_GUI_UPDATE();
         dt_iop_gui_set_enable_button(module);
         DT_LEAVE_GUI_UPDATE();
       }
+#endif
     }
   }
 
@@ -1575,6 +1591,7 @@ void dt_dev_reload_history_items(dt_develop_t *dev)
   for(GList *modules = dev->iop; modules; modules = g_list_next(modules))
   {
     dt_iop_module_t *module = modules->data;
+#ifndef DARKTABLE_ENGINE_ONLY
     if(module->multi_priority > 0)
     {
       if(!dt_iop_is_hidden(module) && !module->expander)
@@ -1586,7 +1603,9 @@ void dt_dev_reload_history_items(dt_develop_t *dev)
         dt_iop_gui_set_expanded(module, TRUE, FALSE);
 
         dt_iop_reload_defaults(module);
+#ifndef DARKTABLE_ENGINE_ONLY
         dt_iop_gui_update_blending(module);
+#endif
 
         // the pipe need to be reconstruct
         dev->full.pipe->changed |= DT_DEV_PIPE_REMOVE;
@@ -1599,6 +1618,9 @@ void dt_dev_reload_history_items(dt_develop_t *dev)
       // we have to ensure that the name of the widget is correct
       dt_iop_gui_update_header(module);
     }
+#else
+    (void)module;
+#endif
   }
 
   dt_dev_pop_history_items(dev, dev->history_end);
@@ -1700,8 +1722,10 @@ void dt_dev_pop_history_items(dt_develop_t *dev, const int32_t cnt)
   GList *modules = dev->iop;
   while(modules)
   {
+#ifndef DARKTABLE_ENGINE_ONLY
     dt_iop_module_t *module = modules->data;
     dt_iop_gui_update(module);
+#endif
     modules = g_list_next(modules);
   }
 
@@ -3428,7 +3452,7 @@ float dt_dev_exposure_get_black(dt_develop_t *dev)
 }
 
 void dt_dev_exposure_handle_event(int n_press, gdouble delta,
-                                  GdkModifierType state,
+                                  dt_modifier_mask_t state,
                                   const gboolean is_blackpoint)
 {
   if(darktable.develop->proxy.exposure.handle_event)
@@ -3910,6 +3934,7 @@ void dt_dev_reorder_gui_module_list(dt_develop_t *dev)
   {
     dt_iop_module_t *module = modules->data;
 
+#ifndef DARKTABLE_ENGINE_ONLY
     GtkWidget *expander = module->expander;
     if(expander)
     {
@@ -3918,6 +3943,10 @@ void dt_dev_reorder_gui_module_list(dt_develop_t *dev)
                             expander,
                             pos_module++);
     }
+#else
+    (void)module;
+    (void)pos_module;
+#endif
   }
 }
 

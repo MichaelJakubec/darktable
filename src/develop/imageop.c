@@ -17,7 +17,9 @@
 */
 
 #include "develop/imageop.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/collection.h"
 #include "common/debug.h"
 #include "common/dtpthread.h"
@@ -36,6 +38,7 @@
 #include "develop/format.h"
 #include "develop/masks.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
 #include "dtgtk/expander.h"
 #include "dtgtk/gradientslider.h"
@@ -43,8 +46,11 @@
 #include "gui/accelerators.h"
 #include "gui/color_picker_proxy.h"
 #include "gui/drag_and_drop.h"
+#endif
 #include "gui/gtk.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/guides.h"
+#endif
 #include "gui/presets.h"
 #include "gui/splash.h"
 #include "imageio/imageio_rawspeed.h"
@@ -80,7 +86,9 @@ void dt_iop_load_default_params(dt_iop_module_t *module)
     dt_develop_blend_default_module_blend_colorspace(module);
   dt_develop_blend_init_blend_parameters(module->default_blendop_params, cst);
   dt_iop_commit_blend_params(module, module->default_blendop_params);
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_gui_blending_reload_defaults(module);
+#endif
 }
 
 static void _iop_modify_roi_in(dt_iop_module_t *self,
@@ -448,6 +456,7 @@ void dt_iop_init_pipe(dt_iop_module_t *module,
   piece->blendop_data = calloc(1, sizeof(dt_develop_blend_params_t));
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _header_enter_notify_callback(GtkWidget *eventbox,
                                               GdkEventCrossing *event,
                                               gpointer user_data)
@@ -1163,6 +1172,7 @@ static void _gui_off_callback(GtkToggleButton *togglebutton,
   if(!gtk_widget_is_visible(module->header))
     dt_dev_modulegroups_update_visibility(darktable.develop);
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 gboolean dt_iop_so_is_hidden(const dt_iop_module_so_t *module)
 {
@@ -1191,6 +1201,7 @@ gboolean dt_iop_shown_in_group(dt_iop_module_t *module, const uint32_t group)
   return dt_dev_modulegroups_test(module->dev, group, module);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _iop_panel_name(dt_iop_module_t *module)
 {
   // IOP instance name if any
@@ -1283,6 +1294,7 @@ void dt_iop_gui_set_enable_button(dt_iop_module_t *module)
 
   _update_module_active_class(module);
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 void dt_iop_set_module_trouble_message(dt_iop_module_t *const module,
                                        const char* const trouble_msg,
@@ -1309,6 +1321,7 @@ void dt_iop_set_module_trouble_message(dt_iop_module_t *const module,
                             module, trouble_msg, trouble_tooltip);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_iop_gui_init(dt_iop_module_t *module)
 {
   DT_ENTER_GUI_UPDATE();
@@ -1318,6 +1331,7 @@ void dt_iop_gui_init(dt_iop_module_t *module)
   ++darktable.bauhaus->skip_accel;
   DT_LEAVE_GUI_UPDATE();
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 void dt_iop_reload_defaults(dt_iop_module_t *module)
 {
@@ -1673,6 +1687,7 @@ static void _iop_preferences_changed(gpointer instance, gpointer self)
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _init_presets_actions(dt_iop_module_so_t *module)
 {
   /** load shortcuts for presets **/
@@ -1690,6 +1705,7 @@ static void _init_presets_actions(dt_iop_module_so_t *module)
   }
   sqlite3_finalize(stmt);
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 static void _init_module_so(void *m)
 {
@@ -1697,6 +1713,7 @@ static void _init_module_so(void *m)
 
   _init_presets(module);
 
+#ifndef DARKTABLE_ENGINE_ONLY
   // do not init accelerators if there is no gui
   if(darktable.gui)
   {
@@ -1746,6 +1763,7 @@ static void _init_module_so(void *m)
 
     free(module_instance);
   }
+#endif
 }
 
 // to be called before issuing any query based on memory.darktable_iop_names
@@ -2245,6 +2263,7 @@ void dt_iop_commit_params(dt_iop_module_t *module,
   piece->hash = phash;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_iop_gui_cleanup_module(dt_iop_module_t *module)
 {
   g_slist_free_full(module->widget_list, g_free);
@@ -2374,6 +2393,7 @@ static gboolean _presets_scroll_callback(GtkWidget *widget,
 
   return TRUE;
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 gboolean dt_iop_has_focus(const dt_iop_module_t *module)
 {
@@ -2384,6 +2404,7 @@ gboolean dt_iop_has_focus(const dt_iop_module_t *module)
       && dt_dev_modulegroups_test_activated(darktable.develop);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_iop_request_focus(dt_iop_module_t *module)
 {
   dt_develop_t *dev = darktable.develop;
@@ -2496,7 +2517,9 @@ void dt_iop_request_focus(dt_iop_module_t *module)
 /*
  * NEW EXPANDER
  */
+#endif // DARKTABLE_ENGINE_ONLY
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _gui_set_single_expanded(dt_iop_module_t *module, gboolean expanded)
 {
   if(!module->expander) return;
@@ -3317,6 +3340,7 @@ GtkWidget *dt_iop_gui_get_pluginui(dt_iop_module_t *module)
   // return gtkframe (pluginui_frame)
   return dtgtk_expander_get_frame(DTGTK_EXPANDER(module->expander));
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 void dt_iop_nap(int32_t usec)
 {
@@ -3386,6 +3410,7 @@ int dt_iop_get_module_flags(const char *op)
   return 0;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _show_module_callback(dt_iop_module_t *module)
 {
   // Showing the module, if it isn't already visible
@@ -3428,6 +3453,7 @@ static void _enable_module_callback(dt_iop_module_t *module)
   const gboolean active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(module->off));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(module->off), !active);
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 const gchar *dt_iop_get_localized_name(const gchar *op)
 {
@@ -3484,7 +3510,11 @@ void dt_iop_so_gui_set_state(dt_iop_module_so_t *module, dt_iop_module_state_t s
     for(mods = darktable.develop->iop; mods; mods = g_list_next(mods))
     {
       dt_iop_module_t *mod = mods->data;
+#ifndef DARKTABLE_ENGINE_ONLY
       if(mod->so == module && mod->expander) gtk_widget_hide(GTK_WIDGET(mod->expander));
+#else
+      (void)mod;
+#endif
     }
 
     snprintf(option, sizeof(option), "plugins/darkroom/%s/visible", module->op);
@@ -3503,7 +3533,9 @@ void dt_iop_so_gui_set_state(dt_iop_module_so_t *module, dt_iop_module_state_t s
         dt_iop_module_t *mod = mods->data;
         if(mod->so == module && mod->expander)
         {
+#ifndef DARKTABLE_ENGINE_ONLY
           gtk_widget_show(GTK_WIDGET(mod->expander));
+#endif
           if(!once)
           {
             dt_dev_modulegroups_switch(darktable.develop, mod);
@@ -3524,7 +3556,11 @@ void dt_iop_so_gui_set_state(dt_iop_module_so_t *module, dt_iop_module_state_t s
     for(mods = darktable.develop->iop; mods; mods = g_list_next(mods))
     {
       dt_iop_module_t *mod = mods->data;
+#ifndef DARKTABLE_ENGINE_ONLY
       if(mod->so == module && mod->expander) gtk_widget_show(GTK_WIDGET(mod->expander));
+#else
+      (void)mod;
+#endif
     }
 
     /* module is shown and favorite lets set conf values */
@@ -3764,6 +3800,7 @@ dt_iop_module_t *dt_iop_get_module_enabled_preferring_unmasked_first_instance(co
 
 /** adds keyboard accels to the first module in the pipe to handle
  * where there are multiple instances */
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_iop_connect_accels_multi(dt_iop_module_so_t *module)
 {
   if(!darktable.develop->gui_attached) return;
@@ -3789,6 +3826,7 @@ void dt_iop_connect_accels_all(void)
     dt_iop_connect_accels_multi(mod->so);
   }
 }
+#endif // DARKTABLE_ENGINE_ONLY
 
 dt_iop_module_t *dt_iop_get_module_by_instance_name(GList *modules,
                                                     const char *operation,
@@ -4027,6 +4065,7 @@ enum
   DT_ACTION_EFFECT_DUPLICATE = 6,
 };
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _action_process(gpointer target,
                              const dt_action_element_t element,
                              const dt_action_effect_t effect,
@@ -4153,6 +4192,7 @@ const dt_action_def_t dt_action_def_iop
       _action_process,
       _action_elements,
       _action_fallbacks };
+#endif // DARKTABLE_ENGINE_ONLY
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

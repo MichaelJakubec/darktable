@@ -23,6 +23,7 @@
 #include "develop/imageop.h"
 #include "develop/masks.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _group_events_mouse_scrolled(dt_iop_module_t *module,
                                         const float pzx,
                                         const float pzy,
@@ -44,7 +45,9 @@ static int _group_events_mouse_scrolled(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _group_events_button_pressed(dt_iop_module_t *module,
                                         const float pzx,
                                         const float pzy,
@@ -104,7 +107,9 @@ static int _group_events_button_pressed(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _group_events_button_released(dt_iop_module_t *module,
                                          const float pzx,
                                          const float pzy,
@@ -126,6 +131,7 @@ static int _group_events_button_released(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
 static inline gboolean _is_handling_form(dt_masks_form_gui_t *gui)
 {
@@ -140,6 +146,7 @@ static inline gboolean _is_handling_form(dt_masks_form_gui_t *gui)
     || (gui->seg_dragging != -1);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _group_events_mouse_moved(dt_iop_module_t *module,
                                      const float pzx,
                                      const float pzy,
@@ -239,6 +246,7 @@ static int _group_events_mouse_moved(dt_iop_module_t *module,
   dt_control_queue_redraw_center();
   return 0;
 }
+#endif
 
 void dt_group_events_post_expose(cairo_t *cr,
                                  const float zoom_scale,
@@ -749,6 +757,7 @@ int dt_masks_group_render_roi(dt_iop_module_t *module,
   return ok;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GSList *_group_setup_mouse_actions(const dt_masks_form_t *const form)
 {
   GSList *lm = NULL;
@@ -773,6 +782,7 @@ static GSList *_group_setup_mouse_actions(const dt_masks_form_t *const form)
   }
   return lm;
 }
+#endif
 
 static void _group_duplicate_points(dt_develop_t *const dev,
                                     dt_masks_form_t *const base,
@@ -795,7 +805,9 @@ static void _group_duplicate_points(dt_develop_t *const dev,
 const dt_masks_functions_t dt_masks_functions_group = {
   .point_struct_size = sizeof(struct dt_masks_point_group_t),
   .sanitize_config = NULL,
+#ifndef DARKTABLE_ENGINE_ONLY
   .setup_mouse_actions = _group_setup_mouse_actions,
+#endif
   .set_form_name = NULL,
   .set_hint_message = NULL,
   .duplicate_points = _group_duplicate_points,
@@ -807,10 +819,18 @@ const dt_masks_functions_t dt_masks_functions_group = {
   .get_mask_roi = _group_get_mask_roi,
   .get_area = NULL,
   .get_source_area = NULL,
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_moved = _group_events_mouse_moved,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_scrolled = _group_events_mouse_scrolled,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_pressed = _group_events_button_pressed,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_released = _group_events_button_released,
+#endif
 //TODO:  .post_expose = _group_events_post_expose
 };
 

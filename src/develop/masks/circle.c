@@ -16,7 +16,9 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/debug.h"
 #include "common/undo.h"
 #include "control/conf.h"
@@ -107,6 +109,7 @@ static void _circle_get_distance(const float x,
   *inside = TRUE;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _circle_events_mouse_scrolled(dt_iop_module_t *module,
                                          const float pzx,
                                          const float pzy,
@@ -200,7 +203,9 @@ static int _circle_events_mouse_scrolled(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _circle_events_button_pressed(dt_iop_module_t *module,
                                          float pzx, float pzy,
                                          const double pressure,
@@ -384,7 +389,9 @@ static int _circle_events_button_pressed(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _circle_events_button_released(dt_iop_module_t *module,
                                           const float pzx,
                                           const float pzy,
@@ -506,7 +513,9 @@ static int _circle_events_button_released(dt_iop_module_t *module,
 
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _circle_events_mouse_moved(dt_iop_module_t *module,
                                       const float pzx,
                                       const float pzy,
@@ -646,7 +655,9 @@ static int _circle_events_mouse_moved(dt_iop_module_t *module,
 
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _circle_draw_lines(const gboolean borders,
                                const gboolean source,
                                cairo_t *cr,
@@ -666,6 +677,7 @@ static void _circle_draw_lines(const gboolean borders,
 
   dt_masks_line_stroke(cr, borders, source, selected, zoom_scale);
 }
+#endif
 
 static float *_points_to_transform(const float x,
                                    const float y,
@@ -791,6 +803,7 @@ static int _circle_get_points(dt_develop_t *dev,
   return 0;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _circle_events_post_expose(cairo_t *cr,
                                        const float zoom_scale,
                                        dt_masks_form_gui_t *gui,
@@ -931,6 +944,7 @@ static void _circle_events_post_expose(cairo_t *cr,
                        zoom_scale, gpt->source, gpt->source_count);
   }
 }
+#endif
 
 static void _bounding_box(const float *const points,
                           const int num_points,
@@ -1386,6 +1400,7 @@ static int _circle_get_mask_roi(const dt_iop_module_t *const restrict module,
   return 1;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GSList *_circle_setup_mouse_actions(const struct dt_masks_form_t *const form)
 {
   GSList *lm = NULL;
@@ -1397,6 +1412,7 @@ static GSList *_circle_setup_mouse_actions(const struct dt_masks_form_t *const f
                                      GDK_CONTROL_MASK, _("[CIRCLE] change opacity"));
   return lm;
 }
+#endif
 
 static void _circle_sanitize_config(dt_masks_type_t type)
 {
@@ -1505,7 +1521,9 @@ static void _circle_initial_source_pos(const float iwd,
 const dt_masks_functions_t dt_masks_functions_circle = {
   .point_struct_size = sizeof(struct dt_masks_point_circle_t),
   .sanitize_config = _circle_sanitize_config,
+#ifndef DARKTABLE_ENGINE_ONLY
   .setup_mouse_actions = _circle_setup_mouse_actions,
+#endif
   .set_form_name = _circle_set_form_name,
   .set_hint_message = _circle_set_hint_message,
   .modify_property = _circle_modify_property,
@@ -1518,11 +1536,21 @@ const dt_masks_functions_t dt_masks_functions_circle = {
   .get_mask_roi = _circle_get_mask_roi,
   .get_area = _circle_get_area,
   .get_source_area = _circle_get_source_area,
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_moved = _circle_events_mouse_moved,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_scrolled = _circle_events_mouse_scrolled,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_pressed = _circle_events_button_pressed,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_released = _circle_events_button_released,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .post_expose = _circle_events_post_expose
+#endif
 };
 
 

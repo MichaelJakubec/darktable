@@ -16,7 +16,9 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/debug.h"
 #include "common/math.h"
 #include "common/undo.h"
@@ -107,6 +109,7 @@ static void _gradient_get_distance(const float x,
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _gradient_events_mouse_scrolled(dt_iop_module_t *module,
                                            const float pzx,
                                            const float pzy,
@@ -188,7 +191,9 @@ static int _gradient_events_mouse_scrolled(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _gradient_events_button_pressed(dt_iop_module_t *module,
                                            const float pzx,
                                            const float pzy,
@@ -254,7 +259,9 @@ static int _gradient_events_button_pressed(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _gradient_init_values(const float zoom_scale,
                                   const dt_masks_form_gui_t *gui,
                                   const float xpos,
@@ -325,7 +332,9 @@ static void _gradient_init_values(const float zoom_scale,
   *curvature = MAX(-2.0f, MIN(2.0f,
                               dt_conf_get_float(DT_MASKS_CONF(0, gradient, curvature))));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _gradient_events_button_released(dt_iop_module_t *module,
                                             const float pzx,
                                             const float pzy,
@@ -528,7 +537,9 @@ static int _gradient_events_button_released(dt_iop_module_t *module,
 
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _gradient_events_mouse_moved(dt_iop_module_t *module,
                                         const float pzx,
                                         const float pzy,
@@ -666,6 +677,7 @@ static int _gradient_events_mouse_moved(dt_iop_module_t *module,
 
   return 0;
 }
+#endif
 
 // check if(x,y) lies within reasonable limits relative to image frame
 static inline gboolean _gradient_is_canonical(const float x,
@@ -878,6 +890,7 @@ end:
   return res;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _gradient_draw_lines(const gboolean borders,
                                  cairo_t *cr,
                                  const gboolean selected,
@@ -931,7 +944,9 @@ static void _gradient_draw_lines(const gboolean borders,
     dt_masks_line_stroke(cr, borders, FALSE, selected, zoom_scale);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _gradient_draw_arrow(cairo_t *cr,
                                  const gboolean selected,
                                  const gboolean border_selected,
@@ -968,7 +983,9 @@ static void _gradient_draw_arrow(cairo_t *cr,
 
   dt_masks_line_stroke(cr, FALSE, FALSE, selected, zoom_scale);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _gradient_events_post_expose(cairo_t *cr,
                                          const float zoom_scale,
                                          dt_masks_form_gui_t *gui,
@@ -1034,6 +1051,7 @@ static void _gradient_events_post_expose(cairo_t *cr,
                        ((gui->group_selected == index) && (gui->border_selected)),
                        zoom_scale, gpt->points, gpt->points_count);
 }
+#endif
 
 static int _gradient_get_points_border(dt_develop_t *dev,
                                        dt_masks_form_t *form,
@@ -1411,6 +1429,7 @@ static int _gradient_get_mask_roi(const dt_iop_module_t *const module,
   return 1;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GSList *_gradient_setup_mouse_actions(const dt_masks_form_t *const form)
 {
   GSList *lm = NULL;
@@ -1426,6 +1445,7 @@ static GSList *_gradient_setup_mouse_actions(const dt_masks_form_t *const form)
                                      GDK_CONTROL_MASK, _("[GRADIENT] change opacity"));
   return lm;
 }
+#endif
 
 static void _gradient_sanitize_config(const dt_masks_type_t type)
 {
@@ -1543,7 +1563,9 @@ static void _gradient_modify_property(dt_masks_form_t *const form,
 const dt_masks_functions_t dt_masks_functions_gradient = {
   .point_struct_size = sizeof(struct dt_masks_point_gradient_t),
   .sanitize_config = _gradient_sanitize_config,
+#ifndef DARKTABLE_ENGINE_ONLY
   .setup_mouse_actions = _gradient_setup_mouse_actions,
+#endif
   .set_form_name = _gradient_set_form_name,
   .set_hint_message = _gradient_set_hint_message,
   .modify_property = _gradient_modify_property,
@@ -1553,11 +1575,21 @@ const dt_masks_functions_t dt_masks_functions_gradient = {
   .get_mask = _gradient_get_mask,
   .get_mask_roi = _gradient_get_mask_roi,
   .get_area = _gradient_get_area,
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_moved = _gradient_events_mouse_moved,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_scrolled = _gradient_events_mouse_scrolled,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_pressed = _gradient_events_button_pressed,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_released = _gradient_events_button_released,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .post_expose = _gradient_events_post_expose
+#endif
 };
 
 // clang-format off

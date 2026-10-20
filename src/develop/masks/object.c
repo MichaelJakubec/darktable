@@ -1121,6 +1121,7 @@ static dt_masks_form_t *_finalize_mask(dt_iop_module_t *module,
 
 // --- mask event handlers ---
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _object_events_mouse_scrolled(dt_iop_module_t *module,
                                          const float pzx,
                                          const float pzy,
@@ -1174,6 +1175,7 @@ static int _object_events_mouse_scrolled(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
 // clear accumulated points, mask preview, and iterative refinement state
 static void _clear_selection(dt_masks_form_gui_t *gui)
@@ -1202,6 +1204,7 @@ static void _clear_selection(dt_masks_form_gui_t *gui)
   dt_control_queue_redraw_center();
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _object_events_button_pressed(dt_iop_module_t *module,
                                          float pzx,
                                          float pzy,
@@ -1336,7 +1339,9 @@ static int _object_events_button_pressed(dt_iop_module_t *module,
 
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _object_events_button_released(dt_iop_module_t *module,
                                           const float pzx,
                                           const float pzy,
@@ -1396,7 +1401,9 @@ static int _object_events_button_released(dt_iop_module_t *module,
   dt_control_queue_redraw_center();
   return 1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _object_events_mouse_moved(dt_iop_module_t *module,
                                       const float pzx,
                                       const float pzy,
@@ -1432,6 +1439,7 @@ static int _object_events_mouse_moved(dt_iop_module_t *module,
 
   return 1;
 }
+#endif
 
 // timer callback: periodically redraw center so +/- cursor tracks shift key
 static gboolean _modifier_poll(gpointer data)
@@ -1441,6 +1449,7 @@ static gboolean _modifier_poll(gpointer data)
   return G_SOURCE_CONTINUE;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _object_events_post_expose(cairo_t *cr,
                                        const float zoom_scale,
                                        dt_masks_form_gui_t *gui,
@@ -1788,6 +1797,7 @@ static void _object_events_post_expose(cairo_t *cr,
   }
 
 }
+#endif
 
 // --- stub functions (object is transient -- result is path masks) ---
 
@@ -1974,11 +1984,21 @@ const dt_masks_functions_t dt_masks_functions_object = {
   .get_mask_roi = NULL,
   .get_area = NULL,
   .get_source_area = NULL,
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_moved = _object_events_mouse_moved,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_scrolled = _object_events_mouse_scrolled,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_pressed = _object_events_button_pressed,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_released = _object_events_button_released,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .post_expose = _object_events_post_expose
+#endif
 };
 
 gboolean dt_masks_object_available(void)

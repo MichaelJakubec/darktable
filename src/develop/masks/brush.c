@@ -16,7 +16,9 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/debug.h"
 #include "common/imagebuf.h"
 #include "common/undo.h"
@@ -52,6 +54,7 @@ static inline int _nb_ctrl_point(const int nb_point)
 
 /** get squared distance of indexed point to line segment, taking
  * weighted payload data into account */
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _brush_point_line_distance2(const int index,
                                          const int pointscount,
                                          const float *points,
@@ -125,9 +128,11 @@ static float _brush_point_line_distance2(const int index,
 
   return sqf(dx) + sqf(dy) + bweight * sqf(db) + hweight * dh * dh + dweight * sqf(dd);
 }
+#endif
 
 /** remove unneeded points (Ramer-Douglas-Peucker algorithm) and
  * return resulting path as linked list */
+#ifndef DARKTABLE_ENGINE_ONLY
 static GList *_brush_ramer_douglas_peucker(const float *points,
                                            const int points_count,
                                            const float *payload,
@@ -188,6 +193,7 @@ static GList *_brush_ramer_douglas_peucker(const float *points,
 
   return ResultList;
 }
+#endif
 
 /** get the point of the brush at pos t [0,1]  */
 static void _brush_get_XY(const float p0x,
@@ -255,6 +261,7 @@ static void _brush_border_get_XY(const float p0x,
 
 /** get feather extremity from the control point n°2 */
 /** the values should be in orthonormal space */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _brush_ctrl2_to_feather(const float ptx,
                                     const float pty,
                                     const float ctrlx,
@@ -274,9 +281,11 @@ static void _brush_ctrl2_to_feather(const float ptx,
     *fy = pty - ptx + ctrlx;
   }
 }
+#endif
 
 /** get bezier control points from feather extremity */
 /** the values should be in orthonormal space */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _brush_feather_to_ctrl(const float ptx,
                                    const float pty,
                                    const float fx,
@@ -302,8 +311,10 @@ static void _brush_feather_to_ctrl(const float ptx,
     *ctrl2y = pty - fx + ptx;
   }
 }
+#endif
 
 /** Get the control points of a segment to match exactly a catmull-rom spline */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _brush_catmull_to_bezier(const float x1,
                                      const float y1,
                                      const float x2,
@@ -322,9 +333,11 @@ static void _brush_catmull_to_bezier(const float x1,
   *bx2 = (x2 + 6 * x3 - x4) / 6;
   *by2 = (y2 + 6 * y3 - y4) / 6;
 }
+#endif
 
 /** initialise all control points to eventually match a catmull-rom
  * like spline */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _brush_init_ctrl_points(dt_masks_form_t *form)
 {
   // if we have less than 2 points, what to do ??
@@ -408,6 +421,7 @@ static void _brush_init_ctrl_points(dt_masks_form_t *form)
     }
   }
 }
+#endif
 
 
 /** fill the gap between 2 points with an arc of circle */
@@ -1269,6 +1283,7 @@ static int _brush_get_points_border(dt_develop_t *dev,
     the point given by coordinates x and y; we only need to find the
     minimum with a resolution of 1%, so we just do an exhaustive
     search without any frills */
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _brush_get_position_in_segment(const float x,
                                             const float y,
                                             dt_masks_form_t *form,
@@ -1306,7 +1321,9 @@ static float _brush_get_position_in_segment(const float x,
 
   return tmin;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _brush_events_mouse_scrolled(dt_iop_module_t *module,
                                         const float pzx,
                                         const float pzy,
@@ -1459,7 +1476,9 @@ static int _brush_events_mouse_scrolled(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _brush_events_button_pressed(dt_iop_module_t *module,
                                         const float pzx,
                                         const float pzy,
@@ -1792,7 +1811,9 @@ static int _brush_events_button_pressed(dt_iop_module_t *module,
 
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _brush_events_button_released(dt_iop_module_t *module,
                                          const float pzx,
                                          const float pzy,
@@ -2135,7 +2156,9 @@ static int _brush_events_button_released(dt_iop_module_t *module,
 
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _brush_events_mouse_moved(struct dt_iop_module_t *module,
                                      float pzx,
                                      float pzy,
@@ -2418,7 +2441,9 @@ static int _brush_events_mouse_moved(struct dt_iop_module_t *module,
   if(gui->edit_mode != DT_MASKS_EDIT_FULL) return 0;
   return 1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _brush_events_post_expose(cairo_t *cr,
                                       const float zoom_scale,
                                       dt_masks_form_gui_t *gui,
@@ -2752,6 +2777,7 @@ static void _brush_events_post_expose(cairo_t *cr,
        zoom_scale);
   }
 }
+#endif
 
 static void _brush_bounding_box_raw(const float *const points,
                                     const float *const border,
@@ -3134,6 +3160,7 @@ static int _brush_get_mask_roi(const dt_iop_module_t *const module,
   return 1;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GSList *_brush_setup_mouse_actions(const struct dt_masks_form_t *const form)
 {
   GSList *lm = NULL;
@@ -3145,6 +3172,7 @@ static GSList *_brush_setup_mouse_actions(const struct dt_masks_form_t *const fo
                                      GDK_CONTROL_MASK, _("[BRUSH] change opacity"));
   return lm;
 }
+#endif
 
 static void _brush_sanitize_config(dt_masks_type_t type)
 {
@@ -3293,7 +3321,9 @@ static void _brush_modify_property(dt_masks_form_t *const form,
 const dt_masks_functions_t dt_masks_functions_brush = {
   .point_struct_size = sizeof(struct dt_masks_point_brush_t),
   .sanitize_config = _brush_sanitize_config,
+#ifndef DARKTABLE_ENGINE_ONLY
   .setup_mouse_actions = _brush_setup_mouse_actions,
+#endif
   .set_form_name = _brush_set_form_name,
   .set_hint_message = _brush_set_hint_message,
   .modify_property = _brush_modify_property,
@@ -3305,11 +3335,21 @@ const dt_masks_functions_t dt_masks_functions_brush = {
   .get_mask_roi = _brush_get_mask_roi,
   .get_area = _brush_get_area,
   .get_source_area = _brush_get_source_area,
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_moved = _brush_events_mouse_moved,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_scrolled = _brush_events_mouse_scrolled,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_pressed = _brush_events_button_pressed,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_released = _brush_events_button_released,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .post_expose = _brush_events_post_expose
+#endif
 };
 
 

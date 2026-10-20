@@ -17,7 +17,9 @@
 */
 
 #include "develop/masks.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/debug.h"
 #include "control/conf.h"
 #include "control/control.h"
@@ -74,6 +76,7 @@ GList *dt_masks_dup_forms_deep(GList *forms,
   return (GList *)g_list_copy_deep(forms, _dup_masks_form_cb, (gpointer)form);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _get_opacity(const dt_masks_form_gui_t *gui,
                         const dt_masks_form_t *form)
 {
@@ -100,7 +103,9 @@ static int _get_opacity(const dt_masks_form_gui_t *gui,
 
   return opacity;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static dt_masks_type_t _get_all_types_in_group(const dt_masks_form_t *form)
 {
   if(form->type & DT_MASKS_GROUP)
@@ -119,7 +124,9 @@ static dt_masks_type_t _get_all_types_in_group(const dt_masks_form_t *form)
     return form->type;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 GSList *dt_masks_mouse_actions(const dt_masks_form_t *form)
 {
   const dt_masks_type_t formtype = _get_all_types_in_group(form);
@@ -138,7 +145,9 @@ GSList *dt_masks_mouse_actions(const dt_masks_form_t *form)
 
   return lm;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _set_hinter_message(const dt_masks_form_gui_t *gui,
                                 const dt_masks_form_t *form)
 {
@@ -170,6 +179,7 @@ static void _set_hinter_message(const dt_masks_form_gui_t *gui,
 
   dt_control_hinter_message(msg);
 }
+#endif
 
 void dt_masks_init_form_gui(dt_masks_form_gui_t *gui)
 {
@@ -1114,6 +1124,7 @@ gboolean dt_masks_events_mouse_enter(dt_iop_module_t *module)
 }
 
 // return true in case of something has been exposed
+#ifndef DARKTABLE_ENGINE_ONLY
 gboolean dt_masks_events_mouse_moved(dt_iop_module_t *module,
                                      const float pzx,
                                      const float pzy,
@@ -1160,6 +1171,7 @@ gboolean dt_masks_events_mouse_moved(dt_iop_module_t *module,
 
   return rep != 0;
 }
+#endif
 
 gboolean dt_masks_events_button_released(dt_iop_module_t *module,
                                          const float pzx,
@@ -1188,6 +1200,7 @@ gboolean dt_masks_events_button_released(dt_iop_module_t *module,
   return FALSE;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 gboolean dt_masks_events_button_pressed(dt_iop_module_t *module,
                                         const float pzx,
                                         const float pzy,
@@ -1228,6 +1241,7 @@ gboolean dt_masks_events_button_pressed(dt_iop_module_t *module,
       || which == 3; // swallow right-clicks so right-drag rotate is disabled
   return FALSE;
 }
+#endif
 
 gboolean dt_masks_scroll_over_mask(void)
 {
@@ -1246,6 +1260,7 @@ gboolean dt_masks_scroll_over_mask(void)
   return gui->group_edited >= 0;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 gboolean dt_masks_events_mouse_scrolled(dt_iop_module_t *module,
                                         const float pzx,
                                         const float pzy,
@@ -1285,6 +1300,7 @@ gboolean dt_masks_events_mouse_scrolled(dt_iop_module_t *module,
 
   return ret;
 }
+#endif
 
 // visualize mask from viewport
 void dt_masks_events_post_expose(const dt_iop_module_t *module,
@@ -1370,11 +1386,15 @@ void dt_masks_change_form_gui(dt_masks_form_t *newform)
   dt_masks_clear_form_gui(darktable.develop);
   darktable.develop->form_visible = newform;
 
+#ifndef DARKTABLE_ENGINE_ONLY
   /* update sticky accels window */
   if(newform != old
      && darktable.view_manager->accels_window.window
      && darktable.view_manager->accels_window.sticky)
     dt_view_accels_refresh(darktable.view_manager);
+#else
+  (void)old;
+#endif
 
   if(newform && newform->type != DT_MASKS_GROUP)
     darktable.develop->form_gui->creation = TRUE;
@@ -1384,6 +1404,7 @@ void dt_masks_change_form_gui(dt_masks_form_t *newform)
   DT_LEAVE_GUI_UPDATE();
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_masks_reset_form_gui(void)
 {
   dt_masks_change_form_gui(NULL);
@@ -1400,7 +1421,9 @@ void dt_masks_reset_form_gui(void)
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(bd->masks_shapes[n]), 0);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_masks_reset_show_masks_icons(void)
 {
   if(darktable.develop->first_load) return;
@@ -1426,6 +1449,7 @@ void dt_masks_reset_show_masks_icons(void)
     }
   }
 }
+#endif
 
 dt_masks_edit_mode_t dt_masks_get_edit_mode(void)
 {
@@ -1439,6 +1463,7 @@ gboolean dt_masks_is_restricted_mode(void)
   return dt_masks_get_edit_mode() == DT_MASKS_EDIT_RESTRICTED;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_masks_set_edit_mode(dt_iop_module_t *module,
                             const dt_masks_edit_mode_t value)
 {
@@ -1472,6 +1497,7 @@ void dt_masks_set_edit_mode(dt_iop_module_t *module,
 
   dt_control_queue_redraw_center();
 }
+#endif
 
 void dt_masks_set_edit_mode_single_form(dt_iop_module_t *module,
                                         const dt_mask_id_t formid,
@@ -1506,6 +1532,7 @@ void dt_masks_set_edit_mode_single_form(dt_iop_module_t *module,
   dt_control_queue_redraw_center();
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_masks_iop_edit_toggle_callback(GtkToggleButton *togglebutton,
                                        dt_iop_module_t *module)
 {
@@ -1523,7 +1550,9 @@ void dt_masks_iop_edit_toggle_callback(GtkToggleButton *togglebutton,
                           ? DT_MASKS_EDIT_FULL
                           : DT_MASKS_EDIT_OFF));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _menu_no_masks(dt_iop_module_t *module)
 {
   // we drop all the forms in the iop
@@ -1538,7 +1567,9 @@ static void _menu_no_masks(dt_iop_module_t *module)
 
   dt_dev_add_history_item(darktable.develop, module, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _menu_add_shape(dt_iop_module_t *module,
                             const dt_masks_type_t type)
 {
@@ -1550,7 +1581,9 @@ static void _menu_add_shape(dt_iop_module_t *module,
   darktable.develop->form_gui->creation_module = module;
   dt_control_queue_redraw_center();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _menu_add_exist(dt_iop_module_t *module,
                             const dt_mask_id_t formid)
 {
@@ -1572,6 +1605,7 @@ static void _menu_add_exist(dt_iop_module_t *module,
   dt_masks_iop_update(module);
   dt_masks_set_edit_mode(module, DT_MASKS_EDIT_FULL);
 }
+#endif
 
 void dt_masks_group_update_name(dt_iop_module_t *module)
 {
@@ -1620,6 +1654,7 @@ void dt_masks_iop_use_same_as(dt_iop_module_t *module,
   dt_dev_add_masks_history_item(darktable.develop, module, TRUE);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_masks_iop_combo_populate(GtkWidget *w, dt_iop_module_t **m)
 {
   // we ensure that the module has focus
@@ -1720,7 +1755,9 @@ void dt_masks_iop_combo_populate(GtkWidget *w, dt_iop_module_t **m)
     pos2++;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_masks_iop_value_changed_callback(GtkWidget *widget,
                                          dt_iop_module_t *module)
 {
@@ -1795,7 +1832,9 @@ void dt_masks_iop_value_changed_callback(GtkWidget *widget,
   // we update the combo line
   dt_masks_iop_update(module);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_masks_iop_update(dt_iop_module_t *module)
 {
   if(!module) return;
@@ -1803,6 +1842,7 @@ void dt_masks_iop_update(dt_iop_module_t *module)
   dt_iop_gui_update(module);
   dt_iop_gui_update_masks(module);
 }
+#endif
 
 void dt_masks_form_remove(dt_iop_module_t *module,
                           dt_masks_form_t *grp,
@@ -2468,6 +2508,7 @@ void dt_masks_draw_clone_source_pos(cairo_t *cr,
 
 // sets if the initial source position for a clone mask will be
 // absolute or relative, based on mouse position and key state
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_masks_set_source_pos_initial_state(dt_masks_form_gui_t *gui,
                                            const uint32_t state,
                                            const float pzx,
@@ -2489,6 +2530,7 @@ void dt_masks_set_source_pos_initial_state(dt_masks_form_gui_t *gui,
   gui->posx_source = pzx * wd;
   gui->posy_source = pzy * ht;
 }
+#endif
 
 // set the initial source position value for a clone mask
 void dt_masks_set_source_pos_initial_value(dt_masks_form_gui_t *gui,
@@ -2654,6 +2696,8 @@ void dt_masks_calculate_source_pos_value(const dt_masks_form_gui_t *gui,
   *py = y;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_masks_draw_anchor(cairo_t *cr,
                           const gboolean selected,
                           const float zoom_scale,
@@ -2675,7 +2719,10 @@ void dt_masks_draw_anchor(cairo_t *cr,
   dt_draw_set_color_overlay(cr, FALSE, 0.8);
   cairo_stroke(cr);
 }
+#endif
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_masks_draw_ctrl(cairo_t *cr,
                         const float x,
                         const float y,
@@ -2694,6 +2741,7 @@ void dt_masks_draw_ctrl(cairo_t *cr,
   dt_draw_set_color_overlay(cr, FALSE, 0.8);
   cairo_stroke(cr);
 }
+#endif
 
 void dt_masks_draw_arrow(cairo_t *cr,
                          const float from_x,
@@ -2747,6 +2795,7 @@ void dt_masks_draw_arrow(cairo_t *cr,
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_masks_stroke_arrow(cairo_t *cr,
                            const dt_masks_form_gui_t *gui,
                            const int group,
@@ -2772,6 +2821,7 @@ void dt_masks_stroke_arrow(cairo_t *cr,
   dt_draw_set_color_overlay(cr, TRUE, 0.8);
   cairo_stroke(cr);
 }
+#endif
 
 void dt_masks_closest_point(const int count,
                             const int nb_ctrl,
@@ -2800,6 +2850,7 @@ void dt_masks_closest_point(const int count,
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void dt_masks_line_stroke(cairo_t *cr,
                           const gboolean border,
                           const gboolean source,
@@ -2855,6 +2906,7 @@ void dt_masks_line_stroke(cairo_t *cr,
 
   cairo_stroke(cr);
 }
+#endif
 
 #include "detail.c"
 

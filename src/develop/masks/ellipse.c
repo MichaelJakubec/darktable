@@ -16,7 +16,9 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/debug.h"
 #include "common/undo.h"
 #include "common/math.h"
@@ -183,6 +185,7 @@ static void _ellipse_get_distance(const float x,
   *inside = TRUE;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _ellipse_draw_shape(const gboolean borders,
                                 const gboolean source,
                                 cairo_t *cr,
@@ -215,6 +218,7 @@ static void _ellipse_draw_shape(const gboolean borders,
 
   dt_masks_line_stroke(cr, borders, source, selected, zoom_scale);
 }
+#endif
 
 static float *_points_to_transform(const float xx,
                                    const float yy,
@@ -420,6 +424,7 @@ static int _ellipse_get_points_border(dt_develop_t *dev,
   return 0;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _ellipse_events_mouse_scrolled(dt_iop_module_t *module,
                                           const float pzx,
                                           const float pzy,
@@ -555,7 +560,9 @@ static int _ellipse_events_mouse_scrolled(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _ellipse_events_button_pressed(dt_iop_module_t *module,
                                           const float pzx,
                                           const float pzy,
@@ -752,7 +759,9 @@ static int _ellipse_events_button_pressed(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _ellipse_events_button_released(dt_iop_module_t *module,
                                            const float pzx,
                                            const float pzy,
@@ -970,7 +979,9 @@ static int _ellipse_events_button_released(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _ellipse_events_mouse_moved(dt_iop_module_t *module,
                                        const float pzx,
                                        const float pzy,
@@ -1213,7 +1224,9 @@ static int _ellipse_events_mouse_moved(dt_iop_module_t *module,
 
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _ellipse_events_post_expose(cairo_t *cr,
                                         const float zoom_scale,
                                         dt_masks_form_gui_t *gui,
@@ -1402,6 +1415,7 @@ static void _ellipse_events_post_expose(cairo_t *cr,
                         zoom_scale, xrefs, yrefs, gpt->source, gpt->source_count);
    }
 }
+#endif
 
 static void _bounding_box(const float *const points,
                           const int num_points,
@@ -1947,6 +1961,7 @@ static int _ellipse_get_mask_roi(const dt_iop_module_t *const module,
   return 1;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GSList *_ellipse_setup_mouse_actions(const struct dt_masks_form_t *const form)
 {
   GSList *lm = NULL;
@@ -1970,6 +1985,7 @@ static GSList *_ellipse_setup_mouse_actions(const struct dt_masks_form_t *const 
                                      _("[ELLIPSE] rotate shape"));
   return lm;
 }
+#endif
 
 static void _ellipse_set_form_name(dt_masks_form_t *const form,
                                    const size_t nb)
@@ -2141,7 +2157,9 @@ static void _ellipse_modify_property(dt_masks_form_t *const form,
 const dt_masks_functions_t dt_masks_functions_ellipse = {
   .point_struct_size = sizeof(struct dt_masks_point_ellipse_t),
   .sanitize_config = _ellipse_sanitize_config,
+#ifndef DARKTABLE_ENGINE_ONLY
   .setup_mouse_actions = _ellipse_setup_mouse_actions,
+#endif
   .set_form_name = _ellipse_set_form_name,
   .set_hint_message = _ellipse_set_hint_message,
   .modify_property = _ellipse_modify_property,
@@ -2154,11 +2172,21 @@ const dt_masks_functions_t dt_masks_functions_ellipse = {
   .get_mask_roi = _ellipse_get_mask_roi,
   .get_area = _ellipse_get_area,
   .get_source_area = _ellipse_get_source_area,
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_moved = _ellipse_events_mouse_moved,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_scrolled = _ellipse_events_mouse_scrolled,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_pressed = _ellipse_events_button_pressed,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_released = _ellipse_events_button_released,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .post_expose = _ellipse_events_post_expose
+#endif
 };
 
 // clang-format off

@@ -16,7 +16,9 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/debug.h"
 #include "common/imagebuf.h"
 #include "common/undo.h"
@@ -1778,6 +1780,7 @@ static int _path_get_points_border(dt_develop_t *dev,
                               points_count, border, border_count, source);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _path_events_mouse_scrolled(dt_iop_module_t *module,
                                        const float pzx,
                                        const float pzy,
@@ -1929,7 +1932,9 @@ static int _path_events_mouse_scrolled(dt_iop_module_t *module,
   }
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _path_events_button_pressed(dt_iop_module_t *module,
                                        const float pzx,
                                        const float pzy,
@@ -2384,7 +2389,9 @@ static int _path_events_button_pressed(dt_iop_module_t *module,
 
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _path_events_button_released(dt_iop_module_t *module,
                                         const float pzx,
                                         const float pzy,
@@ -2528,7 +2535,9 @@ static int _path_events_button_released(dt_iop_module_t *module,
 
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _path_events_mouse_moved(dt_iop_module_t *module,
                                     float pzx,
                                     float pzy,
@@ -2835,7 +2844,9 @@ static int _path_events_mouse_moved(dt_iop_module_t *module,
     return 0;
   return 1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _path_events_post_expose(cairo_t *cr,
                                      const float zoom_scale,
                                      dt_masks_form_gui_t *gui,
@@ -3036,6 +3047,7 @@ static void _path_events_post_expose(cairo_t *cr,
        zoom_scale);
   }
 }
+#endif
 
 static void _path_bounding_box_raw(const float *const points,
                                    const float *border,
@@ -3968,6 +3980,7 @@ static int _path_get_mask_roi(const dt_iop_module_t *const module,
   return 1;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GSList *_path_setup_mouse_actions(const dt_masks_form_t *const form)
 {
   GSList *lm = NULL;
@@ -3993,6 +4006,7 @@ static GSList *_path_setup_mouse_actions(const dt_masks_form_t *const form)
                                      GDK_CONTROL_MASK, _("[PATH] change opacity"));
   return lm;
 }
+#endif
 
 static void _path_sanitize_config(dt_masks_type_t type)
 {
@@ -4158,7 +4172,9 @@ static void _path_modify_property(dt_masks_form_t *const form,
 const dt_masks_functions_t dt_masks_functions_path = {
   .point_struct_size = sizeof(struct dt_masks_point_path_t),
   .sanitize_config = _path_sanitize_config,
+#ifndef DARKTABLE_ENGINE_ONLY
   .setup_mouse_actions = _path_setup_mouse_actions,
+#endif
   .set_form_name = _path_set_form_name,
   .set_hint_message = _path_set_hint_message,
   .modify_property = _path_modify_property,
@@ -4170,11 +4186,21 @@ const dt_masks_functions_t dt_masks_functions_path = {
   .get_mask_roi = _path_get_mask_roi,
   .get_area = _path_get_area,
   .get_source_area = _path_get_source_area,
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_moved = _path_events_mouse_moved,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .mouse_scrolled = _path_events_mouse_scrolled,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_pressed = _path_events_button_pressed,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .button_released = _path_events_button_released,
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   .post_expose = _path_events_post_expose
+#endif
 };
 
 
