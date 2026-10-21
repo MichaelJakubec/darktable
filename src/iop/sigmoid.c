@@ -16,7 +16,9 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/custom_primaries.h"
 #include "common/math.h"
 #include "common/matrices.h"
@@ -28,7 +30,9 @@
 #include "gui/presets.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 
 DT_MODULE_INTROSPECTION(3, dt_iop_sigmoid_params_t)
@@ -861,6 +865,7 @@ void init_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelpipe
   piece->data = calloc(1, sizeof(dt_iop_sigmoid_data_t));
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   const dt_iop_sigmoid_gui_data_t *g = self->gui_data;
@@ -873,7 +878,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     gtk_widget_set_visible(g->primaries_section.expander, is_per_channel);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   const dt_iop_sigmoid_gui_data_t *g = self->gui_data;
@@ -883,7 +890,9 @@ void gui_update(dt_iop_module_t *self)
 
   gui_changed(self, NULL, NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_sigmoid_gui_data_t *g = IOP_GUI_ALLOC(sigmoid);
@@ -973,6 +982,7 @@ void gui_init(dt_iop_module_t *self)
 
   self->widget = main_box;
 }
+#endif
 
 
 // clang-format off

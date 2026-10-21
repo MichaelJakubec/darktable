@@ -16,8 +16,12 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gdk/gdkkeysyms.h>
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
@@ -31,8 +35,12 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/draw.h"
 #include "gui/gtk.h"
 #include "gui/presets.h"
@@ -508,6 +516,7 @@ void reload_defaults(dt_iop_module_t *self)
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _crop_callback(dt_iop_module_t *self,
                            const dt_image_orientation_t mode)
 {
@@ -521,7 +530,9 @@ static void _crop_callback(dt_iop_module_t *self,
   if(cropper && dev->cropping.flip_callback)
     dev->cropping.flip_callback(cropper, mode);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void do_rotate(dt_iop_module_t *self, uint32_t cw)
 {
   dt_iop_flip_params_t *p = self->params;
@@ -549,17 +560,23 @@ static void do_rotate(dt_iop_module_t *self, uint32_t cw)
   p->orientation = orientation;
   _crop_callback(self, cw ? ORIENTATION_ROTATE_CW_90_DEG : ORIENTATION_ROTATE_CCW_90_DEG);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rotate_cw(GtkWidget *widget, dt_iop_module_t *self)
 {
   do_rotate(self, 1);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rotate_ccw(GtkWidget *widget, dt_iop_module_t *self)
 {
   do_rotate(self, 0);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _flip_h(GtkWidget *widget, dt_iop_module_t *self)
 {
   dt_iop_flip_params_t *p = self->params;
@@ -575,7 +592,9 @@ static void _flip_h(GtkWidget *widget, dt_iop_module_t *self)
 
   _crop_callback(self, ORIENTATION_FLIP_HORIZONTALLY);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _flip_v(GtkWidget *widget, dt_iop_module_t *self)
 {
   dt_iop_flip_params_t *p = self->params;
@@ -592,7 +611,9 @@ static void _flip_v(GtkWidget *widget, dt_iop_module_t *self)
 
   _crop_callback(self, ORIENTATION_FLIP_VERTICALLY);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   self->gui_data = NULL;
@@ -618,11 +639,14 @@ void gui_init(dt_iop_module_t *self)
                     G_CALLBACK(_flip_v), FALSE, 0, 0, dtgtk_cairo_paint_flip, 0,
                     self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   self->gui_data = NULL;
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

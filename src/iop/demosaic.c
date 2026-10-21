@@ -16,7 +16,9 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/colorspaces.h"
 #include "common/darktable.h"
 #include "common/interpolation.h"
@@ -36,7 +38,9 @@
 #include "common/colorspaces_inline_conversions.h"
 #include "imageio/imageio_rawspeed.h" // for dt_rawspeed_crop_dcraw_filters
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
@@ -1488,8 +1492,10 @@ void reload_defaults(dt_iop_module_t *self)
   self->hide_enable_button = TRUE;
 
   self->default_enabled = dt_image_is_raw(img) || dt_image_is_mono_sraw(img);
+#ifndef DARKTABLE_ENGINE_ONLY
   if(self->widget)
     gtk_stack_set_visible_child_name(GTK_STACK(self->widget), self->default_enabled ? "raw" : "non_raw");
+#endif
 
   if(g)
   {
@@ -1498,6 +1504,7 @@ void reload_defaults(dt_iop_module_t *self)
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_demosaic_gui_data_t *g = self->gui_data;
@@ -1612,7 +1619,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     g->cs_mask = FALSE;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   gui_changed(self, NULL, NULL);
@@ -1623,7 +1632,9 @@ void gui_update(dt_iop_module_t *self)
   g->autoradius = FALSE;
   g->autothrs = FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _dual_thrs_callback(GtkWidget *quad, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1638,7 +1649,9 @@ static void _dual_thrs_callback(GtkWidget *quad, dt_iop_module_t *self)
 
   dt_dev_reprocess_center(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _cs_thrs_callback(GtkWidget *quad, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1652,7 +1665,9 @@ static void _cs_thrs_callback(GtkWidget *quad, dt_iop_module_t *self)
 
   dt_dev_reprocess_center(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _cs_boost_callback(GtkWidget *quad, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1666,7 +1681,9 @@ static void _cs_boost_callback(GtkWidget *quad, dt_iop_module_t *self)
 
   dt_dev_reprocess_center(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _cs_radius_callback(GtkWidget *quad, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1674,7 +1691,9 @@ static void _cs_radius_callback(GtkWidget *quad, dt_iop_module_t *self)
   g->new_radius = -1.0f;
   dt_dev_reprocess_center(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _ui_pipe_done(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_demosaic_gui_data_t *g = self->gui_data;
@@ -1701,7 +1720,9 @@ static void _ui_pipe_done(gpointer instance, dt_iop_module_t *self)
     dt_dev_add_history_item(darktable.develop, self, TRUE);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _preset_applied_callback(gpointer instance, dt_iop_module_t *self)
 {
   const dt_iop_demosaic_params_t *p = self->params;
@@ -1712,7 +1733,9 @@ static void _preset_applied_callback(gpointer instance, dt_iop_module_t *self)
     dt_dev_reprocess_center(self->dev);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, const gboolean in)
 {
   dt_iop_demosaic_gui_data_t *g = self->gui_data;
@@ -1729,7 +1752,9 @@ void gui_focus(dt_iop_module_t *self, const gboolean in)
     if(was_masking) dt_dev_reprocess_center(self->dev);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_demosaic_gui_data_t *g = IOP_GUI_ALLOC(demosaic);
@@ -1837,6 +1862,7 @@ void gui_init(dt_iop_module_t *self)
 
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_PRESET_APPLIED, _preset_applied_callback);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

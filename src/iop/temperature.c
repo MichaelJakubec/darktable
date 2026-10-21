@@ -22,7 +22,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/colorspaces_inline_conversions.h"
 #include "common/darktable.h"
 #include "common/opencl.h"
@@ -33,8 +35,12 @@
 #include "develop/imageop_gui.h"
 #include "develop/imageop_math.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/expander.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/color_picker_proxy.h"
 #include "iop/iop_api.h"
@@ -63,7 +69,9 @@ DT_MODULE_INTROSPECTION(4, dt_iop_temperature_params_t)
 #define DT_IOP_TEMP_D65 3
 #define DT_IOP_TEMP_D65_LATE 4
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _gui_sliders_update(dt_iop_module_t *self);
+#endif
 
 typedef struct dt_iop_temperature_params_t
 {
@@ -284,6 +292,7 @@ typedef double((*spd)(unsigned long int wavelength, double TempK));
  * Bruce Lindbloom, "Spectral Power Distribution of a Blackbody Radiator"
  * http://www.brucelindbloom.com/Eqn_Blackbody.html
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double _spd_blackbody(unsigned long int wavelength, double TempK)
 {
   // convert wavelength from nm to m
@@ -312,12 +321,14 @@ static double _spd_blackbody(unsigned long int wavelength, double TempK)
 #undef c2
 #undef c1
 }
+#endif
 
 /*
  * Bruce Lindbloom, "Spectral Power Distribution of a CIE D-Illuminant"
  * http://www.brucelindbloom.com/Eqn_DIlluminant.html
  * and https://en.wikipedia.org/wiki/Standard_illuminant#Illuminant_series_D
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double _spd_daylight(unsigned long int wavelength, double TempK)
 {
   cmsCIExyY WhitePoint = { D65xyY.x, D65xyY.y, 1.0 };
@@ -340,11 +351,13 @@ static double _spd_daylight(unsigned long int wavelength, double TempK)
   return (cie_daylight_components[j].S[0] + m1 * cie_daylight_components[j].S[1]
           + m2 * cie_daylight_components[j].S[2]);
 }
+#endif
 
 /*
  * Bruce Lindbloom, "Computing XYZ From Spectral Data (Emissive Case)"
  * http://www.brucelindbloom.com/Eqn_Spect_to_XYZ.html
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static cmsCIEXYZ _spectrum_to_XYZ(double TempK, spd I)
 {
   cmsCIEXYZ Source = {.X = 0.0, .Y = 0.0, .Z = 0.0 };
@@ -374,8 +387,10 @@ static cmsCIEXYZ _spectrum_to_XYZ(double TempK, spd I)
 
   return Source;
 }
+#endif
 
 // TODO: temperature and tint cannot be disjoined! (here it assumes no tint)
+#ifndef DARKTABLE_ENGINE_ONLY
 static cmsCIEXYZ _temperature_to_XYZ(double TempK)
 {
   if(TempK < DT_IOP_LOWEST_TEMPERATURE) TempK = DT_IOP_LOWEST_TEMPERATURE;
@@ -392,7 +407,9 @@ static cmsCIEXYZ _temperature_to_XYZ(double TempK)
     return _spectrum_to_XYZ(TempK, _spd_daylight);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static cmsCIEXYZ _temperature_tint_to_XYZ(double TempK, double tint)
 {
   cmsCIEXYZ xyz = _temperature_to_XYZ(TempK);
@@ -401,8 +418,10 @@ static cmsCIEXYZ _temperature_tint_to_XYZ(double TempK, double tint)
 
   return xyz;
 }
+#endif
 
 // binary search inversion
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _XYZ_to_temperature(cmsCIEXYZ XYZ, float *TempK, float *tint)
 {
   double maxtemp = DT_IOP_HIGHEST_TEMPERATURE, mintemp = DT_IOP_LOWEST_TEMPERATURE;
@@ -428,7 +447,9 @@ static void _XYZ_to_temperature(cmsCIEXYZ XYZ, float *TempK, float *tint)
   if(*tint < DT_IOP_LOWEST_TINT) *tint = DT_IOP_LOWEST_TINT;
   if(*tint > DT_IOP_HIGHEST_TINT) *tint = DT_IOP_HIGHEST_TINT;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _xyz2mul(dt_iop_module_t *self,
                     cmsCIEXYZ xyz,
                     double mul[4])
@@ -449,7 +470,9 @@ static void _xyz2mul(dt_iop_module_t *self,
 
   for(int k = 0; k < 4; k++) mul[k] = 1.0 / CAM[k];
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _temp2mul(dt_iop_module_t *self,
                      const double TempK,
                      const double tint,
@@ -468,7 +491,9 @@ static void _temp2mul(dt_iop_module_t *self,
 
   _xyz2mul(self, xyz, mul);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static cmsCIEXYZ _mul2xyz(dt_iop_module_t *self,
                          const dt_iop_temperature_params_t *p)
 {
@@ -492,7 +517,9 @@ static cmsCIEXYZ _mul2xyz(dt_iop_module_t *self,
 
   return (cmsCIEXYZ){ XYZ[0], XYZ[1], XYZ[2] };
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _mul2temp(dt_iop_module_t *self,
                      dt_iop_temperature_params_t *p,
                      float *TempK,
@@ -500,6 +527,7 @@ static void _mul2temp(dt_iop_module_t *self,
 {
   _XYZ_to_temperature(_mul2xyz(self, p), TempK, tint);
 }
+#endif
 
 DT_OMP_DECLARE_SIMD(aligned(inp,outp))
 static inline void scaled_copy_4wide(float *const outp,
@@ -742,6 +770,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _generate_preset_combo(dt_iop_module_t *self)
 {
   dt_iop_temperature_gui_data_t *g = self->gui_data;
@@ -809,7 +838,9 @@ static int _generate_preset_combo(dt_iop_module_t *self)
 
   return presets_found;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _color_finetuning_slider(dt_iop_module_t *self)
 {
   dt_iop_temperature_gui_data_t *g = self->gui_data;
@@ -895,7 +926,9 @@ static void _color_finetuning_slider(dt_iop_module_t *self)
     gtk_widget_queue_draw(GTK_WIDGET(g->finetune));
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _color_rgb_sliders(dt_iop_module_t *self)
 {
   dt_iop_temperature_gui_data_t *g = self->gui_data;
@@ -1004,7 +1037,9 @@ static void _color_rgb_sliders(dt_iop_module_t *self)
     gtk_widget_queue_draw(GTK_WIDGET(g->scale_b));
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _color_temptint_sliders(dt_iop_module_t *self)
 {
   dt_iop_temperature_gui_data_t *g = self->gui_data;
@@ -1145,6 +1180,7 @@ static void _color_temptint_sliders(dt_iop_module_t *self)
     gtk_widget_queue_draw(GTK_WIDGET(g->scale_tint));
   }
 }
+#endif
 
 static inline const char *_preset_to_str(const int preset)
 {
@@ -1159,6 +1195,7 @@ static inline const char *_preset_to_str(const int preset)
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_preset(dt_iop_module_t *self, int mode)
 {
   dt_iop_temperature_params_t *p = self->params;
@@ -1167,7 +1204,9 @@ static void _update_preset(dt_iop_module_t *self, int mode)
   p->preset = mode;
   chr->late_correction = mode == DT_IOP_TEMP_D65_LATE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_temperature_gui_data_t *g = self->gui_data;
@@ -1378,6 +1417,7 @@ void gui_update(dt_iop_module_t *self)
 
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
 static gboolean _calculate_bogus_daylight_wb(dt_iop_module_t *self, double bwb[4])
 {
@@ -1640,6 +1680,7 @@ void reload_defaults(dt_iop_module_t *self)
 
   // remember daylight wb used for temperature/tint conversion,
   // assuming it corresponds to CIE daylight (D65)
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_temperature_gui_data_t *g = self->gui_data;
   if(g)
   {
@@ -1686,6 +1727,7 @@ void reload_defaults(dt_iop_module_t *self)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g->btn_user), FALSE);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g->btn_d65), FALSE);
   }
+#endif
 }
 
 void init_global(dt_iop_module_so_t *self)
@@ -1709,6 +1751,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _temp_tint_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1731,7 +1774,9 @@ static void _temp_tint_callback(GtkWidget *slider, dt_iop_module_t *self)
   dt_bauhaus_combobox_set(g->presets, DT_IOP_TEMP_USER);
   _update_preset(self, DT_IOP_TEMP_USER);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_temperature_gui_data_t *g = self->gui_data;
@@ -1744,7 +1789,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
   dt_bauhaus_combobox_set(g->presets, DT_IOP_TEMP_USER);
   _update_preset(self, DT_IOP_TEMP_USER);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _btn_toggled(GtkWidget *togglebutton,
                             GdkEventButton *event,
                             dt_iop_module_t *self)
@@ -1778,7 +1825,9 @@ static gboolean _btn_toggled(GtkWidget *togglebutton,
     chr->D65coeffs[0], chr->D65coeffs[1], chr->D65coeffs[2], chr->as_shot[0], chr->as_shot[1], chr->as_shot[2]);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _preset_tune_callback(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1944,7 +1993,9 @@ static void _preset_tune_callback(GtkWidget *widget, dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -1967,8 +2018,10 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
   dt_bauhaus_combobox_set(g->presets, DT_IOP_TEMP_SPOT);
   _update_preset(self, DT_IOP_TEMP_SPOT);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _gui_sliders_update(dt_iop_module_t *self)
 {
   const dt_image_t *img = &self->dev->image_storage;
@@ -2009,7 +2062,9 @@ static void _gui_sliders_update(dt_iop_module_t *self)
 
   gtk_widget_set_visible(GTK_WIDGET(g->scale_y), (img->flags & DT_IMAGE_4BAYER));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean temp_label_click(GtkWidget *label,
                                  GdkEventButton *event,
                                  dt_iop_module_t *self)
@@ -2044,7 +2099,9 @@ static gboolean temp_label_click(GtkWidget *label,
   _color_finetuning_slider(self);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _preference_changed(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_temperature_gui_data_t *g = self->gui_data;
@@ -2060,7 +2117,9 @@ static void _preference_changed(gpointer instance, dt_iop_module_t *self)
   _color_rgb_sliders(self);
   _color_finetuning_slider(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_temperature_gui_data_t *g = IOP_GUI_ALLOC(temperature);
@@ -2214,12 +2273,16 @@ void gui_init(dt_iop_module_t *self)
   gtk_stack_add_named(GTK_STACK(self->widget), GTK_WIDGET(box_enabled), "enabled");
   gtk_stack_add_named(GTK_STACK(self->widget), label_disabled, "disabled");
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   self->request_color_pick = DT_REQUEST_COLORPICK_OFF;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_temperature_gui_data_t *g = self->gui_data;
@@ -2242,6 +2305,7 @@ void gui_reset(dt_iop_module_t *self)
   _color_temptint_sliders(self);
   _update_preset(self, preset);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

@@ -16,7 +16,9 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/colorspaces.h"
 #include "common/colorspaces_inline_conversions.h"
 #include "common/dttypes.h"
@@ -29,12 +31,16 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_math.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gdk/gdkkeysyms.h>
+#endif
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -242,6 +248,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _intent_changed(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -249,7 +256,9 @@ static void _intent_changed(GtkWidget *widget, dt_iop_module_t *self)
   p->intent = (dt_iop_color_intent_t)dt_bauhaus_combobox_get(widget);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _output_profile_changed(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -274,13 +283,16 @@ static void _output_profile_changed(GtkWidget *widget, dt_iop_module_t *self)
            "[colorout] color profile %s seems to have disappeared!",
            dt_colorspaces_get_name(p->type, p->filename));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _signal_profile_changed(gpointer instance, dt_iop_module_t *self)
 {
   dt_develop_t *dev = self->dev;
   if(!dev->gui_attached || dev->gui_leaving) return;
   dt_dev_reprocess_all(dev);
 }
+#endif
 
 static float _lerp_u_lut(const float *const lut, const float v)
 {
@@ -783,6 +795,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_colorout_gui_data_t *g = self->gui_data;
@@ -806,6 +819,7 @@ void gui_update(dt_iop_module_t *self)
            "[colorout] could not find requested profile `%s'!",
            dt_colorspaces_get_name(p->type, p->filename));
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -815,6 +829,7 @@ void init(dt_iop_module_t *self)
   self->default_enabled = TRUE;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _preference_changed(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_colorout_gui_data_t *g = self->gui_data;
@@ -831,7 +846,9 @@ static void _preference_changed(gpointer instance, dt_iop_module_t *self)
     gtk_widget_set_visible(g->output_intent, FALSE);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   const gboolean force_lcms2 = dt_conf_get_bool("plugins/lighttable/export/force_lcms2");
@@ -874,6 +891,7 @@ void gui_init(dt_iop_module_t *self)
   // update the gui when the preferences changed (i.e. show intent when using lcms2)
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_PREFERENCES_CHANGE, _preference_changed);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

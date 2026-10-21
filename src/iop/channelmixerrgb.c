@@ -38,10 +38,14 @@
    If enabled there must be $DESCRIPTION: entries in illuminants.h for bauhaus
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "chart/common.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
 #include "common/chromatic_adaptation.h"
 #include "common/colorspaces_inline_conversions.h"
 #include "common/colorchecker.h"
@@ -52,7 +56,9 @@
 #include "common/dttypes.h"
 #include "develop/imageop_math.h"
 #include "develop/openmp_maths.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "gui/gtk.h"
 #include "gui/presets.h"
@@ -60,7 +66,9 @@
 #include "gaussian_elimination.h"
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
@@ -217,7 +225,9 @@ typedef struct dt_iop_channelmixer_rgb_global_data_t
 } dt_iop_channelmixer_rgb_global_data_t;
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _auto_set_illuminant(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe);
+#endif
 
 
 const char *name()
@@ -598,6 +608,7 @@ static gboolean _dev_is_D65_chroma(const dt_develop_t *dev)
     : dt_dev_equal_chroma(chr->wb_coeffs, chr->D65coeffs);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_mapping_active(const dt_iop_channelmixer_rgb_gui_data_t *g)
 {
   return g  && g->spot_mode
@@ -605,11 +616,14 @@ static gboolean _area_mapping_active(const dt_iop_channelmixer_rgb_gui_data_t *g
             && ((g->lightness_spot && dt_bauhaus_slider_get_val(g->lightness_spot) != 50.0f) ||
                 (g->chroma_spot && dt_bauhaus_slider_get_val(g->chroma_spot) != 0.0f));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static const char *_area_mapping_section_text(const dt_iop_channelmixer_rgb_gui_data_t *g)
 {
   return _area_mapping_active(g) ? _("area color mapping (active)") : _("area color mapping");
 }
+#endif
 
 static gboolean _get_white_balance_coeff(const dt_iop_module_t *self,
                                          dt_aligned_pixel_t custom_wb)
@@ -1209,9 +1223,11 @@ static void _declare_cat_on_pipe(dt_iop_module_t *self, const gboolean preset)
       self->op, dt_iop_get_instance_id(self), origcat, chr->adaptation);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_illuminants(const dt_iop_module_t *self);
 static void _update_approx_cct(const dt_iop_module_t *self);
 static void _update_illuminant_color(const dt_iop_module_t *self);
+#endif
 
 static void _check_if_close_to_daylight(const float x,
                                         const float y,
@@ -1978,6 +1994,7 @@ static void _validate_color_checker(const float *const restrict in,
   dt_free_align(patches);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _set_trouble_messages(dt_iop_module_t *self)
 {
   const dt_iop_channelmixer_rgb_params_t *p = self->params;
@@ -2110,6 +2127,7 @@ static void _set_trouble_messages(dt_iop_module_t *self)
     dt_iop_set_module_trouble_message(self, NULL, NULL, NULL);
   }
 }
+#endif
 
 void process(dt_iop_module_t *self,
              dt_dev_pixelpipe_iop_t *piece,
@@ -2527,6 +2545,7 @@ static inline void _init_bounding_box(dt_iop_channelmixer_rgb_gui_data_t *g,
   _update_bounding_box(g, 0.f, 0.f);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int mouse_moved(dt_iop_module_t *self,
                 const float pzx,
                 const float pzy,
@@ -2599,7 +2618,9 @@ int mouse_moved(dt_iop_module_t *self,
 
   return 1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_pressed(dt_iop_module_t *self,
                    const float pzx,
                    const float pzy,
@@ -2647,7 +2668,9 @@ int button_pressed(dt_iop_module_t *self,
 
   return 1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_released(dt_iop_module_t *self,
                     const float pzx,
                     const float pzy,
@@ -2678,7 +2701,9 @@ int button_released(dt_iop_module_t *self,
 
   return 1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_post_expose(dt_iop_module_t *self,
                      cairo_t *cr,
                      const float width,
@@ -2836,7 +2861,9 @@ void gui_post_expose(dt_iop_module_t *self,
     cairo_fill(cr);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _optimize_changed_callback(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -2849,7 +2876,9 @@ static void _optimize_changed_callback(GtkWidget *widget, dt_iop_module_t *self)
   g->optimization = i;
   dt_iop_gui_leave_critical_section(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _checker_changed_callback(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -2869,7 +2898,9 @@ static void _checker_changed_callback(GtkWidget *widget, dt_iop_module_t *self)
 
   dt_control_queue_redraw_center();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _safety_changed_callback(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -2882,8 +2913,10 @@ static void _safety_changed_callback(GtkWidget *widget, dt_iop_module_t *self)
   dt_conf_set_float("darkroom/modules/channelmixerrgb/safety", g->safety_margin);
   dt_control_queue_redraw_center();
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _start_profiling_callback(GtkWidget *togglebutton, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -2903,7 +2936,9 @@ static void _start_profiling_callback(GtkWidget *togglebutton, dt_iop_module_t *
 
   dt_control_queue_redraw_center();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _run_profile_callback(GtkWidget *widget,
                                  dt_iop_module_t *self)
 {
@@ -2916,7 +2951,9 @@ static void _run_profile_callback(GtkWidget *widget,
 
   dt_dev_reprocess_preview(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _run_validation_callback(GtkWidget *widget,
                                     dt_iop_module_t *self)
 {
@@ -2929,7 +2966,9 @@ static void _run_validation_callback(GtkWidget *widget,
 
   dt_dev_reprocess_preview(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _commit_profile_callback(GtkWidget *widget,
                                      dt_iop_module_t *self)
 {
@@ -2988,8 +3027,10 @@ static void _commit_profile_callback(GtkWidget *widget,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 #ifdef AI_ACTIVATED
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _develop_ui_pipe_finished_callback(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_channelmixer_rgb_gui_data_t *g = self->gui_data;
@@ -3032,7 +3073,9 @@ static void _develop_ui_pipe_finished_callback(gpointer instance, dt_iop_module_
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
 #endif
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _preview_pipe_finished_callback(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_channelmixer_rgb_gui_data_t *g = self->gui_data;
@@ -3043,6 +3086,7 @@ static void _preview_pipe_finished_callback(gpointer instance, dt_iop_module_t *
   dt_iop_gui_leave_critical_section(self);
   _set_trouble_messages(self);
 }
+#endif
 
 void commit_params(dt_iop_module_t *self,
                    dt_iop_params_t *p1,
@@ -3172,6 +3216,7 @@ void commit_params(dt_iop_module_t *self,
   if(g) g->is_blending = is_blending;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_illuminants(const dt_iop_module_t *self)
 {
   const dt_iop_channelmixer_rgb_params_t *p = self->params;
@@ -3289,6 +3334,7 @@ static void _update_illuminants(const dt_iop_module_t *self)
     }
   }
 }
+#endif
 
 /**
  * DOCUMENTATION
@@ -3327,6 +3373,7 @@ static void _update_illuminants(const dt_iop_module_t *self)
  * may get a feeling of what colors they will get.
  **/
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_xy_color(const dt_iop_module_t *self)
 {
   // update the fill background color of x, y sliders
@@ -3365,7 +3412,9 @@ static void _update_xy_color(const dt_iop_module_t *self)
   gtk_widget_queue_draw(g->illum_x);
   gtk_widget_queue_draw(g->illum_y);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _paint_hue(const dt_iop_module_t *self)
 {
   // update the fill background color of LCh sliders
@@ -3408,7 +3457,9 @@ static void _paint_hue(const dt_iop_module_t *self)
   gtk_widget_queue_draw(g->chroma_spot);
   gtk_widget_queue_draw(g->target_spot);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _convert_GUI_colors(const dt_iop_channelmixer_rgb_params_t *p,
                                 const dt_iop_order_iccprofile_info_t *const work_profile,
                                 const dt_aligned_pixel_t LMS,
@@ -3444,7 +3495,9 @@ static void _convert_GUI_colors(const dt_iop_channelmixer_rgb_params_t *p,
     }
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_RGB_slider_stop(const dt_iop_channelmixer_rgb_params_t *p,
                                     const dt_iop_order_iccprofile_info_t *const work_profile,
                                     GtkWidget *w,
@@ -3461,7 +3514,9 @@ static void _update_RGB_slider_stop(const dt_iop_channelmixer_rgb_params_t *p,
   _convert_GUI_colors(p, work_profile, LMS, RGB_t);
   dt_bauhaus_slider_set_stop(w, stop, RGB_t[0], RGB_t[1], RGB_t[2]);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_RGB_colors(dt_iop_module_t *self,
                                const float r,
                                const float g,
@@ -3505,7 +3560,9 @@ static void _update_RGB_colors(dt_iop_module_t *self,
   gtk_widget_queue_draw(w_b);
   gtk_widget_queue_draw(w_g);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _paint_temperature_background(const dt_iop_module_t *self)
 {
   const dt_iop_channelmixer_rgb_gui_data_t *g = self->gui_data;
@@ -3521,15 +3578,19 @@ static void _paint_temperature_background(const dt_iop_module_t *self)
     dt_bauhaus_slider_set_stop(g->temperature, stop, RGB[0], RGB[1], RGB[2]);
   }
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_illuminant_color(const dt_iop_module_t *self)
 {
   const dt_iop_channelmixer_rgb_gui_data_t *g = self->gui_data;
   gtk_widget_queue_draw(g->illum_color);
   _update_xy_color(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _illuminant_color_draw(GtkWidget *widget,
                                        cairo_t *crf,
                                        const dt_iop_module_t *self)
@@ -3572,7 +3633,9 @@ static gboolean _illuminant_color_draw(GtkWidget *widget,
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _target_color_draw(GtkWidget *widget,
                                   cairo_t *crf,
                                   const dt_iop_module_t *self)
@@ -3617,7 +3680,9 @@ static gboolean _target_color_draw(GtkWidget *widget,
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _origin_color_draw(GtkWidget *widget,
                                   cairo_t *crf,
                                   const dt_iop_module_t *self)
@@ -3650,7 +3715,9 @@ static gboolean _origin_color_draw(GtkWidget *widget,
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_approx_cct(const dt_iop_module_t *self)
 {
   const dt_iop_channelmixer_rgb_gui_data_t *g = self->gui_data;
@@ -3711,8 +3778,10 @@ static void _update_approx_cct(const dt_iop_module_t *self)
   gtk_label_set_text(GTK_LABEL(g->approx_cct), str);
   g_free(str);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _illum_xy_callback(GtkWidget *slider,
                               dt_iop_module_t *self)
 {
@@ -3743,6 +3812,7 @@ static void _illum_xy_callback(GtkWidget *slider,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 void init_pipe(dt_iop_module_t *self,
                dt_dev_pixelpipe_t *pipe,
@@ -3760,6 +3830,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_channelmixer_rgb_gui_data_t *g = self->gui_data;
@@ -3767,7 +3838,9 @@ void gui_reset(dt_iop_module_t *self)
   dt_iop_color_picker_reset(self, TRUE);
   gui_changed(self, NULL, NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_channelmixer_rgb_gui_data_t *g = self->gui_data;
@@ -3850,6 +3923,7 @@ void gui_update(dt_iop_module_t *self)
 
   gui_changed(self, NULL, NULL);
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -3905,6 +3979,7 @@ void reload_defaults(dt_iop_module_t *self)
     }
   }
 
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_channelmixer_rgb_gui_data_t *g = self->gui_data;
   if(g)
   {
@@ -3939,9 +4014,11 @@ void reload_defaults(dt_iop_module_t *self)
 
     gui_changed(self, NULL, NULL);
   }
+#endif
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _spot_settings_changed_callback(GtkWidget *slider,
                                             dt_iop_module_t *self)
 {
@@ -3976,8 +4053,10 @@ static void _spot_settings_changed_callback(GtkWidget *slider,
     _auto_set_illuminant(self, darktable.develop->full.pipe);
   // else : just record new values and do nothing
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self,
                  GtkWidget *w,
                  void *previous)
@@ -4152,12 +4231,16 @@ void gui_changed(dt_iop_module_t *self,
 
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, gboolean in)
 {
   gui_changed(self, NULL, NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _auto_set_illuminant(dt_iop_module_t *self,
                                  dt_dev_pixelpipe_t *pipe)
 {
@@ -4410,8 +4493,10 @@ static void _auto_set_illuminant(dt_iop_module_t *self,
     dt_dev_add_history_item(darktable.develop, self, TRUE);
   }
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -4419,8 +4504,10 @@ void color_picker_apply(dt_iop_module_t *self,
   DT_GUARD_GUI_UPDATE();
   _auto_set_illuminant(self, pipe);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_channelmixer_rgb_gui_data_t *g = IOP_GUI_ALLOC(channelmixer_rgb);
@@ -4744,7 +4831,9 @@ void gui_init(dt_iop_module_t *self)
                  g->label_delta_E, dt_gui_hbox(dt_gui_align_right(g->button_validate),
                  g->button_profile, g->button_commit));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   if(self && self->dev)
@@ -4768,6 +4857,7 @@ void gui_cleanup(dt_iop_module_t *self)
 
   g_free(g->delta_E_label_text);
 }
+#endif
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

@@ -54,6 +54,7 @@ typedef struct _GtkStyleContext GtkStyleContext;
 typedef struct _GtkToggleButton GtkToggleButton;
 typedef struct _GtkScrolledWindow GtkScrolledWindow;
 typedef struct _GtkSizeGroup GtkSizeGroup;
+typedef struct _GtkStack GtkStack;
 typedef struct _GdkWindow GdkWindow;
 typedef struct _GdkPixbuf GdkPixbuf;
 typedef struct _GdkCursor GdkCursor;

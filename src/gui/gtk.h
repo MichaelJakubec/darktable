@@ -56,6 +56,18 @@ typedef struct dt_gui_gtk_t
   cairo_filter_t filter_image;
 } dt_gui_gtk_t;
 
+// pointer-only GUI state embedded in module gui_data; same layout as the GUI build
+typedef struct _gui_collapsible_section_t
+{
+  GtkBox *parent;
+  gchar *confname;
+  GtkWidget *toggle;
+  GtkWidget *expander;
+  GtkWidget *label;
+  GtkBox *container;
+  struct dt_action_t *module;
+} dt_gui_collapsible_section_t;
+
 // headless equivalents of GUI helpers that are no-ops when darktable.gui is NULL
 static inline void dt_gui_cursor_set_busy(void) {}
 static inline void dt_gui_cursor_clear_busy(void) {}

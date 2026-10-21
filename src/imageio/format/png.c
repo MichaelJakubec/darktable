@@ -22,7 +22,9 @@
 #include <stdlib.h>
 #include <zlib.h>
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/colorspaces.h"
 #include "common/darktable.h"
 #include "control/conf.h"
@@ -603,13 +605,17 @@ int set_params(dt_imageio_module_format_t *self,
 {
   if(size != self->params_size(self)) return 1;
   const dt_imageio_png_t *d = (dt_imageio_png_t *)params;
+#ifndef DARKTABLE_ENGINE_ONLY
   const dt_imageio_png_gui_t *g = self->gui_data;
   if(d->bpp < 12)
     dt_bauhaus_combobox_set(g->bit_depth, 0);
   else
     dt_bauhaus_combobox_set(g->bit_depth, 1);
+#endif
   dt_conf_set_int("plugins/imageio/format/png/bpp", d->bpp);
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_bauhaus_slider_set(g->compression, d->compression);
+#endif
   dt_conf_set_int("plugins/imageio/format/png/compression", d->compression);
   return 0;
 }
@@ -650,17 +656,21 @@ const char *name()
   return _("PNG");
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void bit_depth_changed(GtkWidget *widget, gpointer user_data)
 {
   const int bpp = (dt_bauhaus_combobox_get(widget) == 0 ? 8 : 16);
   dt_conf_set_int("plugins/imageio/format/png/bpp", bpp);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void compression_level_changed(GtkWidget *slider, gpointer user_data)
 {
   const int compression = (int)dt_bauhaus_slider_get(slider);
   dt_conf_set_int("plugins/imageio/format/png/compression", compression);
 }
+#endif
 
 void init(dt_imageio_module_format_t *self)
 {
@@ -673,6 +683,7 @@ void cleanup(dt_imageio_module_format_t *self)
 {
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_imageio_module_format_t *self)
 {
   dt_imageio_png_gui_t *gui = malloc(sizeof(dt_imageio_png_gui_t));
@@ -706,6 +717,7 @@ void gui_init(dt_imageio_module_format_t *self)
 
   self->widget = dt_gui_vbox(gui->bit_depth, gui->compression);
 }
+#endif
 
 void gui_cleanup(dt_imageio_module_format_t *self)
 {
@@ -714,11 +726,13 @@ void gui_cleanup(dt_imageio_module_format_t *self)
 
 void gui_reset(dt_imageio_module_format_t *self)
 {
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_imageio_png_gui_t *gui = self->gui_data;
   dt_bauhaus_combobox_set(gui->bit_depth, 0); // 8bpp
   dt_bauhaus_slider_set(gui->compression,
                         dt_confgen_get_int("plugins/imageio/format/png/compression",
                                            DT_DEFAULT));
+#endif
 }
 
 int flags(dt_imageio_module_data_t *data)

@@ -22,7 +22,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/histogram.h"
 #include "common/image_cache.h"
 #include "common/mipmap_cache.h"
@@ -33,9 +35,15 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/pixelpipe.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/paint.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "gui/color_picker_proxy.h"
@@ -150,9 +158,11 @@ dt_iop_colorspace_type_t default_colorspace(dt_iop_module_t *self,
   return IOP_CS_RGB;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _exposure_proxy_get_exposure(dt_iop_module_t *self);
 static void _paint_hue(dt_iop_module_t *self);
 static void _exposure_set_black(dt_iop_module_t *self, const float black);
+#endif
 
 int legacy_params(dt_iop_module_t *self,
                   const void *const old_params,
@@ -463,7 +473,9 @@ static void _compute_correction(dt_iop_module_t *self,
   *correction = p->deflicker_target_level - ev;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _show_computed(gpointer user_data);
+#endif
 
 static void _process_common_setup(dt_iop_module_t *self,
                                   dt_dev_pixelpipe_iop_t *piece)
@@ -493,6 +505,7 @@ static void _process_common_setup(dt_iop_module_t *self,
       dt_free_align(histogram);
     }
 
+#ifndef DARKTABLE_ENGINE_ONLY
     // second, show computed correction in UI.
     if(g && dt_pipe_is_preview(piece->pipe))
     {
@@ -502,6 +515,7 @@ static void _process_common_setup(dt_iop_module_t *self,
 
       g_idle_add(_show_computed, self);
     }
+#endif
   }
 
   const float white = exposure2white(exposure);
@@ -657,11 +671,14 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _autoexp_disable(dt_iop_module_t *self)
 {
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_exposure_gui_data_t *g = self->gui_data;
@@ -743,6 +760,7 @@ void gui_update(dt_iop_module_t *self)
 
   dt_gui_update_collapsible_section(&g->cs);
 }
+#endif
 
 void init_global(dt_iop_module_so_t *self)
 {
@@ -760,6 +778,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _exposure_set_white(dt_iop_module_t *self,
                                 const float white)
 {
@@ -778,7 +797,9 @@ static void _exposure_set_white(dt_iop_module_t *self,
   DT_LEAVE_GUI_UPDATE();
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _exposure_proxy_get_exposure(dt_iop_module_t *self)
 {
   dt_iop_exposure_params_t *p = self->params;
@@ -792,7 +813,9 @@ static float _exposure_proxy_get_exposure(dt_iop_module_t *self)
     return p->exposure;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _exposure_set_black(dt_iop_module_t *self,
                                 const float black)
 {
@@ -812,19 +835,25 @@ static void _exposure_set_black(dt_iop_module_t *self,
   DT_LEAVE_GUI_UPDATE();
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _exposure_proxy_get_black(dt_iop_module_t *self)
 {
   dt_iop_exposure_params_t *p = self->params;
   return p->black;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _exposure_proxy_get_effective_exposure(dt_iop_module_t *self)
 {
   const dt_iop_exposure_gui_data_t* const g = self->gui_data;
   return g->effective_exposure;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _exposure_proxy_handle_event(int n_press,
                                          gdouble delta,
                                          GdkModifierType state,
@@ -862,7 +891,9 @@ static void _exposure_proxy_handle_event(int n_press,
     g_free(text);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _auto_set_exposure(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe)
 {
   dt_iop_exposure_gui_data_t *g = self->gui_data;
@@ -962,8 +993,10 @@ static void _auto_set_exposure(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe)
     _exposure_set_white(self, white);
   }
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -971,8 +1004,10 @@ void color_picker_apply(dt_iop_module_t *self,
   DT_GUARD_GUI_UPDATE();
   _auto_set_exposure(self, pipe);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self,
                  GtkWidget *w,
                  void *previous)
@@ -1021,8 +1056,10 @@ void gui_changed(dt_iop_module_t *self,
       _exposure_set_white(self, p->black + 0.01);
   }
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _show_computed(gpointer user_data)
 {
   dt_iop_module_t *self = user_data;
@@ -1041,7 +1078,9 @@ static gboolean _show_computed(gpointer user_data)
 
   return G_SOURCE_REMOVE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _target_color_draw(GtkWidget *widget,
                                    cairo_t *crf,
                                    const dt_iop_module_t *self)
@@ -1085,8 +1124,10 @@ static gboolean _target_color_draw(GtkWidget *widget,
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _origin_color_draw(GtkWidget *widget,
                                    cairo_t *crf,
                                    dt_iop_module_t *self)
@@ -1119,7 +1160,9 @@ static gboolean _origin_color_draw(GtkWidget *widget,
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _paint_hue(dt_iop_module_t *self)
 {
   // update the fill background color of LCh sliders
@@ -1149,8 +1192,10 @@ static void _paint_hue(dt_iop_module_t *self)
   gtk_widget_queue_draw(g->lightness_spot);
   gtk_widget_queue_draw(g->target_spot);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _spot_settings_changed_callback(GtkWidget *slider,
                                             dt_iop_module_t *self)
 {
@@ -1175,12 +1220,16 @@ static void _spot_settings_changed_callback(GtkWidget *slider,
     _auto_set_exposure(self, darktable.develop->full.pipe);
   // else : just record new values and do nothing
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_exposure_gui_data_t *g = IOP_GUI_ALLOC(exposure);
@@ -1335,7 +1384,9 @@ void gui_init(dt_iop_module_t *self)
   instance->get_black = _exposure_proxy_get_black;
   instance->handle_event = _exposure_proxy_handle_event;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_exposure_gui_data_t *g = self->gui_data;
@@ -1348,6 +1399,7 @@ void gui_cleanup(dt_iop_module_t *self)
 
   g_idle_remove_by_data(self);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

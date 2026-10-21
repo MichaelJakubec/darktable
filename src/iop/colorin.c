@@ -16,7 +16,9 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/imagebuf.h"
 #include "common/iop_profile.h"
 #include "common/colormatrices.c"
@@ -28,7 +30,9 @@
 #include "control/control.h"
 #include "develop/develop.h"
 #include "gui/gtk.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "imageio/imageio_jpeg.h"
 #include "imageio/imageio_png.h"
 #include "imageio/imageio_tiff.h"
@@ -490,6 +494,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _profile_changed(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -524,7 +529,9 @@ static void _profile_changed(GtkWidget *widget, dt_iop_module_t *self)
            "[colorin] color profile %s seems to have disappeared!",
            dt_colorspaces_get_name(p->type, p->filename));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _workicc_changed(GtkWidget *widget, dt_iop_module_t *self)
 {
   dt_iop_colorin_params_t *p = self->params;
@@ -583,6 +590,7 @@ static void _workicc_changed(GtkWidget *widget, dt_iop_module_t *self)
              dt_colorspaces_get_name(p->type_work, p->filename_work));
   }
 }
+#endif
 
 static float lerp_lut(const float *const lut, const float v)
 {
@@ -1615,6 +1623,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_colorin_gui_data_t *g = self->gui_data;
@@ -1681,6 +1690,7 @@ void gui_update(dt_iop_module_t *self)
   dt_print(DT_DEBUG_PIPE, "[gui colorin] using default instead of `%s'",
              dt_colorspaces_get_name(p->type, p->filename));
 }
+#endif
 
 // FIXME: update the gui when we add/remove the eprofile or ematrix
 void reload_defaults(dt_iop_module_t *self)
@@ -1792,6 +1802,7 @@ void reload_defaults(dt_iop_module_t *self)
   // change.
 
   // We need gui_data to access widget in order to change tooltip.
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_colorin_gui_data_t *g = self->gui_data;
 
   // reload_defaults() can be called with unavailable (i.e., NULL) gui_data.
@@ -1888,6 +1899,7 @@ corrupted_profile:
       g_free(tooltip_part_profile_dirs);
     }
   }
+#endif
 
   if(color_profile != DT_COLORSPACE_NONE)
     d->type = color_profile;
@@ -1918,6 +1930,7 @@ corrupted_profile:
 
 static void update_profile_list(dt_iop_module_t *self)
 {
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_colorin_gui_data_t *g = self->gui_data;
 
   if(!g) return;
@@ -2035,8 +2048,10 @@ static void update_profile_list(dt_iop_module_t *self)
     dt_colorspaces_color_profile_t *prof = l->data;
     if(prof->work_pos > -1) dt_bauhaus_combobox_add(g->work_combobox, prof->name);
   }
+#endif
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   // pthread_mutex_lock(&darktable.plugin_threadsafe);
@@ -2072,7 +2087,9 @@ void gui_init(dt_iop_module_t *self)
   gtk_widget_set_tooltip_text(g->clipping_combobox,
                               _("confine Lab values to gamut of RGB color space"));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_colorin_gui_data_t *g = self->gui_data;
@@ -2082,6 +2099,7 @@ void gui_cleanup(dt_iop_module_t *self)
     g->image_profiles = g_list_delete_link(g->image_profiles, g->image_profiles);
   }
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

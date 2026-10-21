@@ -17,7 +17,9 @@
     You should have received a copy of the GNU General Public License
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/opencl.h"
 #include "common/imagebuf.h"
 #include "common/image_cache.h"
@@ -25,13 +27,17 @@
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "imageio/imageio_rawspeed.h" // for dt_rawspeed_crop_dcraw_filters
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -772,8 +778,10 @@ void reload_defaults(dt_iop_module_t *self)
   self->hide_enable_button = TRUE;
   self->default_enabled = dt_image_is_rawprepare_supported(image) && !_image_is_normalized(image);
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(self->widget)
     gtk_stack_set_visible_child_name(GTK_STACK(self->widget), self->default_enabled ? "raw" : "non_raw");
+#endif
 }
 
 void init_global(dt_iop_module_so_t *self)
@@ -801,6 +809,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_rawprepare_gui_data_t *g = self->gui_data;
@@ -840,7 +849,9 @@ void gui_update(dt_iop_module_t *self)
   gtk_widget_set_visible(g->flat_field, _check_gain_maps(self, NULL));
   dt_bauhaus_combobox_set(g->flat_field, p->flat_field);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_rawprepare_gui_data_t *g = self->gui_data;
@@ -872,6 +883,7 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     }
   }
 }
+#endif
 
 const gchar *black_label[]
   =  { N_("black level 0"),
@@ -879,6 +891,7 @@ const gchar *black_label[]
        N_("black level 2"),
        N_("black level 3") };
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_rawprepare_gui_data_t *g = IOP_GUI_ALLOC(rawprepare);
@@ -937,6 +950,7 @@ void gui_init(dt_iop_module_t *self)
   gtk_stack_add_named(GTK_STACK(self->widget), label_non_raw, "non_raw");
   gtk_stack_add_named(GTK_STACK(self->widget), box_raw, "raw");
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

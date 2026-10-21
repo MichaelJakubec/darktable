@@ -20,7 +20,12 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#else
+#include "common/math.h"
+#include "control/control.h"
+#endif
 #include "common/box_filters.h"
 #include "common/bspline.h"
 #include "common/opencl.h"
@@ -36,10 +41,14 @@
 #include "develop/noise_generator.h"
 #include "develop/tiling.h"
 #include "develop/masks.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 
 // Downsampling factor for guided-laplacian
@@ -1112,6 +1121,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _set_quads(dt_iop_highlights_gui_data_t *g, GtkWidget *w)
 {
   g->hlr_mask_mode = w && dt_bauhaus_widget_get_quad_active(w)
@@ -1125,7 +1135,9 @@ static void _set_quads(dt_iop_highlights_gui_data_t *g, GtkWidget *w)
   if(w != g->combine    ) dt_bauhaus_widget_set_quad_active(g->combine,     FALSE);
   if(w != g->strength   ) dt_bauhaus_widget_set_quad_active(g->strength,    FALSE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_highlights_gui_data_t *g = self->gui_data;
@@ -1185,7 +1197,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     _set_quads(g, NULL);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_highlights_gui_data_t *g = self->gui_data;
@@ -1199,6 +1213,7 @@ void gui_update(dt_iop_module_t *self)
 
   gui_changed(self, NULL, NULL);
 }
+#endif
 
 void reload_defaults(dt_iop_module_t *self)
 {
@@ -1208,19 +1223,26 @@ void reload_defaults(dt_iop_module_t *self)
   const dt_image_t *img = &self->dev->image_storage;
   const gboolean monochrome = dt_image_is_monochrome(img);
   const gboolean is_4bayer = img->flags & DT_IMAGE_4BAYER;
+#ifndef DARKTABLE_ENGINE_ONLY
   const uint32_t filters = img->buf_dsc.filters;
+#endif
   const gboolean rawprep = dt_image_is_rawprepare_supported(img);
+#ifndef DARKTABLE_ENGINE_ONLY
   const gboolean sraw = rawprep && (filters == 0);
   const gboolean xtrans = rawprep && (filters == 9u);
+#endif
 
   // enable this per default if raw or sraw if not real monochrome
   self->default_enabled = rawprep && !monochrome;
   self->hide_enable_button = monochrome;
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(self->widget)
     gtk_stack_set_visible_child_name(GTK_STACK(self->widget), !monochrome ? "default" : "notapplicable");
+#endif
 
   dt_iop_highlights_params_t *d = self->default_params;
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_highlights_gui_data_t *g = self->gui_data;
   if(g)
   {
@@ -1252,10 +1274,12 @@ void reload_defaults(dt_iop_module_t *self)
     }
     _set_quads(g, NULL);
   }
+#endif
   d->clip = MIN(d->clip, img->linear_response_limit);
   d->mode = rawprep && !is_4bayer ? DT_IOP_HIGHLIGHTS_OPPOSED : DT_IOP_HIGHLIGHTS_CLIP;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _quad_callback(GtkWidget *quad, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1263,7 +1287,9 @@ static void _quad_callback(GtkWidget *quad, dt_iop_module_t *self)
   _set_quads(g, quad);
   dt_dev_reprocess_center(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, gboolean in)
 {
   dt_iop_highlights_gui_data_t *g = self->gui_data;
@@ -1274,7 +1300,9 @@ void gui_focus(dt_iop_module_t *self, gboolean in)
     if(was_visualize) dt_dev_reprocess_center(self->dev);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_highlights_gui_data_t *g = IOP_GUI_ALLOC(highlights);
@@ -1347,6 +1375,7 @@ void gui_init(dt_iop_module_t *self)
   gtk_stack_add_named(GTK_STACK(self->widget), notapplicable, "notapplicable");
   gtk_stack_add_named(GTK_STACK(self->widget), box_raw, "default");
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py
