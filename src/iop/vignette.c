@@ -29,12 +29,18 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 
 DT_MODULE_INTROSPECTION(4, dt_iop_vignette_params_t)
@@ -271,6 +277,7 @@ int legacy_params(dt_iop_module_t *self,
   return 1;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _get_grab(const float pointerx,
                      const float pointery,
                      const float startx,
@@ -294,7 +301,9 @@ static int _get_grab(const float pointerx,
 
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void draw_overlay(cairo_t *cr,
                          const float x,
                          const float y,
@@ -375,9 +384,11 @@ static void draw_overlay(cairo_t *cr,
     cairo_arc(cr, 0.0, -fy, radius_reg, 0.0, M_PI * 2.0);
   cairo_stroke(cr);
 }
+#endif
 
 // FIXME: For portrait images the overlay is a bit off. The
 // coordinates in mouse_moved seem to be ok though.
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_post_expose(dt_iop_module_t *self,
                      cairo_t *cr,
                      const float wd,
@@ -463,9 +474,11 @@ void gui_post_expose(dt_iop_module_t *self,
   dt_draw_set_color_overlay(cr, TRUE, 0.8);
   draw_overlay(cr, vignette_w, vignette_h, vignette_fx, vignette_fy, grab, zoom_scale);
 }
+#endif
 
 // FIXME: Pumping of the opposite direction when changing
 // width/height. See two FIXMEs further down.
+#ifndef DARKTABLE_ENGINE_ONLY
 int mouse_moved(dt_iop_module_t *self,
                 const float pzx,
                 const float pzy,
@@ -666,7 +679,9 @@ int mouse_moved(dt_iop_module_t *self,
   dt_control_queue_redraw_center();
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_pressed(dt_iop_module_t *self,
                    const float x,
                    const float y,
@@ -679,7 +694,9 @@ int button_pressed(dt_iop_module_t *self,
   if(which == GDK_BUTTON_PRIMARY) return 1;
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_released(dt_iop_module_t *self,
                     const float x,
                     const float y,
@@ -690,6 +707,7 @@ int button_released(dt_iop_module_t *self,
   if(which == GDK_BUTTON_PRIMARY) return 1;
   return 0;
 }
+#endif
 
 void process(dt_iop_module_t *self,
              dt_dev_pixelpipe_iop_t *piece,
@@ -965,6 +983,7 @@ void cleanup_global(dt_iop_module_so_t *self)
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_vignette_gui_data_t *g = self->gui_data;
@@ -972,6 +991,7 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 
   gtk_widget_set_sensitive(GTK_WIDGET(g->whratio), !p->autoratio);
 }
+#endif
 
 void commit_params(dt_iop_module_t *self,
                    dt_iop_params_t *p1,
@@ -1028,6 +1048,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_vignette_gui_data_t *g = self->gui_data;
@@ -1035,7 +1056,9 @@ void gui_update(dt_iop_module_t *self)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g->autoratio), p->autoratio);
   gtk_widget_set_sensitive(GTK_WIDGET(g->whratio), !p->autoratio);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_vignette_gui_data_t *g = IOP_GUI_ALLOC(vignette);
@@ -1082,7 +1105,9 @@ void gui_init(dt_iop_module_t *self)
   gtk_widget_set_tooltip_text(g->dithering,
                               _("add some level of random noise to prevent banding"));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 GSList *mouse_actions(dt_iop_module_t *self)
 {
   GSList *lm = NULL;
@@ -1097,6 +1122,7 @@ GSList *mouse_actions(dt_iop_module_t *self)
      _("[%s on center] move vignette"), self->name());
   return lm;
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

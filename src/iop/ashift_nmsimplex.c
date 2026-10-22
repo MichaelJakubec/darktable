@@ -77,6 +77,7 @@
 
 //#include "nmsimplex.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int simplex(double (*objfunc)(double[], void *params), double start[], int n, double EPSILON, double scale,
                    int maxiter, void (*constrain)(double[], int n), void *params)
 {
@@ -407,6 +408,7 @@ static int simplex(double (*objfunc)(double[], void *params), double start[], in
   free(v);
   return itr;
 }
+#endif
 
 /*==================================================================================
  * end of nmsimplex code

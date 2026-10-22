@@ -25,9 +25,15 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/openmp_maths.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "gui/color_picker_proxy.h"
@@ -453,13 +459,16 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
 
 /* Global GUI stuff */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void setup_color_variables(dt_iop_negadoctor_gui_data_t *const g, const gint state)
 {
   gtk_widget_set_visible(g->Dmin_G, state);
   gtk_widget_set_visible(g->Dmin_B, state);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void toggle_stock_controls(dt_iop_module_t *const self)
 {
   dt_iop_negadoctor_gui_data_t *const g = self->gui_data;
@@ -483,8 +492,10 @@ static void toggle_stock_controls(dt_iop_module_t *const self)
     dt_print(DT_DEBUG_ALWAYS, "negadoctor film stock: undefined behavior");
   }
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void Dmin_picker_update(dt_iop_module_t *self)
 {
   dt_iop_negadoctor_gui_data_t *const g = self->gui_data;
@@ -506,7 +517,9 @@ static void Dmin_picker_update(dt_iop_module_t *self)
 
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(g->Dmin_picker), &color);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void Dmin_picker_callback(GtkColorButton *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -531,7 +544,9 @@ static void Dmin_picker_callback(GtkColorButton *widget, dt_iop_module_t *self)
   dt_iop_color_picker_reset(self, TRUE);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void WB_low_picker_update(dt_iop_module_t *self)
 {
   dt_iop_negadoctor_gui_data_t *const g = self->gui_data;
@@ -551,7 +566,9 @@ static void WB_low_picker_update(dt_iop_module_t *self)
 
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(g->WB_low_picker), &color);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void WB_low_picker_callback(GtkColorButton *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -579,8 +596,10 @@ static void WB_low_picker_callback(GtkColorButton *widget, dt_iop_module_t *self
   dt_iop_color_picker_reset(self, TRUE);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void WB_high_picker_update(dt_iop_module_t *self)
 {
   dt_iop_negadoctor_gui_data_t *const g = self->gui_data;
@@ -600,7 +619,9 @@ static void WB_high_picker_update(dt_iop_module_t *self)
 
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(g->WB_high_picker), &color);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void WB_high_picker_callback(GtkColorButton *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -627,11 +648,13 @@ static void WB_high_picker_callback(GtkColorButton *widget, dt_iop_module_t *sel
   dt_iop_color_picker_reset(self, TRUE);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 
 /* Color pickers auto-tuners */
 
 // measure Dmin from the film edges first
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_Dmin(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -650,8 +673,10 @@ static void apply_auto_Dmin(dt_iop_module_t *self)
   dt_control_queue_redraw_widget(self->widget);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 // from Dmin, find out the range of density values of the film and compute Dmax
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_Dmax(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -674,8 +699,10 @@ static void apply_auto_Dmax(dt_iop_module_t *self)
   dt_control_queue_redraw_widget(self->widget);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 // from Dmax, compute the offset so the range of density is rescaled between [0; 1]
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_offset(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -696,9 +723,11 @@ static void apply_auto_offset(dt_iop_module_t *self)
   dt_control_queue_redraw_widget(self->widget);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 // from Dmax and offset, compute the white balance correction as multipliers of the offset
 // such that offset × wb[c] make black monochrome
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_WB_low(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -723,9 +752,11 @@ static void apply_auto_WB_low(dt_iop_module_t *self)
   dt_control_queue_redraw_widget(self->widget);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 // from Dmax, offset and white balance multipliers, compute the white balance of the illuminant as multipliers of 1/Dmax
 // such that WB[c] / Dmax make white monochrome
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_WB_high(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -750,9 +781,11 @@ static void apply_auto_WB_high(dt_iop_module_t *self)
   dt_control_queue_redraw_widget(self->widget);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 // from Dmax, offset and both white balances, compute the print black adjustment
 // such that the printed values range from 0 to + infinity
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_black(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -776,9 +809,11 @@ static void apply_auto_black(dt_iop_module_t *self)
   dt_control_queue_redraw_widget(self->widget);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 // from Dmax, offset, both white balances, and printblack, compute the print exposure adjustment as a scaling factor
 // such that the printed values range from 0 to 1
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_exposure(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -802,8 +837,10 @@ static void apply_auto_exposure(dt_iop_module_t *self)
   dt_control_queue_redraw_widget(self->widget);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -827,7 +864,9 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
   else
     dt_print(DT_DEBUG_ALWAYS, "[negadoctor] unknown color picker");
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_negadoctor_gui_data_t *g = IOP_GUI_ALLOC(negadoctor);
@@ -1014,8 +1053,10 @@ void gui_init(dt_iop_module_t *self)
 
   dt_gui_box_add(self->widget, g->notebook);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_negadoctor_params_t *p = self->params;
@@ -1049,8 +1090,10 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     WB_low_picker_update(self);
   }
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *const self)
 {
   // let gui slider match current parameters:
@@ -1066,11 +1109,14 @@ void gui_update(dt_iop_module_t *const self)
   // Update custom stuff
   gui_changed(self, NULL, NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

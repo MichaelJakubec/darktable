@@ -26,14 +26,18 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 
 #define REDUCESIZE 64
@@ -606,6 +610,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_global_tonemap_gui_data_t *g = self->gui_data;
@@ -617,7 +622,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     gtk_widget_set_visible(g->drago.max_light, p->operator == OPERATOR_DRAGO);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_global_tonemap_gui_data_t *g = self->gui_data;
@@ -629,7 +636,9 @@ void gui_update(dt_iop_module_t *self)
   g->hash = DT_INVALID_HASH;
   dt_iop_gui_leave_critical_section(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_global_tonemap_gui_data_t *g = IOP_GUI_ALLOC(global_tonemap);
@@ -650,6 +659,7 @@ void gui_init(dt_iop_module_t *self)
   g->detail = dt_bauhaus_slider_from_params(self, N_("detail"));
   dt_bauhaus_slider_set_digits(g->detail, 3);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

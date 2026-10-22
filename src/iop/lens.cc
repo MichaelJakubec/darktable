@@ -37,15 +37,23 @@
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/draw.h"
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 #include <assert.h>
 #include <ctype.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
@@ -2460,6 +2468,7 @@ static int _init_coeffs_md_v2(const dt_image_t *img,
   return nc;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _use_latest_md_algo_callback(GtkWidget *button,
                                          dt_iop_module_t *self)
 {
@@ -2472,8 +2481,10 @@ static void _use_latest_md_algo_callback(GtkWidget *button,
   gui_changed(self, NULL, NULL);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _autoscale_pressed_md(GtkWidget *button,
                                   dt_iop_module_t *self)
 {
@@ -2482,6 +2493,7 @@ static void _autoscale_pressed_md(GtkWidget *button,
 
   dt_bauhaus_slider_set(g->scale_md, 1.0f);
 }
+#endif
 
 static int _check_corrections_md(dt_iop_lens_data_t *d)
 {
@@ -3553,6 +3565,7 @@ void reload_defaults(dt_iop_module_t *self)
     d->scale_md = 1.0f;
   }
 
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_lens_gui_data_t *g = (dt_iop_lens_gui_data_t *)self->gui_data;
   if(g)
   {
@@ -3570,6 +3583,7 @@ void reload_defaults(dt_iop_module_t *self)
     dt_iop_gui_leave_critical_section(self);
     gtk_label_set_text(g->message, "");
   }
+#endif
 }
 
 void cleanup_global(dt_iop_module_so_t *self)
@@ -3599,6 +3613,7 @@ void cleanup_global(dt_iop_module_so_t *self)
 /* simple function to compute the floating-point precision
    which is enough for "normal use". The criteria is to have
    about 3 leading digits after the initial zeros.  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _precision(double x, double adj)
 {
   x *= adj;
@@ -3621,9 +3636,11 @@ static int _precision(double x, double adj)
   else
     return 0;
 }
+#endif
 
 /* -- UFRaw ptr array functions -- */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _ptr_array_insert_sorted(GPtrArray *array,
                                     const void *item,
                                     GCompareFunc compare)
@@ -3662,7 +3679,9 @@ done:
   root[m] = item;
   return m;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _ptr_array_find_sorted(const GPtrArray *array,
                                   const void *item,
                                   GCompareFunc compare)
@@ -3695,7 +3714,9 @@ static int _ptr_array_find_sorted(const GPtrArray *array,
 
   return -1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _ptr_array_insert_index(GPtrArray *array,
                                     const void *item,
                                     const int index)
@@ -3707,11 +3728,13 @@ static void _ptr_array_insert_index(GPtrArray *array,
   memmove(root + index + 1, root + index, sizeof(void *) * (length - index));
   root[index] = item;
 }
+#endif
 
 /* -- end of UFRaw ptr array functions -- */
 
 /* -- camera -- */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _camera_set(dt_iop_module_t *self, const lfCamera *cam)
 {
   dt_iop_lens_gui_data_t *g = (dt_iop_lens_gui_data_t *)self->gui_data;
@@ -3760,7 +3783,9 @@ static void _camera_set(dt_iop_module_t *self, const lfCamera *cam)
   gtk_widget_set_tooltip_text(GTK_WIDGET(g->camera_model), fm);
   g_free(fm);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _camera_menu_select(GtkMenuItem *menuitem, dt_iop_module_t *self)
 {
   _camera_set(self, (lfCamera *)g_object_get_data(G_OBJECT(menuitem),
@@ -3770,7 +3795,9 @@ static void _camera_menu_select(GtkMenuItem *menuitem, dt_iop_module_t *self)
   p->has_been_set = TRUE;
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GtkMenu *camera_menu_fill(dt_iop_module_t *self,
                                  const lfCamera *const *camlist)
 {
@@ -3825,7 +3852,9 @@ static GtkMenu *camera_menu_fill(dt_iop_module_t *self,
   g_ptr_array_free(makers, TRUE);
   return camera_menu;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _parse_model(const char *txt,
                          char *model,
                          const size_t sz_model)
@@ -3837,7 +3866,9 @@ static void _parse_model(const char *txt,
   memcpy(model, txt, len);
   model[len] = 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _camera_menusearch_clicked(GtkWidget *button, dt_iop_module_t *self)
 {
   dt_iop_lens_global_data_t *gd = (dt_iop_lens_global_data_t *)self->global_data;
@@ -3853,7 +3884,9 @@ static void _camera_menusearch_clicked(GtkWidget *button, dt_iop_module_t *self)
   // dt_gui_menu_popup unrefs the menu
   dt_gui_menu_popup(menu, button, GDK_GRAVITY_SOUTH, GDK_GRAVITY_NORTH);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _camera_autosearch_clicked(GtkWidget *button, dt_iop_module_t *self)
 {
   dt_iop_lens_global_data_t *gd = (dt_iop_lens_global_data_t *)self->global_data;
@@ -3886,9 +3919,11 @@ static void _camera_autosearch_clicked(GtkWidget *button, dt_iop_module_t *self)
   // dt_gui_menu_popup unrefs the menu
   dt_gui_menu_popup(menu, button, GDK_GRAVITY_SOUTH_EAST, GDK_GRAVITY_NORTH_EAST);
 }
+#endif
 
 /* -- end camera -- */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _lens_comboentry_focal_update(GtkWidget *widget,
                                           dt_iop_module_t *self)
 {
@@ -3898,7 +3933,9 @@ static void _lens_comboentry_focal_update(GtkWidget *widget,
   p->has_been_set = TRUE;
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _lens_comboentry_aperture_update(GtkWidget *widget,
                                              dt_iop_module_t *self)
 {
@@ -3908,7 +3945,9 @@ static void _lens_comboentry_aperture_update(GtkWidget *widget,
   p->has_been_set = TRUE;
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _lens_comboentry_distance_update(GtkWidget *widget,
                                              dt_iop_module_t *self)
 {
@@ -3918,7 +3957,9 @@ static void _lens_comboentry_distance_update(GtkWidget *widget,
   p->has_been_set = TRUE;
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _lens_set(dt_iop_module_t *self,
                       const lfLens *lens)
 {
@@ -4097,7 +4138,9 @@ static void _lens_set(dt_iop_module_t *self,
     val *= M_SQRT2_F;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _lens_menu_select(GtkMenuItem *menuitem,
                               dt_iop_module_t *self)
 {
@@ -4111,7 +4154,9 @@ static void _lens_menu_select(GtkMenuItem *menuitem,
   dt_bauhaus_slider_set(g->scale, scale);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GtkMenu *_lens_menu_fill(dt_iop_module_t *self,
                                 const lfLens *const *lenslist)
 {
@@ -4158,7 +4203,9 @@ static GtkMenu *_lens_menu_fill(dt_iop_module_t *self,
   g_ptr_array_free(makers, TRUE);
   return lens_menu;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _lens_menusearch_clicked(GtkWidget *button, dt_iop_module_t *self)
 {
   dt_iop_lens_global_data_t *gd = (dt_iop_lens_global_data_t *)self->global_data;
@@ -4180,7 +4227,9 @@ static void _lens_menusearch_clicked(GtkWidget *button, dt_iop_module_t *self)
   // dt_gui_menu_popup unrefs the menu
   dt_gui_menu_popup(menu, button, GDK_GRAVITY_SOUTH, GDK_GRAVITY_NORTH);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _lens_autosearch_clicked(GtkWidget *button, dt_iop_module_t *self)
 {
   dt_iop_lens_global_data_t *gd = (dt_iop_lens_global_data_t *)self->global_data;
@@ -4205,9 +4254,11 @@ static void _lens_autosearch_clicked(GtkWidget *button, dt_iop_module_t *self)
   // dt_gui_menu_popup unrefs the menu
   dt_gui_menu_popup(menu, button, GDK_GRAVITY_SOUTH_EAST, GDK_GRAVITY_NORTH_EAST);
 }
+#endif
 
 /* -- end lens -- */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _autoscale_pressed_lf(GtkWidget *button, dt_iop_module_t *self)
 {
   dt_iop_lens_gui_data_t *g = (dt_iop_lens_gui_data_t *)self->gui_data;
@@ -4217,9 +4268,11 @@ static void _autoscale_pressed_lf(GtkWidget *button, dt_iop_module_t *self)
   p->has_been_set = TRUE;
   dt_bauhaus_slider_set(g->scale, scale);
 }
+#endif
 
 /* -- Lensfun GUI end -- */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _display_errors(dt_iop_module_t *self)
 {
   dt_iop_lens_gui_data_t *g = (dt_iop_lens_gui_data_t *)self->gui_data;
@@ -4243,7 +4296,9 @@ static void _display_errors(dt_iop_module_t *self)
 
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_lens_params_t *p = (dt_iop_lens_params_t *)self->params;
@@ -4328,7 +4383,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 
   _display_errors(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _have_corrections_done(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_lens_gui_data_t *g = (dt_iop_lens_gui_data_t *)self->gui_data;
@@ -4348,13 +4405,17 @@ static void _have_corrections_done(gpointer instance, dt_iop_module_t *self)
   gtk_label_set_text(g->message, Q_(message));
   gtk_widget_set_tooltip_text(GTK_WIDGET(g->message), Q_(message));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _develop_ui_pipe_finished_callback(gpointer instance,
                                                dt_iop_module_t *self)
 {
   _display_errors(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _visualize_callback(GtkWidget *quad,
                                 dt_iop_module_t *self)
 {
@@ -4363,7 +4424,9 @@ static void _visualize_callback(GtkWidget *quad,
   g->vig_masking = dt_bauhaus_widget_get_quad_active(quad);
   dt_dev_reprocess_center(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_lens_gui_data_t *g = IOP_GUI_ALLOC(lens);
@@ -4605,7 +4668,9 @@ void gui_init(dt_iop_module_t *self)
      corrections done */
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_DEVELOP_PREVIEW_PIPE_FINISHED, _have_corrections_done);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, gboolean in)
 {
   dt_iop_lens_gui_data_t *g = (dt_iop_lens_gui_data_t *)self->gui_data;
@@ -4619,7 +4684,9 @@ void gui_focus(dt_iop_module_t *self, gboolean in)
   }
   _display_errors(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   // let GUI elements reflect params
@@ -4690,6 +4757,7 @@ void gui_update(dt_iop_module_t *self)
 
   gui_changed(self, NULL, NULL);
 }
+#endif
 
 
 G_END_DECLS

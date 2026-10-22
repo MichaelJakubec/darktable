@@ -26,9 +26,13 @@
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
 #include "gui/gtk.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 
 DT_MODULE_INTROSPECTION(1, dt_iop_defringe_params_t)
@@ -393,6 +397,7 @@ FINISH_PROCESS:
   free(xy_avg);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_defringe_gui_data_t *g = IOP_GUI_ALLOC(defringe);
@@ -411,7 +416,9 @@ void gui_init(dt_iop_module_t *self)
   g->thresh_scale = dt_bauhaus_slider_from_params(self, "thresh");
   gtk_widget_set_tooltip_text(g->thresh_scale, _("threshold for defringe, higher values mean less defringing"));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_defringe_gui_data_t *g = self->gui_data;
@@ -420,6 +427,7 @@ void gui_update(dt_iop_module_t *self)
   dt_bauhaus_slider_set(g->radius_scale, p->radius);
   dt_bauhaus_slider_set(g->thresh_scale, p->thresh);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

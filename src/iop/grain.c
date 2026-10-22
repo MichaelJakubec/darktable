@@ -26,10 +26,14 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 
 #define GRAIN_LIGHTNESS_STRENGTH_SCALE 0.15f
@@ -531,6 +535,7 @@ void init_global(dt_iop_module_so_t *self)
   _simplex_noise_init();
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_grain_gui_data_t *g = IOP_GUI_ALLOC(grain);
@@ -550,6 +555,7 @@ void gui_init(dt_iop_module_t *self)
   dt_bauhaus_slider_set_format(g->midtones_bias, "%");
   gtk_widget_set_tooltip_text(g->midtones_bias, _("amount of mid-tones bias from the photographic paper response modeling. the greater the bias, the more pronounced the fall off of the grain in shadows and highlights"));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

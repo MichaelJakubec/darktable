@@ -31,8 +31,12 @@
 #include "develop/masks.h"
 #include "develop/tiling.h"
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include <stdlib.h>
 
@@ -393,11 +397,14 @@ static int rt_get_index_from_formid(const dt_iop_retouch_params_t *p, const dt_m
   return index;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static dt_mask_id_t rt_get_selected_shape_id()
 {
   return darktable.develop->mask_form_selected_id;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static dt_masks_point_group_t *rt_get_mask_point_group(dt_iop_module_t *self,
                                                        const dt_mask_id_t formid)
 {
@@ -422,14 +429,18 @@ static dt_masks_point_group_t *rt_get_mask_point_group(dt_iop_module_t *self,
 
   return form_point_group;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float rt_get_shape_opacity(dt_iop_module_t *self,
                                   const dt_mask_id_t formid)
 {
   dt_masks_point_group_t *grpt = rt_get_mask_point_group(self, formid);
   return (grpt) ? grpt->opacity : 0.0f;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_display_selected_fill_color(dt_iop_retouch_gui_data_t *g,
                                            dt_iop_retouch_params_t *p)
 {
@@ -440,7 +451,9 @@ static void rt_display_selected_fill_color(dt_iop_retouch_gui_data_t *g,
                   .alpha = 1.0 };
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(g->colorpick), &c);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_show_hide_controls(const dt_iop_module_t *self)
 {
   dt_iop_retouch_gui_data_t *g = self->gui_data;
@@ -488,7 +501,9 @@ static void rt_show_hide_controls(const dt_iop_module_t *self)
   else
     gtk_widget_hide(GTK_WIDGET(g->sl_mask_opacity));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_display_selected_shapes_lbl(dt_iop_retouch_gui_data_t *g)
 {
   const dt_masks_form_t *form =
@@ -498,12 +513,16 @@ static void rt_display_selected_shapes_lbl(dt_iop_retouch_gui_data_t *g)
   else
     gtk_label_set_text(g->label_form_selected, _("none"));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int rt_get_selected_shape_index(dt_iop_retouch_params_t *p)
 {
   return rt_get_index_from_formid(p, rt_get_selected_shape_id());
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_shape_selection_changed(dt_iop_module_t *self)
 {
   dt_iop_retouch_params_t *p = self->params;
@@ -581,11 +600,13 @@ static void rt_shape_selection_changed(dt_iop_module_t *self)
   if(selection_changed)
     dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 //---------------------------------------------------------------------------------
 // helpers
 //---------------------------------------------------------------------------------
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_masks_form_change_opacity(dt_iop_module_t *self,
                                          const dt_mask_id_t formid,
                                          const float opacity)
@@ -602,7 +623,9 @@ static void rt_masks_form_change_opacity(dt_iop_module_t *self,
     }
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_paste_forms_from_scale(dt_iop_retouch_params_t *p,
                                       const int source_scale,
                                       const int dest_scale)
@@ -616,7 +639,9 @@ static void rt_paste_forms_from_scale(dt_iop_retouch_params_t *p,
     }
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_allow_create_form(const dt_iop_module_t *self)
 {
   gboolean allow = TRUE;
@@ -628,7 +653,9 @@ static gboolean rt_allow_create_form(const dt_iop_module_t *self)
   }
   return allow;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_reset_form_creation(GtkWidget *widget,
                                    const dt_iop_module_t *self)
 {
@@ -659,7 +686,9 @@ static void rt_reset_form_creation(GtkWidget *widget,
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g->bt_suppress), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g->colorpicker), FALSE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_show_forms_for_current_scale(dt_iop_module_t *self)
 {
   if(!self->enabled
@@ -736,8 +765,10 @@ static void rt_show_forms_for_current_scale(dt_iop_module_t *self)
 
   dt_control_queue_redraw_center();
 }
+#endif
 
 // called if a shape is added or deleted
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_resynch_params(dt_iop_module_t *self)
 {
   dt_iop_retouch_params_t *p = self->params;
@@ -809,6 +840,7 @@ static void rt_resynch_params(dt_iop_module_t *self)
 
   memcpy(p->rt_forms, forms_d, sizeof(p->rt_forms));
 }
+#endif
 
 static gboolean rt_masks_form_is_in_roi(dt_iop_module_t *self,
                                         dt_dev_pixelpipe_iop_t *piece,
@@ -990,6 +1022,7 @@ static void rt_clamp_minmax(float levels_old[3], float levels_new[3])
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_shape_is_being_added(dt_iop_module_t *self,
                                         const dt_masks_type_t shape_type)
 {
@@ -1021,7 +1054,9 @@ static gboolean rt_shape_is_being_added(dt_iop_module_t *self,
   }
   return being_added;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_add_shape(GtkWidget *widget,
                              const int creation_continuous,
                              dt_iop_module_t *self)
@@ -1090,11 +1125,13 @@ static gboolean rt_add_shape(GtkWidget *widget,
 
   return !allow;
 }
+#endif
 
 //---------------------------------------------------------------------------------
 // GUI callbacks
 //---------------------------------------------------------------------------------
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_colorpick_color_set_callback(GtkColorButton *widget,
                                             dt_iop_module_t *self)
 {
@@ -1127,11 +1164,13 @@ static void rt_colorpick_color_set_callback(GtkColorButton *widget,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 // wavelet decompose bar
 #define RT_WDBAR_INSET 0.2f
 #define lw DT_PIXEL_APPLY_DPI(1.0f)
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_update_wd_bar_labels(const dt_iop_retouch_params_t *p,
                                     dt_iop_retouch_gui_data_t *g)
 {
@@ -1146,7 +1185,9 @@ static void rt_update_wd_bar_labels(const dt_iop_retouch_params_t *p,
   snprintf(text, sizeof(text), "%i", p->merge_from_scale);
   gtk_label_set_text(g->lbl_merge_from_scale, text);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_num_scales_update(const int _num_scales,
                                  dt_iop_module_t *self)
 {
@@ -1168,7 +1209,9 @@ static void rt_num_scales_update(const int _num_scales,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_curr_scale_update(const int _curr_scale, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1205,7 +1248,9 @@ static void rt_curr_scale_update(const int _curr_scale, dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_merge_from_scale_update(const int _merge_from_scale,
                                        dt_iop_module_t *self)
 {
@@ -1223,7 +1268,9 @@ static void rt_merge_from_scale_update(const int _merge_from_scale,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_wdbar_leave_notify(GtkWidget *widget,
                                       GdkEventCrossing *event,
                                       dt_iop_module_t *self)
@@ -1238,7 +1285,9 @@ static gboolean rt_wdbar_leave_notify(GtkWidget *widget,
   gtk_widget_queue_draw(g->wd_bar);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_wdbar_button_press(GtkWidget *widget,
                                       GdkEventButton *event,
                                       dt_iop_module_t *self)
@@ -1277,7 +1326,9 @@ static gboolean rt_wdbar_button_press(GtkWidget *widget,
   gtk_widget_queue_draw(g->wd_bar);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_wdbar_button_release(GtkWidget *widget,
                                         GdkEventButton *event,
                                         dt_iop_module_t *self)
@@ -1290,7 +1341,9 @@ static gboolean rt_wdbar_button_release(GtkWidget *widget,
   gtk_widget_queue_draw(g->wd_bar);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_wdbar_scrolled(GtkWidget *widget,
                                   GdkEventScroll *event,
                                   dt_iop_module_t *self)
@@ -1320,7 +1373,9 @@ static gboolean rt_wdbar_scrolled(GtkWidget *widget,
   gtk_widget_queue_draw(g->wd_bar);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_wdbar_motion_notify(GtkWidget *widget,
                                        GdkEventMotion *event,
                                        dt_iop_module_t *self)
@@ -1371,7 +1426,9 @@ static gboolean rt_wdbar_motion_notify(GtkWidget *widget,
   gtk_widget_queue_draw(g->wd_bar);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int rt_scale_has_shapes(dt_iop_retouch_params_t *p,
                                const int scale)
 {
@@ -1383,7 +1440,9 @@ static int rt_scale_has_shapes(dt_iop_retouch_params_t *p,
 
   return has_shapes;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_wdbar_draw(GtkWidget *widget,
                               cairo_t *crf,
                               const dt_iop_module_t *self)
@@ -1543,7 +1602,9 @@ static gboolean rt_wdbar_draw(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float rt_gslider_scale_callback(GtkWidget *self,
                                        const float inval,
                                        const int dir)
@@ -1564,8 +1625,10 @@ static float rt_gslider_scale_callback(GtkWidget *self,
   }
   return outval;
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_gslider_changed(GtkDarktableGradientSlider *gslider,
                                dt_iop_module_t *self)
 {
@@ -1584,8 +1647,10 @@ static void rt_gslider_changed(GtkDarktableGradientSlider *gslider,
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -1620,7 +1685,9 @@ void color_picker_apply(dt_iop_module_t *self,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_copypaste_scale_callback(GtkToggleButton *togglebutton,
                                             GdkEventButton *event,
                                             dt_iop_module_t *self)
@@ -1658,7 +1725,9 @@ static gboolean rt_copypaste_scale_callback(GtkToggleButton *togglebutton,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_display_wavelet_scale_callback(GtkToggleButton *togglebutton,
                                                   GdkEventButton *event,
                                                   dt_iop_module_t *self)
@@ -1709,7 +1778,9 @@ static gboolean rt_display_wavelet_scale_callback(GtkToggleButton *togglebutton,
   gtk_toggle_button_set_active(togglebutton, g->display_wavelet_scale);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_develop_ui_pipe_finished_callback(gpointer instance,
                                                  dt_iop_module_t *self)
 {
@@ -1748,7 +1819,9 @@ static void rt_develop_ui_pipe_finished_callback(gpointer instance,
   // just in case zoom level has changed
   gtk_widget_queue_draw(GTK_WIDGET(g->wd_bar));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_auto_levels_callback(GtkToggleButton *togglebutton,
                                         GdkEventButton *event,
                                         dt_iop_module_t *self)
@@ -1771,7 +1844,9 @@ static gboolean rt_auto_levels_callback(GtkToggleButton *togglebutton,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rt_mask_opacity_callback(GtkWidget *slider,
                                      dt_iop_module_t *self)
 {
@@ -1785,7 +1860,9 @@ static void rt_mask_opacity_callback(GtkWidget *slider,
     rt_masks_form_change_opacity(self, shape_id, opacity);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_post_expose(dt_iop_module_t *self,
                      cairo_t *cr,
                      const float width,
@@ -1807,7 +1884,9 @@ void gui_post_expose(dt_iop_module_t *self,
     DT_LEAVE_GUI_UPDATE();
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_edit_masks_callback(GtkWidget *widget,
                                        GdkEventButton *event,
                                        dt_iop_module_t *self)
@@ -1891,7 +1970,9 @@ static gboolean rt_edit_masks_callback(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_add_shape_callback(GtkWidget *widget,
                                       GdkEventButton *e,
                                       dt_iop_module_t *self)
@@ -1917,7 +1998,9 @@ static gboolean rt_add_shape_callback(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_select_algorithm_callback(GtkToggleButton *togglebutton,
                                              GdkEventButton *e,
                                              dt_iop_module_t *self)
@@ -2035,7 +2118,9 @@ static gboolean rt_select_algorithm_callback(GtkToggleButton *togglebutton,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_showmask_callback(GtkToggleButton *togglebutton,
                                      GdkEventButton *event,
                                      dt_iop_module_t *self)
@@ -2065,7 +2150,9 @@ static gboolean rt_showmask_callback(GtkToggleButton *togglebutton,
   gtk_toggle_button_set_active(togglebutton, g->mask_display);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rt_suppress_callback(GtkToggleButton *togglebutton,
                                      GdkEventButton *event,
                                      dt_iop_module_t *self)
@@ -2083,7 +2170,9 @@ static gboolean rt_suppress_callback(GtkToggleButton *togglebutton,
   gtk_toggle_button_set_active(togglebutton, g->suppress_mask);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_retouch_params_t *p = self->params;
@@ -2113,6 +2202,7 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     }
   }
 }
+#endif
 
 //---------------------------------------------------------------------------------------
 // GUI
@@ -2123,9 +2213,11 @@ void masks_selection_changed(dt_iop_module_t *self, const int form_selected_id)
   dt_iop_retouch_gui_data_t *g = self->gui_data;
   if(!g) return;
 
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_gui_enter_critical_section(self);
   rt_shape_selection_changed(self);
   dt_iop_gui_leave_critical_section(self);
+#endif
 }
 
 void init(dt_iop_module_t *self)
@@ -2186,6 +2278,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, const gboolean in)
 {
   if(self->enabled
@@ -2241,6 +2334,7 @@ void gui_focus(dt_iop_module_t *self, const gboolean in)
       dt_iop_refresh_center(self);
   }
 }
+#endif
 
 void tiling_callback(dt_iop_module_t *self,
                      dt_dev_pixelpipe_iop_t *piece,
@@ -2283,6 +2377,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_retouch_gui_data_t *g = self->gui_data;
@@ -2388,6 +2483,7 @@ void gui_update(dt_iop_module_t *self)
     dlevels[i] = p->preview_levels[i];
   dtgtk_gradient_slider_multivalue_set_values(g->preview_levels_gslider, dlevels);
 }
+#endif
 
 void change_image(dt_iop_module_t *self)
 {
@@ -2414,6 +2510,7 @@ void change_image(dt_iop_module_t *self)
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_retouch_gui_data_t *g = IOP_GUI_ALLOC(retouch);
@@ -2694,7 +2791,9 @@ void gui_init(dt_iop_module_t *self)
   /* add signal handler for preview pipe finish to redraw the preview */
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_DEVELOP_UI_PIPE_FINISHED, rt_develop_ui_pipe_finished_callback);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   // hide the previous masks
@@ -2703,6 +2802,7 @@ void gui_reset(dt_iop_module_t *self)
   dt_iop_retouch_params_t *p = self->params;
   p->algorithm = dt_conf_get_int("plugins/darkroom/retouch/default_algo");
 }
+#endif
 
 void reload_defaults(dt_iop_module_t *self)
 {

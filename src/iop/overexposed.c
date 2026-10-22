@@ -26,7 +26,9 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_math.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "develop/tiling.h"
 #include "iop/iop_api.h"
 

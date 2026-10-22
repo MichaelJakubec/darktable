@@ -186,11 +186,13 @@ struct point {int x,y;};
 /*----------------------------------------------------------------------------*/
 /** Fatal error, print a message to standard-error output and exit.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void error(char * msg)
 {
   dt_print(DT_DEBUG_ALWAYS,"LSD Error: %s",msg);
   exit(EXIT_FAILURE);
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Doubles relative error factor
@@ -208,6 +210,7 @@ static void error(char * msg)
     should be related to the cumulated rounding error in the chain of
     computation. Here, as a simplification, a fixed factor is used.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static int double_equal(const double a, const double b)
 {
   double abs_diff,aa,bb,abs_max;
@@ -230,14 +233,17 @@ static int double_equal(const double a, const double b)
   /* equal if relative error <= factor x eps */
   return (abs_diff / abs_max) <= (RELATIVE_ERROR_FACTOR * DBL_EPSILON);
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Computes Euclidean distance between point (x1,y1) and point (x2,y2).
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double dist(const double x1, const double y1, const double x2, const double y2)
 {
   return sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) );
 }
+#endif
 
 
 /*----------------------------------------------------------------------------*/
@@ -276,6 +282,7 @@ typedef struct ntuple_list_s
 /*----------------------------------------------------------------------------*/
 /** Free memory used in n-tuple 'in'.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void free_ntuple_list(const ntuple_list in)
 {
   if( in == NULL || in->values == NULL )
@@ -283,11 +290,13 @@ static void free_ntuple_list(const ntuple_list in)
   free( (void *) in->values );
   free( (void *) in );
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Create an n-tuple list and allocate memory for one element.
     @param dim the dimension (n) of the n-tuple.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static ntuple_list new_ntuple_list(const unsigned int dim)
 {
   ntuple_list n_tuple;
@@ -310,10 +319,12 @@ static ntuple_list new_ntuple_list(const unsigned int dim)
 
   return n_tuple;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Enlarge the allocated memory of an n-tuple list.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void enlarge_ntuple_list(const ntuple_list n_tuple)
 {
   /* check parameters */
@@ -328,10 +339,12 @@ static void enlarge_ntuple_list(const ntuple_list n_tuple)
                       sizeof(double) * n_tuple->dim * n_tuple->max_size );
   if( n_tuple->values == NULL ) error("not enough memory.");
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Add a 7-tuple to an n-tuple list.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void add_7tuple(const ntuple_list out, const double v1, const double v2, const double v3,
                         const double v4, const double v5, const double v6, const double v7 )
 {
@@ -355,6 +368,7 @@ static void add_7tuple(const ntuple_list out, const double v1, const double v2, 
   /* update number of tuples counter */
   out->size++;
 }
+#endif
 
 
 /*----------------------------------------------------------------------------*/
@@ -379,6 +393,7 @@ typedef struct image_char_s
 /*----------------------------------------------------------------------------*/
 /** Free memory used in image_char 'i'.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void free_image_char(const image_char i)
 {
   if( i == NULL || i->data == NULL )
@@ -386,10 +401,12 @@ static void free_image_char(const image_char i)
   free( (void *) i->data );
   free( (void *) i );
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Create a new image_char of size 'xsize' times 'ysize'.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static image_char new_image_char(const unsigned int xsize, const unsigned int ysize)
 {
   image_char image;
@@ -410,11 +427,13 @@ static image_char new_image_char(const unsigned int xsize, const unsigned int ys
 
   return image;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Create a new image_char of size 'xsize' times 'ysize',
     initialized to the value 'fill_value'.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static image_char new_image_char_ini(const unsigned int xsize, const unsigned int ysize,
                                       const unsigned char fill_value )
 {
@@ -431,6 +450,7 @@ static image_char new_image_char_ini(const unsigned int xsize, const unsigned in
 
   return image;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** int image data type
@@ -450,6 +470,7 @@ typedef struct image_int_s
 /*----------------------------------------------------------------------------*/
 /** Create a new image_int of size 'xsize' times 'ysize'.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static image_int new_image_int(const unsigned int xsize, const unsigned int ysize)
 {
   image_int image;
@@ -469,11 +490,13 @@ static image_int new_image_int(const unsigned int xsize, const unsigned int ysiz
 
   return image;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Create a new image_int of size 'xsize' times 'ysize',
     initialized to the value 'fill_value'.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static image_int new_image_int_ini(const unsigned int xsize, const unsigned int ysize,
                                     const int fill_value )
 {
@@ -486,6 +509,7 @@ static image_int new_image_int_ini(const unsigned int xsize, const unsigned int 
 
   return image;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** double image data type
@@ -505,6 +529,7 @@ typedef struct image_double_s
 /*----------------------------------------------------------------------------*/
 /** Free memory used in image_double 'i'.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void free_image_double(const image_double i)
 {
   if( i == NULL || i->data == NULL )
@@ -512,10 +537,12 @@ static void free_image_double(const image_double i)
   free( (void *) i->data );
   free( (void *) i );
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Create a new image_double of size 'xsize' times 'ysize'.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static image_double new_image_double(const unsigned int xsize, const unsigned int ysize)
 {
   image_double image;
@@ -535,11 +562,13 @@ static image_double new_image_double(const unsigned int xsize, const unsigned in
 
   return image;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Create a new image_double of size 'xsize' times 'ysize'
     with the data pointed by 'data'.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static image_double new_image_double_ptr(const unsigned int xsize,
                                           const unsigned int ysize, double * data )
 {
@@ -561,6 +590,7 @@ static image_double new_image_double_ptr(const unsigned int xsize,
 
   return image;
 }
+#endif
 
 
 /*----------------------------------------------------------------------------*/
@@ -575,6 +605,7 @@ static image_double new_image_double_ptr(const unsigned int xsize,
     in the middle point between values 'kernel->values[0]'
     and 'kernel->values[1]'.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void gaussian_kernel(const ntuple_list kernel, const double sigma, const double mean)
 {
   double sum = 0.0;
@@ -599,6 +630,7 @@ static void gaussian_kernel(const ntuple_list kernel, const double sigma, const 
   /* normalization */
   if( sum >= 0.0 ) for(i=0;i<kernel->dim;i++) kernel->values[i] /= sum;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Scale the input image 'in' by a factor 'scale' by Gaussian sub-sampling.
@@ -638,6 +670,7 @@ static void gaussian_kernel(const ntuple_list kernel, const double sigma, const 
     in the x axis, and then the combined Gaussian kernel and sampling
     in the y axis.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static image_double gaussian_sampler(const image_double in, const double scale,
                                       const double sigma_scale )
 {
@@ -756,6 +789,7 @@ static image_double gaussian_sampler(const image_double in, const double scale,
 
   return out;
 }
+#endif
 
 
 /*----------------------------------------------------------------------------*/
@@ -779,6 +813,7 @@ static image_double gaussian_sampler(const image_double in, const double scale,
     - a pointer 'mem_p' to the memory used by 'list_p' to be able to
       free the memory when it is not used anymore.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static image_double ll_angle(const image_double in, const double threshold,
                               struct coorlist ** list_p, void ** mem_p,
                               image_double * modgrad, const unsigned int n_bins )
@@ -921,10 +956,12 @@ static image_double ll_angle(const image_double in, const double threshold,
 
   return g;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Is point (x,y) aligned to angle theta, up to precision 'prec'?
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static int isaligned(const int x, const int y, const image_double angles, double theta,
                       const double prec )
 {
@@ -959,10 +996,12 @@ static int isaligned(const int x, const int y, const image_double angles, double
 
   return theta <= prec;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Absolute value angle difference.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double angle_diff(double a, const double b)
 {
   a -= b;
@@ -971,10 +1010,12 @@ static double angle_diff(double a, const double b)
   if( a < 0.0 ) a = -a;
   return a;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Signed angle difference.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double angle_diff_signed(double a, const double b)
 {
   a -= b;
@@ -982,6 +1023,7 @@ static double angle_diff_signed(double a, const double b)
   while( a >   M_PI ) a -= M_2__PI;
   return a;
 }
+#endif
 
 
 /*----------------------------------------------------------------------------*/
@@ -1012,6 +1054,7 @@ static double angle_diff_signed(double a, const double b)
       q5 = 83.8676043424,
       q6 = 2.50662827511.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double log_gamma_lanczos(const double x)
 {
   static double q[7] = { 75122.6331530, 80916.6278952, 36308.2951477,
@@ -1028,6 +1071,7 @@ static double log_gamma_lanczos(const double x)
     }
   return a + log(b);
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Computes the natural logarithm of the absolute value of
@@ -1046,11 +1090,13 @@ static double log_gamma_lanczos(const double x)
     @f]
     This formula is a good approximation when x > 15.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double log_gamma_windschitl(const double x)
 {
   return 0.918938533204673 + (x-0.5)*log(x) - x
          + 0.5*x*log( x*sinh(1/x) + 1/(810.0*pow(x,6.0)) );
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Computes the natural logarithm of the absolute value of
@@ -1124,6 +1170,7 @@ __attribute__((destructor)) static void invDestructor()
     of the terms are neglected based on a bound to the error obtained
     (an error of 10% in the result is accepted).
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double nfa(const int n, const int k, const double p, const double logNT)
 {
   const double tolerance = 0.1;       /* an error of 10% in the result is accepted */
@@ -1209,6 +1256,7 @@ static double nfa(const int n, const int k, const double p, const double logNT)
     }
   return -log10(bin_tail) - logNT;
 }
+#endif
 
 
 /*----------------------------------------------------------------------------*/
@@ -1232,6 +1280,7 @@ struct rect
 /*----------------------------------------------------------------------------*/
 /** Copy one rectangle structure to another.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rect_copy(const struct rect * in, struct rect * out)
 {
   /* check parameters */
@@ -1251,6 +1300,7 @@ static void rect_copy(const struct rect * in, struct rect * out)
   out->prec = in->prec;
   out->p = in->p;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Rectangle points iterator.
@@ -1326,6 +1376,7 @@ typedef struct
     - x1 <= x
     - x  <= x2
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double inter_low(const double x, const double x1, const double y1, const double x2, const double y2)
 {
   /* check parameters */
@@ -1337,6 +1388,7 @@ static double inter_low(const double x, const double x1, const double y1, const 
   if( double_equal(x1,x2) && y1>y2 ) return y2;
   return y1 + (x-x1) * (y2-y1) / (x2-x1);
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Interpolate y value corresponding to 'x' value given, in
@@ -1348,6 +1400,7 @@ static double inter_low(const double x, const double x1, const double y1, const 
     - x1 <= x
     - x  <= x2
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double inter_hi(const double x, const double x1, const double y1, const double x2, const double y2)
 {
   /* check parameters */
@@ -1359,21 +1412,25 @@ static double inter_hi(const double x, const double x1, const double y1, const d
   if( double_equal(x1,x2) && y1>y2 ) return y1;
   return y1 + (x-x1) * (y2-y1) / (x2-x1);
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Free memory used by a rectangle iterator.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void ri_del(rect_iter * iter)
 {
   if( iter == NULL ) error("ri_del: NULL iterator.");
   free( (void *) iter );
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Check if the iterator finished the full iteration.
 
     See details in \ref rect_iter
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static int ri_end(const rect_iter * i)
 {
   /* check input */
@@ -1384,12 +1441,14 @@ static int ri_end(const rect_iter * i)
      exploration of the rectangle is finished. */
   return (double)(i->x) > i->vx[2];
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Increment a rectangle iterator.
 
     See details in \ref rect_iter
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void ri_inc(rect_iter * i)
 {
   /* check input */
@@ -1454,12 +1513,14 @@ static void ri_inc(rect_iter * i)
       i->y = (int) ceil(i->ys);
     }
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Create and initialize a rectangle iterator.
 
     See details in \ref rect_iter
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static rect_iter * ri_ini(const struct rect * r)
 {
   double vx[4],vy[4];
@@ -1527,10 +1588,12 @@ static rect_iter * ri_ini(const struct rect * r)
 
   return i;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Compute a rectangle's NFA value.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double rect_nfa(const struct rect * rec, const image_double angles, const double logNT)
 {
   rect_iter * i;
@@ -1554,6 +1617,7 @@ static double rect_nfa(const struct rect * rec, const image_double angles, const
 
   return nfa(pts,alg,rec->p,logNT); /* compute NFA value */
 }
+#endif
 
 
 /*----------------------------------------------------------------------------*/
@@ -1617,6 +1681,7 @@ static double rect_nfa(const struct rect * rec, const image_double angles, const
     When |Ixx| > |Iyy| we use the first, otherwise the second (just to
     get better numeric precision).
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double get_theta(const struct point * reg, const int reg_size, const double x, const double y,
                          const image_double modgrad, const double reg_angle, const double prec )
 {
@@ -1656,10 +1721,12 @@ static double get_theta(const struct point * reg, const int reg_size, const doub
 
   return theta;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Computes a rectangle that covers a region of points.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void region2rect(const struct point * reg, const int reg_size,
                          const image_double modgrad, const double reg_angle,
                          const double prec, const double p, struct rect * rec )
@@ -1748,11 +1815,13 @@ static void region2rect(const struct point * reg, const int reg_size,
    */
   if( rec->width < 1.0 ) rec->width = 1.0;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Build a region of pixels that share the same angle, up to a
     tolerance 'prec', starting at point (x,y).
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void region_grow(const int x, const int y, const image_double angles, struct point * reg,
                          int * reg_size, double * reg_angle, const image_char used,
                          const double prec )
@@ -1800,11 +1869,13 @@ static void region_grow(const int x, const int y, const image_double angles, str
             *reg_angle = atan2(sumdy,sumdx);
           }
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Try some rectangles variations to improve NFA value. Only if the
     rectangle is not meaningful (i.e., log_nfa <= log_eps).
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static double rect_improve( struct rect * rec, const image_double angles,
                             const double logNT, const double log_eps )
 {
@@ -1912,12 +1983,14 @@ static double rect_improve( struct rect * rec, const image_double angles,
 
   return log_nfa;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Reduce the region size, by elimination the points far from the
     starting point, until that leads to rectangle with the right
     density of region points or to discard the region if too small.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static int reduce_region_radius( struct point * reg, int * reg_size,
                                  const image_double modgrad, const double reg_angle,
                                  const double prec, const double p, struct rect * rec,
@@ -1985,6 +2058,7 @@ static int reduce_region_radius( struct point * reg, int * reg_size,
   /* if this point is reached, the density criterion is satisfied */
   return TRUE;
 }
+#endif
 
 /*----------------------------------------------------------------------------*/
 /** Refine a rectangle.
@@ -1996,6 +2070,7 @@ static int reduce_region_radius( struct point * reg, int * reg_size,
     produce a rectangle with the right density of region points,
     'reduce_region_radius' is called to try to satisfy this condition.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static int refine( struct point * reg, int * reg_size, const image_double modgrad,
                    double reg_angle, const double prec, const double p, struct rect * rec,
                    const image_char used, const image_double angles, const double density_th )
@@ -2069,6 +2144,7 @@ static int refine( struct point * reg, int * reg_size, const image_double modgra
   /* if this point is reached, the density criterion is satisfied */
   return TRUE;
 }
+#endif
 
 
 /*----------------------------------------------------------------------------*/
@@ -2078,6 +2154,7 @@ static int refine( struct point * reg, int * reg_size, const image_double modgra
 /*----------------------------------------------------------------------------*/
 /** LSD full interface.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static
 double * LineSegmentDetection( int * n_out,
                                double * img, const int X, const int Y,
@@ -2262,6 +2339,7 @@ double * LineSegmentDetection( int * n_out,
 
   return return_value;
 }
+#endif
 
 /*==================================================================================
  * end of LSD code

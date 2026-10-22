@@ -27,8 +27,12 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/togglebutton.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
@@ -37,7 +41,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 
 #define UNBOUND_L 1
@@ -672,6 +678,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_shadhi_gui_data_t *g = IOP_GUI_ALLOC(shadhi);
@@ -697,6 +704,7 @@ void gui_init(dt_iop_module_t *self)
   gtk_widget_set_tooltip_text(g->shadows_ccorrect, _("adjust saturation of shadows"));
   gtk_widget_set_tooltip_text(g->highlights_ccorrect, _("adjust saturation of highlights"));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

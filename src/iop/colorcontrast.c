@@ -23,12 +23,16 @@
 #include "control/control.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 
 DT_MODULE_INTROSPECTION(2, dt_iop_colorcontrast_params_t)
@@ -294,6 +298,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_colorcontrast_gui_data_t *g = self->gui_data;
@@ -301,7 +306,9 @@ void gui_update(dt_iop_module_t *self)
   dt_bauhaus_slider_set(g->a_scale, p->a_steepness);
   dt_bauhaus_slider_set(g->b_scale, p->b_steepness);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_colorcontrast_gui_data_t *g = IOP_GUI_ALLOC(colorcontrast);
@@ -319,6 +326,7 @@ void gui_init(dt_iop_module_t *self)
      _("steepness of the b* curve in Lab\nlower values desaturate"
        " blues and yellows while higher saturate them"));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

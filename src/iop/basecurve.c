@@ -29,16 +29,22 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
 #include "gui/draw.h"
 #include "gui/gtk.h"
 #include "gui/presets.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "iop/iop_api.h"
 
 #include <regex.h>
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1461,6 +1467,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_basecurve_params_t *p = self->params;
@@ -1472,13 +1479,16 @@ void gui_update(dt_iop_module_t *self)
   // gui curve is read directly from params during expose event.
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float eval_grey(float x)
 {
   // "log base" is a combined scaling and offset change so that x->[0,1], with
   // the left side of the histogram expanded (slider->right) or not (slider left, linear)
   return x;
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -1532,6 +1542,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_basecurve_leave_notify(GtkWidget *widget,
                                               GdkEventCrossing *event,
                                               dt_iop_module_t *self)
@@ -1542,7 +1553,9 @@ static gboolean dt_iop_basecurve_leave_notify(GtkWidget *widget,
   gtk_widget_queue_draw(widget);
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float to_log(const float x, const float base)
 {
   if(base > 0.0f)
@@ -1550,7 +1563,9 @@ static float to_log(const float x, const float base)
   else
     return x;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float to_lin(const float x, const float base)
 {
   if(base > 0.0f)
@@ -1558,7 +1573,9 @@ static float to_lin(const float x, const float base)
   else
     return x;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_basecurve_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   dt_iop_basecurve_gui_data_t *g = self->gui_data;
@@ -1712,6 +1729,7 @@ static gboolean dt_iop_basecurve_draw(GtkWidget *widget, cairo_t *crf, dt_iop_mo
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
 static inline int _add_node(dt_iop_basecurve_node_t *basecurve, int *nodes, float x, float y)
 {
@@ -1742,6 +1760,7 @@ static inline int _add_node(dt_iop_basecurve_node_t *basecurve, int *nodes, floa
   return selected;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void dt_iop_basecurve_sanity_check(dt_iop_module_t *self, GtkWidget *widget)
 {
   dt_iop_basecurve_gui_data_t *g = self->gui_data;
@@ -1770,13 +1789,17 @@ static void dt_iop_basecurve_sanity_check(dt_iop_module_t *self, GtkWidget *widg
     p->basecurve_nodes[ch]--;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _move_point_internal(dt_iop_module_t *self,
                                      GtkWidget *widget,
                                      float dx,
                                      float dy,
                                      const guint state);
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_basecurve_motion_notify(GtkWidget *widget,
                                                GdkEventMotion *event,
                                                dt_iop_module_t *self)
@@ -1846,7 +1869,9 @@ static gboolean dt_iop_basecurve_motion_notify(GtkWidget *widget,
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_basecurve_button_press(GtkWidget *widget,
                                               GdkEventButton *event,
                                               dt_iop_module_t *self)
@@ -1961,7 +1986,9 @@ static gboolean dt_iop_basecurve_button_press(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _move_point_internal(dt_iop_module_t *self,
                                      GtkWidget *widget,
                                      float dx,
@@ -1987,9 +2014,11 @@ static gboolean _move_point_internal(dt_iop_module_t *self,
   dt_dev_add_history_item_target(darktable.develop, self, TRUE, widget);
   return TRUE;
 }
+#endif
 
 #define BASECURVE_DEFAULT_STEP (0.001f)
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _scrolled(GtkWidget *widget, GdkEventScroll *event, dt_iop_module_t *self)
 {
   dt_iop_basecurve_gui_data_t *g = self->gui_data;
@@ -2007,7 +2036,9 @@ static gboolean _scrolled(GtkWidget *widget, GdkEventScroll *event, dt_iop_modul
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_basecurve_key_press(GtkWidget *widget,
                                            GdkEventKey *event,
                                            dt_iop_module_t *self)
@@ -2043,9 +2074,11 @@ static gboolean dt_iop_basecurve_key_press(GtkWidget *widget,
 
   return _move_point_internal(self, widget, dx, dy, event->state);
 }
+#endif
 
 #undef BASECURVE_DEFAULT_STEP
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_basecurve_params_t *p = self->params;
@@ -2066,14 +2099,18 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     }
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void logbase_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   dt_iop_basecurve_gui_data_t *g = self->gui_data;
   g->loglogscale = eval_grey(dt_bauhaus_slider_get(g->logbase));
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_basecurve_gui_data_t *g = IOP_GUI_ALLOC(basecurve);
@@ -2137,12 +2174,15 @@ void gui_init(dt_iop_module_t *self)
   g_signal_connect(G_OBJECT(g->area), "scroll-event", G_CALLBACK(_scrolled), self);
   g_signal_connect(G_OBJECT(g->area), "key-press-event", G_CALLBACK(dt_iop_basecurve_key_press), self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_basecurve_gui_data_t *g = self->gui_data;
   dt_draw_curve_destroy(g->minmax_curve);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

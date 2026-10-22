@@ -30,8 +30,12 @@ http://www.youtube.com/watch?v=JVoUgR6bhBc
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/openmp_maths.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/gradientslider.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "gui/color_picker_proxy.h"
@@ -866,6 +870,7 @@ error:
 }
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void update_saturation_slider_color(GtkWidget *slider, float hue)
 {
   dt_aligned_pixel_t rgb;
@@ -878,7 +883,9 @@ static inline void update_saturation_slider_color(GtkWidget *slider, float hue)
     gtk_widget_queue_draw(GTK_WIDGET(slider));
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void set_RGB_sliders(GtkWidget *R, GtkWidget *G, GtkWidget *B, float hsl[3], float *p, int mode)
 {
 
@@ -898,7 +905,9 @@ static inline void set_RGB_sliders(GtkWidget *R, GtkWidget *G, GtkWidget *B, flo
     DT_LEAVE_GUI_UPDATE();
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void set_HSL_sliders(GtkWidget *hue, GtkWidget *sat, float RGB[4])
 {
   /** HSL sliders are set from the RGB values at any time.
@@ -924,7 +933,9 @@ static inline void set_HSL_sliders(GtkWidget *hue, GtkWidget *sat, float RGB[4])
     gtk_widget_queue_draw(GTK_WIDGET(sat));
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void _check_tuner_picker_labels(dt_iop_module_t *self)
 {
   dt_iop_colorbalance_gui_data_t *g = self->gui_data;
@@ -941,8 +952,10 @@ static inline void _check_tuner_picker_labels(dt_iop_module_t *self)
   else
     dt_bauhaus_widget_set_label(g->auto_color, NULL, N_("neutralize colors"));
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_autogrey(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -981,7 +994,9 @@ static void apply_autogrey(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_lift_neutralize(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1021,7 +1036,9 @@ static void apply_lift_neutralize(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_gamma_neutralize(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1060,7 +1077,9 @@ static void apply_gamma_neutralize(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_gain_neutralize(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1100,7 +1119,9 @@ static void apply_gain_neutralize(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_lift_auto(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1124,7 +1145,9 @@ static void apply_lift_auto(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_gamma_auto(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1149,7 +1172,9 @@ static void apply_gamma_auto(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_gain_auto(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1173,7 +1198,9 @@ static void apply_gain_auto(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_autocolor(dt_iop_module_t *self)
 {
   dt_iop_colorbalance_params_t *p = self->params;
@@ -1294,7 +1321,9 @@ static void apply_autocolor(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_autoluma(dt_iop_module_t *self)
 {
   dt_iop_colorbalance_params_t *p = self->params;
@@ -1346,7 +1375,9 @@ static void apply_autoluma(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -1374,6 +1405,7 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
 
   _check_tuner_picker_labels(self);
 }
+#endif
 
 void init_global(dt_iop_module_so_t *self)
 {
@@ -1492,6 +1524,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void set_visible_widgets(dt_iop_colorbalance_gui_data_t *g)
 {
   const int mode = dt_bauhaus_combobox_get(g->mode);
@@ -1524,7 +1557,9 @@ void set_visible_widgets(dt_iop_colorbalance_gui_data_t *g)
 
   gtk_widget_set_visible(g->optimizer_box, mode == SLOPE_OFFSET_POWER);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_color_picker_reset(self, TRUE);
@@ -1532,7 +1567,9 @@ void gui_update(dt_iop_module_t *self)
 
   gui_changed(self, NULL, NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_colorbalance_gui_data_t *g = self->gui_data;
@@ -1550,9 +1587,13 @@ void gui_reset(dt_iop_module_t *self)
 
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _configure_slider_blocks(gpointer instance, dt_iop_module_t *self);
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_colorbalance_params_t *p = self->params;
@@ -1575,7 +1616,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void controls_callback(GtkWidget *combo, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1586,6 +1629,7 @@ static void controls_callback(GtkWidget *combo, dt_iop_module_t *self)
 
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
 #ifdef SHOW_COLOR_WHEELS
 static gboolean dt_iop_area_draw(GtkWidget *widget, cairo_t *cr, dt_iop_module_t *self)
@@ -1708,6 +1752,7 @@ static gboolean dt_iop_area_draw(GtkWidget *widget, cairo_t *cr, dt_iop_module_t
 }
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _configure_slider_blocks(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_colorbalance_params_t *p = self->params;
@@ -1796,7 +1841,9 @@ static void _configure_slider_blocks(gpointer instance, dt_iop_module_t *self)
   gtk_container_add(GTK_CONTAINER(g->main_box), new_container);
   if(old_container) gtk_widget_show(new_container);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _cycle_layout_callback(GtkWidget *label, GdkEventButton *event, dt_iop_module_t *self)
 {
   gchar *layout = dt_conf_get_string("plugins/darkroom/colorbalance/layout");
@@ -1810,7 +1857,9 @@ static gboolean _cycle_layout_callback(GtkWidget *label, GdkEventButton *event, 
   _configure_slider_blocks(NULL, self);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #define HSL_CALLBACK(which)                                                             \
 static void which##_callback(GtkWidget *slider, dt_iop_module_t *self)                  \
 {                                                                                       \
@@ -1834,7 +1883,9 @@ static void which##_callback(GtkWidget *slider, dt_iop_module_t *self)          
 HSL_CALLBACK(lift)
 HSL_CALLBACK(gamma)
 HSL_CALLBACK(gain)
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_colorbalance_gui_data_t *g = IOP_GUI_ALLOC(colorbalance);
@@ -2018,6 +2069,7 @@ void gui_init(dt_iop_module_t *self)
 
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_PREFERENCES_CHANGE, _configure_slider_blocks);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

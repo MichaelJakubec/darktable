@@ -20,12 +20,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
-#else
-#include "common/math.h"
-#include "control/control.h"
-#endif
 #include "common/box_filters.h"
 #include "common/bspline.h"
 #include "common/opencl.h"

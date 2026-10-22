@@ -22,10 +22,16 @@
 #include "common/rgb_norms.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "libs/colorpicker.h"
+#endif
 
 #define DT_GUI_CURVE_EDITOR_INSET DT_PIXEL_APPLY_DPI(5)
 
@@ -124,6 +130,7 @@ const char **description(dt_iop_module_t *self)
                                       _("non-linear, RGB, display-referred"));
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _turn_select_region_off(dt_iop_module_t *self)
 {
   dt_iop_rgblevels_gui_data_t *g = self->gui_data;
@@ -133,13 +140,17 @@ static void _turn_select_region_off(dt_iop_module_t *self)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g->bt_select_region), g->draw_selected_region);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _turn_selregion_picker_off(dt_iop_module_t *self)
 {
   _turn_select_region_off(self);
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _develop_ui_pipe_finished_callback(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_rgblevels_params_t *p = self->params;
@@ -175,6 +186,7 @@ static void _develop_ui_pipe_finished_callback(gpointer instance, dt_iop_module_
     dt_iop_gui_leave_critical_section(self);
   }
 }
+#endif
 
 static void _compute_lut(dt_dev_pixelpipe_iop_t *piece)
 {
@@ -213,6 +225,7 @@ static void _compute_lut(dt_dev_pixelpipe_iop_t *piece)
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _rgblevels_show_hide_controls(dt_iop_rgblevels_params_t *p, dt_iop_rgblevels_gui_data_t *g)
 {
   switch(p->autoscale)
@@ -230,7 +243,9 @@ static void _rgblevels_show_hide_controls(dt_iop_rgblevels_params_t *p, dt_iop_r
   else
     gtk_widget_set_visible(g->cmb_preserve_colors, FALSE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int mouse_moved(dt_iop_module_t *self,
                 const float pzx,
                 const float pzy,
@@ -254,7 +269,9 @@ int mouse_moved(dt_iop_module_t *self,
 
   return handled;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_released(dt_iop_module_t *self,
                     const float x,
                     const float y,
@@ -291,7 +308,9 @@ int button_released(dt_iop_module_t *self,
 
   return handled;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_pressed(dt_iop_module_t *self,
                    const float pzx,
                    const float pzy,
@@ -326,7 +345,9 @@ int button_pressed(dt_iop_module_t *self,
 
   return handled;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_post_expose(dt_iop_module_t *self,
                      cairo_t *cr,
                      const float width,
@@ -358,7 +379,9 @@ void gui_post_expose(dt_iop_module_t *self,
                   (posy_to - posy_from) - 2. / zoom_scale);
   cairo_stroke(cr);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_leave_notify_callback(GtkWidget *widget,
                                             GdkEventCrossing *event,
                                             dt_iop_module_t *self)
@@ -368,7 +391,9 @@ static gboolean _area_leave_notify_callback(GtkWidget *widget,
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_draw_callback(GtkWidget *widget,
                                     cairo_t *crf,
                                     dt_iop_module_t *self)
@@ -503,7 +528,9 @@ static gboolean _area_draw_callback(GtkWidget *widget,
   cairo_surface_destroy(cst);
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _rgblevels_move_handle(dt_iop_module_t *self,
                                    const int handle_move,
                                    const float new_pos,
@@ -547,7 +574,9 @@ static void _rgblevels_move_handle(dt_iop_module_t *self,
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_motion_notify_callback(GtkWidget *widget,
                                              GdkEventMotion *event,
                                              dt_iop_module_t *self)
@@ -596,7 +625,9 @@ static gboolean _area_motion_notify_callback(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_button_press_callback(GtkWidget *widget,
                                             GdkEventButton *event,
                                             dt_iop_module_t *self)
@@ -635,7 +666,9 @@ static gboolean _area_button_press_callback(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_button_release_callback(GtkWidget *widget,
                                               GdkEventButton *event,
                                               dt_iop_module_t *self)
@@ -648,7 +681,9 @@ static gboolean _area_button_release_callback(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_scroll_callback(GtkWidget *widget,
                                       GdkEventScroll *event,
                                       dt_iop_module_t *self)
@@ -679,7 +714,9 @@ static gboolean _area_scroll_callback(GtkWidget *widget,
 
   return TRUE; // Ensure that scrolling the widget cannot move side panel
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _auto_levels_callback(GtkButton *button,
                                   dt_iop_module_t *self)
 {
@@ -706,7 +743,9 @@ static void _auto_levels_callback(GtkButton *button,
 
   dt_dev_reprocess_all(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _select_region_toggled_callback(GtkToggleButton *togglebutton,
                                             dt_iop_module_t *self)
 {
@@ -736,7 +775,9 @@ static void _select_region_toggled_callback(GtkToggleButton *togglebutton,
 
   dt_iop_gui_leave_critical_section(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_rgblevels_gui_data_t *g = self->gui_data;
@@ -752,7 +793,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     _rgblevels_show_hide_controls(p, g);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _tab_switch_callback(GtkNotebook *notebook,
                                  GtkWidget *page,
                                  const guint page_num,
@@ -765,12 +808,16 @@ static void _tab_switch_callback(GtkNotebook *notebook,
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _color_picker_callback(GtkWidget *button, dt_iop_module_t *self)
 {
   _turn_select_region_off(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -838,6 +885,7 @@ void color_picker_apply(dt_iop_module_t *self,
   }
 
 }
+#endif
 
 void commit_params(dt_iop_module_t *self,
                    dt_iop_params_t *p1,
@@ -884,6 +932,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_rgblevels_params_t *p = self->params;
@@ -897,12 +946,16 @@ void gui_update(dt_iop_module_t *self)
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, gboolean in)
 {
   if(!in) _turn_select_region_off(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_rgblevels_gui_data_t *g = self->gui_data;
@@ -913,6 +966,7 @@ void gui_reset(dt_iop_module_t *self)
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -958,12 +1012,14 @@ void change_image(dt_iop_module_t *self)
   g->button_down = 0;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 const dt_action_element_def_t _action_elements_levels[]
   = { { N_("black"), dt_action_effect_value },
       { N_("gray" ), dt_action_effect_value },
       { N_("white"), dt_action_effect_value },
       { NULL } };
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _action_process(gpointer target,
                              const dt_action_element_t element,
                              const dt_action_effect_t effect,
@@ -1013,12 +1069,15 @@ static float _action_process(gpointer target,
 
   return p->levels[g->channel][element];
 }
+#endif
 
 const dt_action_def_t _action_def_levels
   = { N_("levels"),
       _action_process,
       _action_elements_levels };
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_rgblevels_gui_data_t *g = IOP_GUI_ALLOC(rgblevels);
@@ -1108,6 +1167,7 @@ void gui_init(dt_iop_module_t *self)
   // add signal handler for preview pipe finish
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_DEVELOP_PREVIEW_PIPE_FINISHED, _develop_ui_pipe_finished_callback);
 }
+#endif
 
 static void _get_selected_area(dt_iop_module_t *self,
                                dt_dev_pixelpipe_iop_t *piece,

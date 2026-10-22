@@ -39,7 +39,9 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "gui/gtk.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "develop/tiling.h"
 #include "iop/iop_api.h"
 
@@ -48,7 +50,9 @@
 #endif
 
 #include <float.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -234,6 +238,7 @@ void cleanup_global(dt_iop_module_so_t *self)
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_hazeremoval_gui_data_t *g = self->gui_data;
@@ -246,7 +251,9 @@ void gui_update(dt_iop_module_t *self)
   g->hash = DT_INVALID_HASH;
   dt_iop_gui_leave_critical_section(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self,
                  GtkWidget *w,
                  void *previous)
@@ -258,7 +265,9 @@ void gui_changed(dt_iop_module_t *self,
     p->adaptive = TRUE;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_hazeremoval_gui_data_t *g = IOP_GUI_ALLOC(hazeremoval);
@@ -277,6 +286,7 @@ void gui_init(dt_iop_module_t *self)
   gtk_widget_set_tooltip_text(g->distance,
                               _("limit haze removal up to a specific spatial depth"));
 }
+#endif
 
 
 //----------------------------------------------------------------------

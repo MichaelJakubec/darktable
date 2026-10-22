@@ -34,11 +34,21 @@
 #include "develop/noise_generator.h"
 #include "develop/openmp_maths.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/expander.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/paint.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
@@ -1755,6 +1765,7 @@ void cleanup_global(dt_iop_module_so_t *self)
 #endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_diffuse_gui_data_t *g = IOP_GUI_ALLOC(diffuse);
@@ -1908,6 +1919,7 @@ void gui_init(dt_iop_module_t *self)
        "any higher value excludes pixels with luminance lower than the threshold.\n"
        "this can be used to inpaint highlights."));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

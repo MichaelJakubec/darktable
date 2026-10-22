@@ -24,8 +24,12 @@
 #include "control/control.h"
 #include "develop/develop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/draw.h"
 #include "gui/gtk.h"
 #include "gui/presets.h"
@@ -271,6 +275,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_lowlight_gui_data_t *g = self->gui_data;
@@ -278,6 +283,7 @@ void gui_update(dt_iop_module_t *self)
   dt_bauhaus_slider_set(g->scale_blueness, p->blueness);
   gtk_widget_queue_draw(GTK_WIDGET(g->area));;
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -461,6 +467,7 @@ void init_presets(dt_iop_module_so_t *self)
 }
 
 // fills in new parameters based on mouse position (in 0,1)
+#ifndef DARKTABLE_ENGINE_ONLY
 static void dt_iop_lowlight_get_params(dt_iop_lowlight_params_t *p, const double mouse_x,
                                        const double mouse_y, const float rad)
 {
@@ -470,7 +477,9 @@ static void dt_iop_lowlight_get_params(dt_iop_lowlight_params_t *p, const double
     p->transition_y[k] = (1 - f) * p->transition_y[k] + f * mouse_y;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean lowlight_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   dt_iop_lowlight_gui_data_t *g = self->gui_data;
@@ -662,7 +671,9 @@ static gboolean lowlight_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *
   cairo_surface_destroy(cst);
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean lowlight_motion_notify(GtkWidget *widget, GdkEventMotion *event, dt_iop_module_t *self)
 {
   dt_iop_lowlight_gui_data_t *g = self->gui_data;
@@ -715,7 +726,9 @@ static gboolean lowlight_motion_notify(GtkWidget *widget, GdkEventMotion *event,
   }
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean lowlight_button_press(GtkWidget *widget, GdkEventButton *event, dt_iop_module_t *self)
 {
   dt_iop_lowlight_gui_data_t *g = self->gui_data;
@@ -747,7 +760,9 @@ static gboolean lowlight_button_press(GtkWidget *widget, GdkEventButton *event, 
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean lowlight_button_release(GtkWidget *widget, GdkEventButton *event, dt_iop_module_t *self)
 {
   if(event->button == GDK_BUTTON_PRIMARY)
@@ -758,7 +773,9 @@ static gboolean lowlight_button_release(GtkWidget *widget, GdkEventButton *event
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean lowlight_leave_notify(GtkWidget *widget, GdkEventCrossing *event, dt_iop_module_t *self)
 {
   dt_iop_lowlight_gui_data_t *g = self->gui_data;
@@ -766,7 +783,9 @@ static gboolean lowlight_leave_notify(GtkWidget *widget, GdkEventCrossing *event
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean lowlight_scrolled(GtkWidget *widget, GdkEventScroll *event, dt_iop_module_t *self)
 {
   dt_iop_lowlight_gui_data_t *g = self->gui_data;
@@ -782,7 +801,9 @@ static gboolean lowlight_scrolled(GtkWidget *widget, GdkEventScroll *event, dt_i
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_lowlight_gui_data_t *g = IOP_GUI_ALLOC(lowlight);
@@ -818,12 +839,15 @@ void gui_init(dt_iop_module_t *self)
   dt_bauhaus_slider_set_format(g->scale_blueness, "%");
   gtk_widget_set_tooltip_text(g->scale_blueness, _("blueness in shadows"));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_lowlight_gui_data_t *g = self->gui_data;
   dt_draw_curve_destroy(g->transition_curve);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

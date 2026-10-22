@@ -29,11 +29,15 @@
 #include "develop/imageop.h"
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 
 DT_MODULE_INTROSPECTION(2, dt_iop_velvia_params_t)
@@ -265,6 +269,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_velvia_gui_data_t *g = self->gui_data;
@@ -272,7 +277,9 @@ void gui_update(dt_iop_module_t *self)
   dt_bauhaus_slider_set(g->strength_scale, p->strength);
   dt_bauhaus_slider_set(g->bias_scale, p->bias);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_velvia_gui_data_t *g = IOP_GUI_ALLOC(velvia);
@@ -284,6 +291,7 @@ void gui_init(dt_iop_module_t *self)
   g->bias_scale = dt_bauhaus_slider_from_params(self, "bias");
   gtk_widget_set_tooltip_text(g->bias_scale, _("how much to spare highlights and shadows"));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

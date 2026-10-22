@@ -22,7 +22,9 @@
 #include "develop/imageop_gui.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 
 // Linear (matrix) transformation of the RGB data based on user-defined
@@ -185,6 +187,7 @@ int process_cl(dt_iop_module_t *self,
 }
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _rotated_primary_to_display_RGB
   (const dt_iop_order_iccprofile_info_t *work_profile,
    const dt_iop_order_iccprofile_info_t *display_profile,
@@ -217,7 +220,9 @@ static void _rotated_primary_to_display_RGB
   const float scale = 1.f / display_max_value;
   for_each_channel(c) display_RGB[c] = scale * (RGB[c] + display_offset);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _apply_trc_if_nonlinear(const dt_iop_order_iccprofile_info_t *display_profile,
                                     const dt_aligned_pixel_t linear_RGB,
                                     dt_aligned_pixel_t RGB)
@@ -230,7 +235,9 @@ static void _apply_trc_if_nonlinear(const dt_iop_order_iccprofile_info_t *displa
   else
     copy_pixel(RGB, linear_RGB);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _paint_hue_slider(const dt_iop_order_iccprofile_info_t *work_profile,
                               const dt_iop_order_iccprofile_info_t *display_profile,
                               const dt_iop_order_iccprofile_info_t *sRGB_profile,
@@ -253,7 +260,9 @@ static void _paint_hue_slider(const dt_iop_order_iccprofile_info_t *work_profile
   }
   gtk_widget_queue_draw(GTK_WIDGET(slider));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _paint_purity_slider(const dt_iop_order_iccprofile_info_t *work_profile,
                                  const dt_iop_order_iccprofile_info_t *display_profile,
                                  const dt_iop_order_iccprofile_info_t *sRGB_profile,
@@ -285,7 +294,9 @@ static void _paint_purity_slider(const dt_iop_order_iccprofile_info_t *work_prof
   }
   gtk_widget_queue_draw(GTK_WIDGET(purity_slider));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   if(!self->dev || !self->dev->full.pipe) return;
@@ -336,20 +347,26 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
                          0, 5.f, g->achromatic_tint_hue,
                          g->achromatic_tint_purity);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _signal_profile_user_changed(gpointer instance,
                                          const uint8_t profile_type,
                                          dt_iop_module_t *self)
 {
   gui_changed(self, NULL, NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _signal_profile_changed(gpointer instance,
                                     dt_iop_module_t *self)
 {
   gui_changed(self, NULL, NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GtkWidget *_setup_hue_slider(dt_iop_module_t *self,
                                     const char *param_name,
                                     const char *tooltip)
@@ -362,7 +379,9 @@ static GtkWidget *_setup_hue_slider(dt_iop_module_t *self,
   gtk_widget_set_tooltip_text(slider, tooltip);
   return slider;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GtkWidget *_setup_purity_slider(dt_iop_module_t *self,
                                        const char *param_name,
                                        const char *tooltip)
@@ -376,7 +395,9 @@ static GtkWidget *_setup_purity_slider(dt_iop_module_t *self,
   gtk_widget_set_tooltip_text(slider, tooltip);
   return slider;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_primaries_gui_data_t *g = IOP_GUI_ALLOC(primaries);
@@ -408,6 +429,7 @@ void gui_init(dt_iop_module_t *self)
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_CONTROL_PROFILE_CHANGED, _signal_profile_changed);
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_DEVELOP_UI_PIPE_FINISHED, _signal_profile_changed);
 }
+#endif
 
 void init_global(dt_iop_module_so_t *self)
 {

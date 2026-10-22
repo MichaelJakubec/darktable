@@ -36,10 +36,14 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 
 #include "iop/Permutohedral.h"
@@ -219,6 +223,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_tonemapping_gui_data_t *g = IOP_GUI_ALLOC(tonemapping);
@@ -228,6 +233,7 @@ void gui_init(dt_iop_module_t *self)
   g->Fsize = dt_bauhaus_slider_from_params(self, "Fsize");
   dt_bauhaus_slider_set_format(g->Fsize, "%");
 }
+#endif
 
 G_END_DECLS
 

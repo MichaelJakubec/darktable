@@ -30,13 +30,19 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/openmp_maths.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
 #include "gui/draw.h"
 #include "gui/gtk.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/presets.h"
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "libs/colorpicker.h"
+#endif
 
 #define DT_GUI_CURVE_EDITOR_INSET DT_PIXEL_APPLY_DPI(5)
 // special marker value for uninitialized (and thus invalid) levels.  Use this in preference
@@ -45,13 +51,27 @@
 
 DT_MODULE_INTROSPECTION(2, dt_iop_levels_params_t)
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_levels_area_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_levels_motion_notify(GtkWidget *widget, GdkEventMotion *event, dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_levels_button_press(GtkWidget *widget, GdkEventButton *event, dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_levels_button_release(GtkWidget *widget, GdkEventButton *event, dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_levels_leave_notify(GtkWidget *widget, GdkEventCrossing *event, dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_levels_scroll(GtkWidget *widget, GdkEventScroll *event, dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static void dt_iop_levels_autoadjust_callback(GtkRange *range, dt_iop_module_t *self);
+#endif
 //static void dt_iop_levels_mode_callback(GtkWidget *combo, gpointer user_data);
 //static void dt_iop_levels_percentiles_callback(GtkWidget *slider, gpointer user_data);
 
@@ -183,6 +203,7 @@ int legacy_params(dt_iop_module_t *self,
   return 1;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void dt_iop_levels_compute_levels_manual(const uint32_t *histogram, float *levels)
 {
   if(!histogram) return;
@@ -207,6 +228,7 @@ static void dt_iop_levels_compute_levels_manual(const uint32_t *histogram, float
   }
   levels[1] = levels[0] / 2 + levels[2] / 2;
 }
+#endif
 
 static void dt_iop_levels_compute_levels_automatic(dt_dev_pixelpipe_iop_t *piece)
 {
@@ -265,6 +287,7 @@ static void compute_lut(dt_dev_pixelpipe_iop_t *piece)
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -328,6 +351,7 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
     }
   }
 }
+#endif
 
 /*
  * WARNING: unlike commit_params, which is thread safe wrt gui thread and
@@ -545,6 +569,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_levels_gui_data_t *g = self->gui_data;
@@ -558,7 +583,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
       gtk_stack_set_visible_child_name(GTK_STACK(g->mode_stack), "manual");
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_levels_gui_data_t *g = self->gui_data;
@@ -577,6 +604,7 @@ void gui_update(dt_iop_module_t *self)
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -607,6 +635,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_levels_gui_data_t *g = IOP_GUI_ALLOC(levels);
@@ -689,13 +718,17 @@ void gui_init(dt_iop_module_t *self)
 
   dt_gui_box_add(self->widget, g->mode_stack);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_levels_gui_data_t *g = self->gui_data;
   g_list_free(g->modes);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_levels_leave_notify(GtkWidget *widget, GdkEventCrossing *event, dt_iop_module_t *self)
 {
   dt_iop_levels_gui_data_t *g = self->gui_data;
@@ -703,7 +736,9 @@ static gboolean dt_iop_levels_leave_notify(GtkWidget *widget, GdkEventCrossing *
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_levels_area_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   dt_iop_levels_gui_data_t *g = self->gui_data;
@@ -810,6 +845,7 @@ static gboolean dt_iop_levels_area_draw(GtkWidget *widget, cairo_t *crf, dt_iop_
   cairo_surface_destroy(cst);
   return FALSE;
 }
+#endif
 
 /**
  * Move handler_move to new_pos, storing the value in handles,
@@ -824,6 +860,7 @@ static gboolean dt_iop_levels_area_draw(GtkWidget *widget, cairo_t *crf, dt_iop_
  *
  * @return TRUE if the marker were given a new position. FALSE otherwise.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void dt_iop_levels_move_handle(dt_iop_module_t *self, int handle_move, float new_pos, float *levels,
                                       float drag_start_percentage)
 {
@@ -861,7 +898,9 @@ static void dt_iop_levels_move_handle(dt_iop_module_t *self, int handle_move, fl
   if(g->activeToggleButton != NULL) gtk_toggle_button_set_active(g->activeToggleButton, FALSE);
   g->last_picked_color = -1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_levels_motion_notify(GtkWidget *widget, GdkEventMotion *event, dt_iop_module_t *self)
 {
   dt_iop_levels_gui_data_t *g = self->gui_data;
@@ -906,7 +945,9 @@ static gboolean dt_iop_levels_motion_notify(GtkWidget *widget, GdkEventMotion *e
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_levels_button_press(GtkWidget *widget, GdkEventButton *event, dt_iop_module_t *self)
 {
   // set active point
@@ -935,7 +976,9 @@ static gboolean dt_iop_levels_button_press(GtkWidget *widget, GdkEventButton *ev
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_levels_button_release(GtkWidget *widget, GdkEventButton *event, dt_iop_module_t *self)
 {
   if(event->button == GDK_BUTTON_PRIMARY)
@@ -946,7 +989,9 @@ static gboolean dt_iop_levels_button_release(GtkWidget *widget, GdkEventButton *
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_levels_scroll(GtkWidget *widget, GdkEventScroll *event, dt_iop_module_t *self)
 {
   dt_iop_levels_gui_data_t *g = self->gui_data;
@@ -975,7 +1020,9 @@ static gboolean dt_iop_levels_scroll(GtkWidget *widget, GdkEventScroll *event, d
 
   return TRUE; // Ensure that scrolling the widget cannot move side panel
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void dt_iop_levels_autoadjust_callback(GtkRange *range, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -991,6 +1038,7 @@ static void dt_iop_levels_autoadjust_callback(GtkRange *range, dt_iop_module_t *
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

@@ -23,10 +23,14 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 
 // which version of the non-local means code should be used?  0=old (this file), 1=new (src/common/nlmeans_core.c)
@@ -432,6 +436,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_nlmeans_gui_data_t *g = IOP_GUI_ALLOC(nlmeans);
@@ -452,6 +457,7 @@ void gui_init(dt_iop_module_t *self)
   dt_bauhaus_slider_set_format(g->chroma, "%");
   gtk_widget_set_tooltip_text(g->chroma, _("how much to smooth colors"));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

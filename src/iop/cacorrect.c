@@ -28,11 +28,15 @@
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
 #include "develop/imageop_math.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 
 // this is the version of the modules parameters,
@@ -1281,6 +1285,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_cacorrect_gui_data_t *g = self->gui_data;
@@ -1297,7 +1302,9 @@ void gui_update(dt_iop_module_t *self)
   gtk_widget_set_visible(g->iterations, supported);
   dt_bauhaus_combobox_set_from_value(g->iterations, p->iterations);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_cacorrect_gui_data_t *g = IOP_GUI_ALLOC(cacorrect);
@@ -1317,6 +1324,7 @@ void gui_init(dt_iop_module_t *self)
   GtkWidget *label_other = dt_ui_label_new(_("automatic chromatic aberration correction\nonly for Bayer raw files with 3 color channels"));
   gtk_stack_add_named(GTK_STACK(self->widget), label_other, "other");
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

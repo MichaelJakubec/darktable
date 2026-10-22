@@ -25,18 +25,30 @@
 #include "develop/imageop.h"
 #include "develop/borders_helper.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/togglebutton.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "gui/draw.h"
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gdk/gdkkeysyms.h>
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
@@ -719,6 +731,7 @@ void init_presets(dt_iop_module_so_t *self)
                              self->version(), &p, sizeof(p), TRUE, DEVELOP_BLEND_CS_NONE);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -763,7 +776,9 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _aspect_changed(GtkWidget *combo,
                             dt_iop_module_t *self)
 {
@@ -780,7 +795,9 @@ static void _aspect_changed(GtkWidget *combo,
   dt_iop_color_picker_reset(self, TRUE);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _position_h_changed(GtkWidget *combo,
                                 dt_iop_module_t *self)
 {
@@ -797,7 +814,9 @@ static void _position_h_changed(GtkWidget *combo,
   dt_iop_color_picker_reset(self, TRUE);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _position_v_changed(GtkWidget *combo,
                                 dt_iop_module_t *self)
 {
@@ -814,7 +833,9 @@ static void _position_v_changed(GtkWidget *combo,
   dt_iop_color_picker_reset(self, TRUE);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self,
                  GtkWidget *w,
                  void *previous)
@@ -851,7 +872,9 @@ void gui_changed(dt_iop_module_t *self,
     dt_bauhaus_combobox_set(g->pos_v, k);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _colorpick_color_set(GtkColorButton *widget,
                                 dt_iop_module_t *self)
 {
@@ -869,7 +892,9 @@ static void _colorpick_color_set(GtkColorButton *widget,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _frame_colorpick_color_set(GtkColorButton *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -886,7 +911,9 @@ static void _frame_colorpick_color_set(GtkColorButton *widget, dt_iop_module_t *
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_borders_gui_data_t *g = self->gui_data;
@@ -911,7 +938,9 @@ void gui_update(dt_iop_module_t *self)
   };
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(g->frame_colorpick), &fc);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_borders_gui_data_t *g = IOP_GUI_ALLOC(borders);
@@ -1034,6 +1063,7 @@ void gui_init(dt_iop_module_t *self)
                        g->frame_picker, &dt_action_def_toggle);
   dt_gui_box_add(self->widget, dt_gui_hbox(dt_gui_expand(label), g->frame_colorpick, g->frame_picker));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

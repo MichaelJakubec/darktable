@@ -26,7 +26,9 @@
 #include "common/rgb_norms.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "develop/tiling.h"
 
@@ -188,6 +190,7 @@ dt_iop_colorspace_type_t default_colorspace(dt_iop_module_t *self,
   return IOP_CS_RGB;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _turn_select_region_off(struct dt_iop_module_t *self)
 {
   dt_iop_basicadj_gui_data_t *g = self->gui_data;
@@ -197,23 +200,31 @@ static void _turn_select_region_off(struct dt_iop_module_t *self)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g->bt_select_region), g->draw_selected_region);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _turn_selregion_picker_off(struct dt_iop_module_t *self)
 {
   _turn_select_region_off(self);
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   _turn_select_region_off(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _color_picker_callback(GtkWidget *button, dt_iop_module_t *self)
 {
   _turn_select_region_off(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _auto_levels_callback(GtkButton *button, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -239,7 +250,9 @@ static void _auto_levels_callback(GtkButton *button, dt_iop_module_t *self)
 
   dt_dev_reprocess_all(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _select_region_toggled_callback(GtkToggleButton *togglebutton, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -266,7 +279,9 @@ static void _select_region_toggled_callback(GtkToggleButton *togglebutton, dt_io
   g->posx_from = g->posx_to = g->posy_from = g->posy_to = 0;
   dt_iop_gui_leave_critical_section(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _develop_ui_pipe_finished_callback(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_basicadj_params_t *p = self->params;
@@ -301,7 +316,9 @@ static void _develop_ui_pipe_finished_callback(gpointer instance, dt_iop_module_
     dt_iop_gui_leave_critical_section(self);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _signal_profile_user_changed(gpointer instance, uint8_t profile_type, dt_iop_module_t *self)
 {
   if(profile_type == DT_COLORSPACES_PROFILE_TYPE_WORK)
@@ -331,7 +348,9 @@ static void _signal_profile_user_changed(gpointer instance, uint8_t profile_type
     }
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int mouse_moved(dt_iop_module_t *self,
                 const float pzx,
                 const float pzy,
@@ -356,7 +375,9 @@ int mouse_moved(dt_iop_module_t *self,
 
   return handled;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_released(dt_iop_module_t *self,
                     const float x,
                     const float y,
@@ -393,7 +414,9 @@ int button_released(dt_iop_module_t *self,
 
   return handled;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_pressed(dt_iop_module_t *self,
                    const float pzx,
                    const float pzy,
@@ -429,7 +452,9 @@ int button_pressed(dt_iop_module_t *self,
 
   return handled;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_post_expose(dt_iop_module_t *self,
                      cairo_t *cr,
                      const float width,
@@ -461,6 +486,7 @@ void gui_post_expose(dt_iop_module_t *self,
                   (posy_to - posy_from) - 2. / zoom_scale);
   cairo_stroke(cr);
 }
+#endif
 
 void init_global(dt_iop_module_so_t *self)
 {
@@ -479,6 +505,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -501,6 +528,7 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 static inline float get_gamma(const float x, const float gamma)
 {
@@ -581,17 +609,21 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_basicadj_gui_data_t *g = self->gui_data;
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g->bt_select_region), g->draw_selected_region);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, gboolean in)
 {
   if(!in) _turn_select_region_off(self);
 }
+#endif
 
 void change_image(dt_iop_module_t *self)
 {
@@ -604,6 +636,7 @@ void change_image(dt_iop_module_t *self)
   g->button_down = 0;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_basicadj_gui_data_t *g = IOP_GUI_ALLOC(basicadj);
@@ -672,6 +705,7 @@ void gui_init(dt_iop_module_t *self)
   // and profile change
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_CONTROL_PROFILE_USER_CHANGED, _signal_profile_user_changed);
 }
+#endif
 
 static inline int64_t doubleToRawLongBits(double d)
 {

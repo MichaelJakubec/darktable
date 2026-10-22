@@ -29,13 +29,19 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <math.h>
 #include <stdlib.h>
 
@@ -2670,7 +2676,9 @@ static int _get_iso_highlight_preservation_shift(dt_image_t *img)
  * from film strip mode. */
 void reload_defaults(dt_iop_module_t *self)
 {
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_denoiseprofile_gui_data_t *g = self->gui_data;
+#endif
   dt_iop_denoiseprofile_params_t *d = self->default_params;
 
   d->radius = 1.0f;
@@ -2714,6 +2722,7 @@ void reload_defaults(dt_iop_module_t *self)
     d->b[k] = interpolated.b[k];
   }
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(g)
   {
     dt_bauhaus_combobox_clear(g->profile);
@@ -2734,6 +2743,7 @@ void reload_defaults(dt_iop_module_t *self)
 
     gui_update(self);
   }
+#endif
 }
 
 void init_global(dt_iop_module_so_t *self)
@@ -2984,6 +2994,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void profile_callback(GtkWidget *w, dt_iop_module_t *self)
 {
   int i = dt_bauhaus_combobox_get(w);
@@ -2998,7 +3009,9 @@ static void profile_callback(GtkWidget *w, dt_iop_module_t *self)
   }
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_denoiseprofile_params_t *p = self->params;
@@ -3096,7 +3109,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     gtk_widget_set_visible(g->bias, p->use_new_vst && !auto_mode);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_denoiseprofile_gui_data_t *g = self->gui_data;
@@ -3142,7 +3157,9 @@ void gui_update(dt_iop_module_t *self)
 
   gui_changed(self, NULL, NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_denoiseprofile_gui_data_t *g = self->gui_data;
@@ -3162,7 +3179,9 @@ void gui_reset(dt_iop_module_t *self)
                          !p->fix_anscombe_and_nlmeans_norm);
   gtk_widget_set_visible(g->use_new_vst, !p->use_new_vst);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void dt_iop_denoiseprofile_get_params(dt_iop_denoiseprofile_params_t *p,
                                              const int ch,
                                              const double mouse_x,
@@ -3175,7 +3194,9 @@ static void dt_iop_denoiseprofile_get_params(dt_iop_denoiseprofile_params_t *p,
     p->y[ch][k] = (1 - f) * p->y[ch][k] + f * mouse_y;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean denoiseprofile_draw_variance(GtkWidget *widget,
                                              cairo_t *crf,
                                              dt_iop_module_t *self)
@@ -3209,7 +3230,9 @@ static gboolean denoiseprofile_draw_variance(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean denoiseprofile_draw(GtkWidget *widget,
                                     cairo_t *crf,
                                     dt_iop_module_t *self)
@@ -3442,7 +3465,9 @@ static gboolean denoiseprofile_draw(GtkWidget *widget,
   cairo_surface_destroy(cst);
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean denoiseprofile_motion_notify(GtkWidget *widget,
                                              GdkEventMotion *event,
                                              dt_iop_module_t *self)
@@ -3473,7 +3498,9 @@ static gboolean denoiseprofile_motion_notify(GtkWidget *widget,
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean denoiseprofile_button_press(GtkWidget *widget,
                                             GdkEventButton *event,
                                             dt_iop_module_t *self)
@@ -3510,7 +3537,9 @@ static gboolean denoiseprofile_button_press(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean denoiseprofile_button_release(GtkWidget *widget,
                                               GdkEventButton *event,
                                               dt_iop_module_t *self)
@@ -3523,7 +3552,9 @@ static gboolean denoiseprofile_button_release(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean denoiseprofile_leave_notify(GtkWidget *widget,
                                             GdkEventCrossing *event,
                                             dt_iop_module_t *self)
@@ -3533,7 +3564,9 @@ static gboolean denoiseprofile_leave_notify(GtkWidget *widget,
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean denoiseprofile_scrolled(GtkWidget *widget,
                                         GdkEventScroll *event,
                                         dt_iop_module_t *self)
@@ -3555,7 +3588,9 @@ static gboolean denoiseprofile_scrolled(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void denoiseprofile_tab_switch(GtkNotebook *notebook,
                                       GtkWidget *page,
                                       const guint page_num,
@@ -3570,7 +3605,9 @@ static void denoiseprofile_tab_switch(GtkNotebook *notebook,
     g->channel = (dt_iop_denoiseprofile_channel_t)page_num;
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_denoiseprofile_gui_data_t *g = IOP_GUI_ALLOC(denoiseprofile);
@@ -3782,7 +3819,9 @@ void gui_init(dt_iop_module_t *self)
                                 "differences in the images already processed."));
 
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_denoiseprofile_gui_data_t *g = self->gui_data;
@@ -3790,6 +3829,7 @@ void gui_cleanup(dt_iop_module_t *self)
   dt_draw_curve_destroy(g->transition_curve);
   // nothing else necessary, gtk will clean up the slider.
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

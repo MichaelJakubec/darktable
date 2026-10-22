@@ -23,17 +23,31 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/togglebutton.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/drag_and_drop.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
@@ -250,6 +264,7 @@ static void _clear_cache_entry(const dt_iop_module_t *self, const int index)
   gd->cache[index] = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _module_remove_callback(gpointer instance,
                                     dt_iop_module_t *self,
                                     const gpointer user_data)
@@ -260,6 +275,7 @@ static void _module_remove_callback(gpointer instance,
   if(dt_is_valid_imgid(p->imgid))
     dt_overlay_remove(self->dev->image_storage.id, p->imgid);
 }
+#endif
 
 static void _setup_overlay(dt_iop_module_t *self,
                            const dt_dev_pixelpipe_iop_t *piece,
@@ -268,7 +284,9 @@ static void _setup_overlay(dt_iop_module_t *self,
                            size_t *pheight)
 {
   dt_iop_overlay_params_t *p = self->params;
+#ifndef DARKTABLE_ENGINE_ONLY
   const dt_iop_overlay_gui_data_t *g = self->gui_data;
+#endif
   const dt_iop_overlay_data_t *data = piece->data;
 
   dt_imgid_t imgid = data->imgid;
@@ -291,9 +309,12 @@ static void _setup_overlay(dt_iop_module_t *self,
       p->imgid = new_imgid;
       imgid = new_imgid;
       dt_dev_add_history_item(dev, self, TRUE);
+#ifndef DARKTABLE_ENGINE_ONLY
       if(g)
         gtk_widget_queue_draw(GTK_WIDGET(g->area));
+#endif
     }
+#ifndef DARKTABLE_ENGINE_ONLY
     else if(g)
     {
       const gchar *tooltip = g_strdup_printf
@@ -301,12 +322,15 @@ static void _setup_overlay(dt_iop_module_t *self,
            "'%s'" ), p->filename);
       gtk_widget_set_tooltip_text(GTK_WIDGET(g->area), tooltip);
     }
+#endif
   }
 
   if(image_exists)
   {
+#ifndef DARKTABLE_ENGINE_ONLY
     if(g)
       gtk_widget_set_tooltip_text(GTK_WIDGET(g->area), "");
+#endif
 
     uint8_t *buf;
     size_t bw;
@@ -721,6 +745,7 @@ cleanup:
 }
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _draw_thumb(GtkWidget *area,
                             cairo_t *crf,
                             const dt_iop_module_t *self)
@@ -796,7 +821,9 @@ static gboolean _draw_thumb(GtkWidget *area,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _alignment_callback(const GtkWidget *tb, dt_iop_module_t *self)
 {
   const dt_iop_overlay_gui_data_t *g = self->gui_data;
@@ -825,6 +852,7 @@ static void _alignment_callback(const GtkWidget *tb, dt_iop_module_t *self)
   p->alignment = index;
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 void commit_params(dt_iop_module_t *self,
                    dt_iop_params_t *p1,
@@ -862,6 +890,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   const dt_iop_overlay_gui_data_t *g = self->gui_data;
@@ -886,6 +915,7 @@ void gui_update(dt_iop_module_t *self)
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
 void reload_defaults(dt_iop_module_t *self)
 {
@@ -897,6 +927,7 @@ void reload_defaults(dt_iop_module_t *self)
   p->imgid = NO_IMGID;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   const dt_iop_overlay_gui_data_t *g = self->gui_data;
@@ -907,7 +938,9 @@ void gui_reset(dt_iop_module_t *self)
   p->imgid = NO_IMGID;
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self,
                  GtkWidget *w,
                  void *previous)
@@ -933,6 +966,7 @@ void gui_changed(dt_iop_module_t *self,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 void init_global(dt_iop_module_so_t *self)
 {
@@ -970,6 +1004,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _signal_image_changed(gpointer instance, dt_iop_module_t *self)
 {
   if(!self) return;
@@ -977,7 +1012,9 @@ static void _signal_image_changed(gpointer instance, dt_iop_module_t *self)
   for(int k=0; k<MAX_OVERLAY; k++)
     _clear_cache_entry(self, k);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _signal_module_moved(gpointer instance, dt_iop_module_t *self)
 {
   if(!self) return;
@@ -985,7 +1022,9 @@ static void _signal_module_moved(gpointer instance, dt_iop_module_t *self)
   _clear_cache_entry(self, self->multi_priority);
   dt_dev_reprocess_all(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _drag_and_drop_received(GtkWidget *widget,
                                     GdkDragContext *context,
                                     gint x,
@@ -1049,7 +1088,9 @@ static void _drag_and_drop_received(GtkWidget *widget,
   }
   gtk_drag_finish(context, success, FALSE, time);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _on_drag_motion(GtkWidget *widget,
                                 GdkDragContext *dc,
                                 gint x,
@@ -1063,7 +1104,9 @@ static gboolean _on_drag_motion(GtkWidget *widget,
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _on_drag_leave(GtkWidget *widget,
                            GdkDragContext *dc,
                            guint time,
@@ -1074,7 +1117,9 @@ static void _on_drag_leave(GtkWidget *widget,
   g->drop_inside = FALSE;
   gtk_widget_queue_draw(widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_overlay_gui_data_t *g = IOP_GUI_ALLOC(overlay);
@@ -1180,6 +1225,7 @@ void gui_init(dt_iop_module_t *self)
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_DEVELOP_IMAGE_CHANGED, _signal_image_changed);
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_DEVELOP_MODULE_MOVED, _signal_module_moved);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

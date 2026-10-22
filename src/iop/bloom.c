@@ -27,12 +27,16 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
@@ -375,6 +379,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_bloom_gui_data_t *g = IOP_GUI_ALLOC(bloom);
@@ -391,6 +396,7 @@ void gui_init(dt_iop_module_t *self)
   dt_bauhaus_slider_set_format(g->strength, "%");
   gtk_widget_set_tooltip_text(g->strength, _("the strength of bloom"));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

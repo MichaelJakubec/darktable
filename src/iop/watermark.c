@@ -27,22 +27,38 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/togglebutton.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "gui/gtk.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/gtkentry.h"
+#endif
 #include "iop/iop_api.h"
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include <librsvg/rsvg.h>
+#ifdef DARKTABLE_ENGINE_ONLY
+// pango is a direct (non-GTK) dependency; GTK used to provide this include
+#include <pango/pango.h>
+#endif
 // ugh, ugly hack. why do people break stuff all the time?
 #ifndef RSVG_CAIRO_H
 #include <librsvg/rsvg-cairo.h>
@@ -494,6 +510,7 @@ dt_iop_colorspace_type_t default_colorspace(dt_iop_module_t *self,
 }
 
 // sets text / color / font widgets sensitive based on watermark file type
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _text_color_font_set_sensitive(const dt_iop_watermark_gui_data_t *g,
                                            const gchar *filename)
 {
@@ -507,7 +524,9 @@ static void _text_color_font_set_sensitive(const dt_iop_watermark_gui_data_t *g,
     gtk_widget_set_sensitive(GTK_WIDGET(g->fontsel), active);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _combo_box_set_active_text(const dt_iop_watermark_gui_data_t *g,
                                        const gchar *text)
 {
@@ -523,6 +542,7 @@ static void _combo_box_set_active_text(const dt_iop_watermark_gui_data_t *g,
     i++;
   }
 }
+#endif
 
 // replace < and > with &lt; and &gt;. any more? Yes! & -> &amp;
 static gchar *_string_escape(const gchar *string)
@@ -601,8 +621,16 @@ static gchar *_watermark_get_svgdoc(dt_iop_module_t *self,
     pango_font_description_free(font);
 
     // watermark color
+#ifndef DARKTABLE_ENGINE_ONLY
     const GdkRGBA c = { data->color[0], data->color[1], data->color[2], 1.0f };
     g_strlcpy(buffer, gdk_rgba_to_string(&c), sizeof(buffer));
+#else
+    // same text as gdk_rgba_to_string() for an opaque color
+    g_snprintf(buffer, sizeof(buffer), "rgb(%d,%d,%d)",
+               (int)(0.5 + CLAMP((double)data->color[0], 0., 1.) * 255.),
+               (int)(0.5 + CLAMP((double)data->color[1], 0., 1.) * 255.),
+               (int)(0.5 + CLAMP((double)data->color[2], 0., 1.) * 255.));
+#endif
     svgdata = _string_substitute(svgdata, "$(WATERMARK_COLOR)", buffer);
 
     // standard calculation on the remaining variables
@@ -1097,6 +1125,7 @@ void process(dt_iop_module_t *self,
 
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _watermark_callback(GtkWidget *tb,
                                 dt_iop_module_t *self)
 {
@@ -1111,7 +1140,9 @@ static void _watermark_callback(GtkWidget *tb,
   _text_color_font_set_sensitive(g, p->filename);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -1139,7 +1170,9 @@ void color_picker_apply(dt_iop_module_t *self,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _load_watermarks(const char *basedir,
                              dt_iop_watermark_gui_data_t *g)
 {
@@ -1181,7 +1214,9 @@ static void _load_watermarks(const char *basedir,
   g_list_free_full(files, g_free);
   g_free(watermarks_dir);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _refresh_watermarks(dt_iop_module_t *self)
 {
   dt_iop_watermark_gui_data_t *g = self->gui_data;
@@ -1207,13 +1242,17 @@ static void _refresh_watermarks(dt_iop_module_t *self)
 
   g_signal_handlers_unblock_by_func(g->watermarks, _watermark_callback, self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _refresh_callback(GtkWidget *tb,
                               dt_iop_module_t *self)
 {
   _refresh_watermarks(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _alignment_callback(const GtkWidget *tb,
                                 dt_iop_module_t *self)
 {
@@ -1243,7 +1282,9 @@ static void _alignment_callback(const GtkWidget *tb,
   p->alignment = index;
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _text_callback(GtkWidget *entry,
                            dt_iop_module_t *self)
 {
@@ -1253,7 +1294,9 @@ static void _text_callback(GtkWidget *entry,
   dt_conf_set_string("plugins/darkroom/watermark/text", p->text);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _colorpick_color_set(GtkColorButton *widget,
                                  dt_iop_module_t *self)
 {
@@ -1271,7 +1314,9 @@ static void _colorpick_color_set(GtkColorButton *widget,
   dt_conf_set_float("plugins/darkroom/watermark/color_blue", p->color[2]);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _fontsel_callback(GtkWidget *button,
                               dt_iop_module_t *self)
 {
@@ -1284,6 +1329,7 @@ static void _fontsel_callback(GtkWidget *button,
   dt_conf_set_string("plugins/darkroom/watermark/font", p->font);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 void commit_params(dt_iop_module_t *self,
                    dt_iop_params_t *p1,
@@ -1327,6 +1373,7 @@ void cleanup_pipe(dt_iop_module_t *self,
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   const dt_iop_watermark_gui_data_t *g = self->gui_data;
@@ -1356,7 +1403,9 @@ void gui_update(dt_iop_module_t *self)
     gtk_widget_set_visible(GTK_WIDGET(g->scale_svg), FALSE);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self,
                  GtkWidget *w,
                  void *previous)
@@ -1378,6 +1427,7 @@ void gui_changed(dt_iop_module_t *self,
     }
   }
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -1389,6 +1439,7 @@ void init(dt_iop_module_t *self)
   dt_strlcpy_to_fixed(d->font, "DejaVu Sans 10", sizeof(d->font));
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_watermark_gui_data_t *g = IOP_GUI_ALLOC(watermark);
@@ -1547,13 +1598,16 @@ void gui_init(dt_iop_module_t *self)
   g_signal_connect(G_OBJECT(g->fontsel), "font-set",
                    G_CALLBACK(_fontsel_callback), self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_watermark_gui_data_t *g = self->gui_data;
   g_list_free_full(g->watermarks_filenames, g_free);
   g->watermarks_filenames = NULL;
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

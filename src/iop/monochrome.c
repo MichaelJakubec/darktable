@@ -27,11 +27,15 @@
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "gui/gtk.h"
 #include "gui/presets.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "iop/iop_api.h"
 #include <assert.h>
 #include <stdlib.h>
@@ -361,11 +365,13 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_monochrome_gui_data_t *g = self->gui_data;
   g->dragging = FALSE;
 }
+#endif
 
 void init_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelpipe_iop_t *piece)
 {
@@ -378,6 +384,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _monochrome_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE(FALSE);
@@ -437,7 +444,9 @@ static gboolean _monochrome_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker, dt_dev_pixelpipe_t *pipe)
 {
   dt_iop_monochrome_params_t *p = self->params;
@@ -458,7 +467,9 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker, dt_dev_pixelpi
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   dt_control_queue_redraw_widget(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _monochrome_motion_notify(GtkWidget *widget, GdkEventMotion *event, dt_iop_module_t *self)
 {
   dt_iop_monochrome_gui_data_t *g = self->gui_data;
@@ -480,7 +491,9 @@ static gboolean _monochrome_motion_notify(GtkWidget *widget, GdkEventMotion *eve
   }
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _monochrome_button_press(GtkWidget *widget, GdkEventButton *event, dt_iop_module_t *self)
 {
   if(event->button == GDK_BUTTON_PRIMARY)
@@ -514,7 +527,9 @@ static gboolean _monochrome_button_press(GtkWidget *widget, GdkEventButton *even
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _monochrome_button_release(GtkWidget *widget, GdkEventButton *event, dt_iop_module_t *self)
 {
   if(event->button == GDK_BUTTON_PRIMARY)
@@ -528,7 +543,9 @@ static gboolean _monochrome_button_release(GtkWidget *widget, GdkEventButton *ev
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _monochrome_leave_notify(GtkWidget *widget, GdkEventCrossing *event, dt_iop_module_t *self)
 {
   dt_iop_monochrome_gui_data_t *g = self->gui_data;
@@ -536,7 +553,9 @@ static gboolean _monochrome_leave_notify(GtkWidget *widget, GdkEventCrossing *ev
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _monochrome_scrolled(GtkWidget *widget, GdkEventScroll *event, dt_iop_module_t *self)
 {
   dt_iop_monochrome_params_t *p = self->params;
@@ -556,7 +575,9 @@ static gboolean _monochrome_scrolled(GtkWidget *widget, GdkEventScroll *event, d
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_monochrome_gui_data_t *g = IOP_GUI_ALLOC(monochrome);
@@ -589,12 +610,15 @@ void gui_init(dt_iop_module_t *self)
   g->xform = cmsCreateTransform(hLab, TYPE_Lab_DBL, hsRGB, TYPE_RGB_DBL, INTENT_PERCEPTUAL,
                                 0); // cmsFLAGS_NOTPRECALC);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_monochrome_gui_data_t *g = self->gui_data;
   cmsDeleteTransform(g->xform);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

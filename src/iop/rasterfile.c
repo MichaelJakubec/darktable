@@ -37,7 +37,9 @@
 #include "common/ras2vect.h"
 #include "common/utility.h"
 #include "imageio/imageio_png.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 
 #include <dirent.h>
@@ -157,6 +159,7 @@ void modify_roi_in(dt_iop_module_t *self,
   roi_in->height = piece->buf_in.height;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _vectorize_button_clicked(GtkWidget *widget,
                                       dt_iop_module_t *self)
 {
@@ -188,6 +191,7 @@ static void _vectorize_button_clicked(GtkWidget *widget,
     dt_masks_register_forms(dev, forms);
   }
 }
+#endif
 
 static float *_read_rasterfile(char *filename,
                                const dt_iop_rasterfile_mode_t mode,
@@ -309,6 +313,7 @@ static float *_read_rasterfile(char *filename,
   return mask;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _check_extension(const struct dirent *namestruct)
 {
   const char *filename = namestruct->d_name;
@@ -318,7 +323,9 @@ static int _check_extension(const struct dirent *namestruct)
          && (!g_ascii_strcasecmp(p, ".pfm")
              || !g_ascii_strcasecmp(p, ".png"));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_filepath(dt_iop_module_t *self)
 {
   dt_iop_rasterfile_gui_data_t *g = self->gui_data;
@@ -362,7 +369,9 @@ static void _update_filepath(dt_iop_module_t *self)
     }
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _fbutton_clicked(GtkWidget *widget, dt_iop_module_t *self)
 {
   dt_iop_rasterfile_gui_data_t *g = self->gui_data;
@@ -422,7 +431,9 @@ static void _fbutton_clicked(GtkWidget *widget, dt_iop_module_t *self)
   g_free(mfolder);
   g_object_unref(filechooser);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _file_callback(GtkWidget *widget, dt_iop_module_t *self)
 {
   dt_iop_rasterfile_params_t *p = self->params;
@@ -430,6 +441,7 @@ static void _file_callback(GtkWidget *widget, dt_iop_module_t *self)
   dt_strlcpy_to_fixed(p->file, select, sizeof(p->file));
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 static void _clear_cache(dt_rasterfile_cache_t *cache)
 {
@@ -653,6 +665,7 @@ void distort_mask(dt_iop_module_t *self,
     dt_iop_copy_image_roi(out, in, 1, roi_in, roi_out);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self,
                  GtkWidget *w,
                  void *previous)
@@ -678,11 +691,14 @@ void gui_changed(dt_iop_module_t *self,
 
   gtk_widget_set_sensitive(g->vectorize, p->path[0] && p->file[0]);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   gui_changed(self, NULL, NULL);
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -728,11 +744,14 @@ void cleanup(dt_iop_module_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, gboolean in)
 {
   dt_dev_reprocess_center(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_rasterfile_gui_data_t *g = IOP_GUI_ALLOC(rasterfile);
@@ -773,6 +792,7 @@ void gui_init(dt_iop_module_t *self)
                  dt_gui_hbox(g->fbutton, dt_gui_expand(g->file)),
                  g->vectorize);
 }
+#endif
 
 #undef RASTERFILE_MAXFILE
 

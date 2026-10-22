@@ -31,8 +31,12 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/gradientslider.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "gui/gtk.h"
 #include "gui/presets.h"
@@ -176,6 +180,7 @@ typedef struct dt_iop_vector_2d_t
 } dt_iop_vector_2d_t;
 
 // determine the distance between the segment [(xa,ya)(xb,yb)] and the point (xc,yc)
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _dist_seg(
   	const float xa,
         const float ya,
@@ -202,7 +207,9 @@ static float _dist_seg(
   const float un2 = ux * ux + uy * uy;
   return un2 - ah2;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _set_grad_from_points(
 	dt_iop_module_t *self,
         const float xa,
@@ -303,7 +310,9 @@ static int _set_grad_from_points(
 
   return 1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _set_points_from_grad(
 	dt_iop_module_t *self,
         float *xa,
@@ -442,14 +451,18 @@ static int _set_points_from_grad(
   *yb = pts[3] / ht;
   return 1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void _update_saturation_slider_end_color(GtkWidget *slider, const float hue)
 {
   dt_aligned_pixel_t rgb;
   hsl2rgb(rgb, hue, 1.0, 0.5);
   dt_bauhaus_slider_set_stop(slider, 1.0, rgb[0], rgb[1], rgb[2]);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -477,12 +490,16 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_post_expose(dt_iop_module_t *self,
                      cairo_t *cr,
                      const float wd,
@@ -574,7 +591,9 @@ void gui_post_expose(dt_iop_module_t *self,
     dt_draw_set_color_overlay(cr, FALSE, 0.5);
   cairo_stroke(cr);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int mouse_moved(dt_iop_module_t *self,
                 const float pzx,
                 const float pzy,
@@ -632,7 +651,9 @@ int mouse_moved(dt_iop_module_t *self,
   dt_control_queue_redraw_center();
   return handled;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_pressed(dt_iop_module_t *self,
                    const float pzx,
                    const float pzy,
@@ -666,7 +687,9 @@ int button_pressed(dt_iop_module_t *self,
   g->dragging = 0;
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_released(dt_iop_module_t *self,
                     const float pzx,
                     const float pzy,
@@ -704,7 +727,9 @@ int button_released(dt_iop_module_t *self,
   g->dragging = 0;
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int scrolled(
 	dt_iop_module_t *self,
         float x,
@@ -742,6 +767,7 @@ int scrolled(
   }
   return 0;
 }
+#endif
 
 static inline float _compute_density(const float dens, const float length)
 {
@@ -961,6 +987,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   const dt_iop_graduatednd_params_t *p = self->params;
@@ -975,6 +1002,7 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     gtk_widget_queue_draw(g->saturation);
   }
 }
+#endif
 
 void commit_params(dt_iop_module_t *self,
                    dt_iop_params_t *p1,
@@ -1013,6 +1041,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_graduatednd_gui_data_t *g = self->gui_data;
@@ -1023,7 +1052,9 @@ void gui_update(dt_iop_module_t *self)
   g->define = 0;
   _update_saturation_slider_end_color(g->saturation, p->hue);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_graduatednd_gui_data_t *g = IOP_GUI_ALLOC(graduatednd);
@@ -1065,7 +1096,9 @@ void gui_init(dt_iop_module_t *self)
   g->dragging = 0;
   g->define = 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 GSList *mouse_actions(dt_iop_module_t *self)
 {
   GSList *lm = NULL;
@@ -1078,6 +1111,7 @@ GSList *mouse_actions(dt_iop_module_t *self)
                                      _("[%s on line] change hardness"), self->name());
   return lm;
 }
+#endif
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

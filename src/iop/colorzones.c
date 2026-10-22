@@ -23,11 +23,17 @@
 #include "common/math.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "gui/presets.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "libs/colorpicker.h"
+#endif
 
 DT_MODULE_INTROSPECTION(5, dt_iop_colorzones_params_t)
 
@@ -350,21 +356,26 @@ int legacy_params(dt_iop_module_t *self,
   return 1;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _curve_to_mouse(const float x,
                              const float zoom_factor,
                              const float offset)
 {
   return (x - offset) * zoom_factor;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _mouse_to_curve(const float x,
                              const float zoom_factor,
                              const float offset)
 {
   return (x / zoom_factor) + offset;
 }
+#endif
 
 // fills in new parameters based on mouse position (in 0,1)
+#ifndef DARKTABLE_ENGINE_ONLY
 static void dt_iop_colorzones_get_params(dt_iop_colorzones_params_t *p,
                                          dt_iop_colorzones_gui_data_t *g,
                                          const int ch,
@@ -408,6 +419,7 @@ static void dt_iop_colorzones_get_params(dt_iop_colorzones_params_t *p,
     }
   }
 }
+#endif
 
 static float lookup(const float *lut, const float i)
 {
@@ -791,6 +803,7 @@ void init_presets(dt_iop_module_so_t *self)
   dt_database_release_transaction(darktable.db);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _reset_display_selection(dt_iop_module_t *self)
 {
   dt_iop_colorzones_gui_data_t *g = self->gui_data;
@@ -809,6 +822,7 @@ static void _reset_display_selection(dt_iop_module_t *self)
     }
   }
 }
+#endif
 
 static void _reset_nodes(dt_iop_colorzones_params_t *p,
                          const int ch,
@@ -840,6 +854,7 @@ static void _reset_parameters(dt_iop_colorzones_params_t *p,
   p->splines_version = splines_version;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _select_base_display_color(dt_iop_module_t *self,
                                       float *picked_color,
                                       float *picker_min,
@@ -872,7 +887,9 @@ static int _select_base_display_color(dt_iop_module_t *self,
   }
   return select_by_picker;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _draw_color_picker(dt_iop_module_t *self,
                                cairo_t *cr,
                                dt_iop_colorzones_params_t *p,
@@ -1029,6 +1046,7 @@ static void _draw_color_picker(dt_iop_module_t *self,
     cairo_restore(cr);
   }
 }
+#endif
 
 // graph x resulolution
 #define DT_COLORZONES_CELLSI 64
@@ -1056,6 +1074,7 @@ static void _draw_color_picker(dt_iop_module_t *self,
                                                                                                                   \
   cairo_set_source_rgb(cr, rgb[0], rgb[1], rgb[2]);
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _draw_background(cairo_t *cr,
                              dt_iop_colorzones_params_t *p,
                              dt_iop_colorzones_gui_data_t *g,
@@ -1136,7 +1155,9 @@ static void _draw_background(cairo_t *cr,
     }
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_draw_callback(GtkWidget *widget,
                                     cairo_t *crf,
                                     dt_iop_module_t *self)
@@ -1547,7 +1568,9 @@ static gboolean _area_draw_callback(GtkWidget *widget,
   cairo_surface_destroy(cst);
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _bottom_area_draw_callback(GtkWidget *widget,
                                            cairo_t *crf,
                                            dt_iop_module_t *self)
@@ -1651,11 +1674,13 @@ static gboolean _bottom_area_draw_callback(GtkWidget *widget,
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
 #undef COLORZONES_DRAW_BACKGROUD_BOX
 #undef DT_COLORZONES_CELLSI
 #undef DT_COLORZONES_CELLSJ
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _bottom_area_button_press_callback(GtkWidget *widget,
                                                    GdkEventButton *event,
                                                    dt_iop_module_t *self)
@@ -1675,7 +1700,9 @@ static gboolean _bottom_area_button_press_callback(GtkWidget *widget,
 
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _sanity_check(const float x,
                               const int selected,
                               const int nodes,
@@ -1701,7 +1728,9 @@ static gboolean _sanity_check(const float x,
 
   return point_valid;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _move_point_internal(dt_iop_module_t *self,
                                      GtkWidget *widget,
                                      const int node,
@@ -1776,7 +1805,9 @@ static gboolean _move_point_internal(dt_iop_module_t *self,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _delete_node(dt_iop_module_t *self,
                          dt_iop_colorzones_node_t *curve,
                          int *nodes,
@@ -1813,6 +1844,7 @@ static void _delete_node(dt_iop_module_t *self,
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 static inline int _add_node(dt_iop_colorzones_node_t *curve,
                             int *nodes,
@@ -1856,6 +1888,7 @@ static inline int _add_node(dt_iop_colorzones_node_t *curve,
   return selected;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_scrolled_callback(GtkWidget *widget,
                                         GdkEventScroll *event,
                                         dt_iop_module_t *self)
@@ -1918,7 +1951,9 @@ static gboolean _area_scrolled_callback(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_motion_notify_callback(GtkWidget *widget,
                                              GdkEventMotion *event,
                                              dt_iop_module_t *self)
@@ -2087,7 +2122,9 @@ static gboolean _area_motion_notify_callback(GtkWidget *widget,
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_button_press_callback(GtkWidget *widget,
                                             GdkEventButton *event,
                                             dt_iop_module_t *self)
@@ -2226,7 +2263,9 @@ static gboolean _area_button_press_callback(GtkWidget *widget,
 
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_button_release_callback(GtkWidget *widget,
                                               GdkEventButton *event,
                                               dt_iop_module_t *self)
@@ -2241,7 +2280,9 @@ static gboolean _area_button_release_callback(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_leave_notify_callback(GtkWidget *widget,
                                             GdkEventCrossing *event,
                                             dt_iop_module_t *self)
@@ -2256,7 +2297,9 @@ static gboolean _area_leave_notify_callback(GtkWidget *widget,
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_key_press_callback(GtkWidget *widget,
                                          GdkEventKey *event,
                                          dt_iop_module_t *self)
@@ -2295,7 +2338,9 @@ static gboolean _area_key_press_callback(GtkWidget *widget,
   dt_iop_color_picker_reset(self, TRUE);
   return _move_point_internal(self, widget, g->selected, dx, dy, event->state);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _channel_tabs_switch_callback(GtkNotebook *notebook,
                                           GtkWidget *page,
                                           const guint page_num,
@@ -2318,8 +2363,10 @@ static void _channel_tabs_switch_callback(GtkNotebook *notebook,
     dt_iop_refresh_center(self);
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self,
                  GtkWidget *w,
                  void *previous)
@@ -2335,7 +2382,9 @@ void gui_changed(dt_iop_module_t *self,
     gtk_widget_queue_draw(GTK_WIDGET(g->bottom_area));
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _interpolator_callback(GtkWidget *widget,
                                    dt_iop_module_t *self)
 {
@@ -2356,7 +2405,9 @@ static void _interpolator_callback(GtkWidget *widget,
   dt_dev_add_history_item_target(darktable.develop, self, TRUE, widget);
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _edit_by_area_callback(GtkWidget *widget,
                                    dt_iop_module_t *self)
 {
@@ -2367,7 +2418,9 @@ static void _edit_by_area_callback(GtkWidget *widget,
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _display_mask_callback(GtkToggleButton *togglebutton,
                                    dt_iop_module_t *self)
 {
@@ -2392,7 +2445,9 @@ static void _display_mask_callback(GtkToggleButton *togglebutton,
   dt_iop_request_focus(self);
   dt_iop_refresh_center(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -2480,7 +2535,9 @@ void color_picker_apply(dt_iop_module_t *self,
 
   dt_control_queue_redraw_widget(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 const dt_action_element_def_t _action_elements_zones[]
   = { { N_("red"    ), dt_action_effect_value },
       { N_("orange" ), dt_action_effect_value },
@@ -2492,6 +2549,7 @@ const dt_action_element_def_t _action_elements_zones[]
       { N_("magenta"), dt_action_effect_value },
       { NULL } };
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _action_process_zones(gpointer target,
                                    dt_action_element_t element,
                                    dt_action_effect_t effect,
@@ -2556,12 +2614,15 @@ static float _action_process_zones(gpointer target,
 
   return return_value + DT_VALUE_PATTERN_PLUS_MINUS;
 }
+#endif
 
 const dt_action_def_t _action_def_zones
   = { N_("color zones"),
       _action_process_zones,
       _action_elements_zones };
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_colorzones_gui_data_t *g = self->gui_data;
@@ -2578,7 +2639,9 @@ void gui_reset(dt_iop_module_t *self)
 
   _reset_display_selection(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, gboolean in)
 {
   if(!in)
@@ -2587,7 +2650,9 @@ void gui_focus(dt_iop_module_t *self, gboolean in)
     dt_iop_color_picker_reset(self, FALSE);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_colorzones_gui_data_t *g = IOP_GUI_ALLOC(colorzones);
@@ -2739,7 +2804,9 @@ void gui_init(dt_iop_module_t *self)
   g_signal_connect(G_OBJECT(g->interpolator), "value-changed",
                    G_CALLBACK(_interpolator_callback), self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_colorzones_gui_data_t *g = self->gui_data;
@@ -2749,7 +2816,9 @@ void gui_update(dt_iop_module_t *self)
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_colorzones_gui_data_t *g = self->gui_data;
@@ -2758,6 +2827,7 @@ void gui_cleanup(dt_iop_module_t *self)
   for(int ch = 0; ch < DT_IOP_COLORZONES_MAX_CHANNELS; ch++)
     dt_draw_curve_destroy(g->minmax_curve[ch]);
 }
+#endif
 
 void init_global(dt_iop_module_so_t *self)
 {

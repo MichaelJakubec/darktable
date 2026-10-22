@@ -23,11 +23,17 @@
 #include "develop/imageop.h"
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "gui/presets.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "libs/colorpicker.h"
+#endif
 
 #define DT_GUI_CURVE_EDITOR_INSET DT_PIXEL_APPLY_DPI(1)
 #define DT_IOP_RGBCURVE_RES 256
@@ -284,20 +290,25 @@ void init_presets(dt_iop_module_so_t *self)
                              TRUE, DEVELOP_BLEND_CS_RGB_DISPLAY);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _curve_to_mouse(const float x,
                              const float zoom_factor,
                              const float offset)
 {
   return (x - offset) * zoom_factor;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _mouse_to_curve(const float x,
                              const float zoom_factor,
                              const float offset)
 {
   return (x / zoom_factor) + offset;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void picker_scale(const float *const in,
                          float *out,
                          dt_iop_rgbcurve_params_t *p,
@@ -343,7 +354,9 @@ static void picker_scale(const float *const in,
 
   for(int c = 0; c < 3; c++) out[c] = CLIP(out[c]);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _rgbcurve_show_hide_controls(dt_iop_rgbcurve_params_t *p,
                                          dt_iop_rgbcurve_gui_data_t *g)
 {
@@ -353,7 +366,9 @@ static void _rgbcurve_show_hide_controls(dt_iop_rgbcurve_params_t *p,
   gtk_widget_set_visible(g->cmb_preserve_colors,
                          p->curve_autoscale == DT_S_SCALE_AUTOMATIC_RGB);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _is_identity(dt_iop_rgbcurve_params_t *p,
                              rgbcurve_channel_t channel)
 {
@@ -362,7 +377,9 @@ static gboolean _is_identity(dt_iop_rgbcurve_params_t *p,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self,
                  GtkWidget *w,
                  void *previous)
@@ -425,7 +442,9 @@ void gui_changed(dt_iop_module_t *self,
     self->histogram_middle_grey = p->compensate_middle_grey;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void interpolator_callback(GtkWidget *widget,
                                   dt_iop_module_t *self)
 {
@@ -451,7 +470,9 @@ static void interpolator_callback(GtkWidget *widget,
   dt_dev_add_history_item_target(darktable.develop, self, TRUE, widget);
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void tab_switch_callback(GtkNotebook *notebook,
                                 GtkWidget *page,
                                 guint page_num,
@@ -464,6 +485,7 @@ static void tab_switch_callback(GtkNotebook *notebook,
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
 static inline int _add_node(dt_iop_rgbcurve_node_t *curve_nodes,
                             int *nodes,
@@ -531,6 +553,7 @@ static inline int _add_node_from_picker
   return _add_node(p->curve_nodes[ch], &p->curve_num_nodes[ch], x, y);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -582,7 +605,9 @@ void color_picker_apply(dt_iop_module_t *self,
 
   dt_control_queue_redraw_widget(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _sanity_check(const float x,
                               const int selected,
                               const int nodes,
@@ -607,7 +632,9 @@ static gboolean _sanity_check(const float x,
 
   return point_valid;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _move_point_internal(dt_iop_module_t *self,
                                      GtkWidget *widget,
                                      float dx,
@@ -639,9 +666,11 @@ static gboolean _move_point_internal(dt_iop_module_t *self,
 
   return TRUE;
 }
+#endif
 
 #define RGBCURVE_DEFAULT_STEP (0.001f)
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_scrolled_callback(GtkWidget *widget,
                                         GdkEventScroll *event,
                                         dt_iop_module_t *self)
@@ -697,7 +726,9 @@ static gboolean _area_scrolled_callback(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_key_press_callback(GtkWidget *widget,
                                          GdkEventKey *event,
                                          dt_iop_module_t *self)
@@ -742,9 +773,11 @@ static gboolean _area_key_press_callback(GtkWidget *widget,
   dt_iop_color_picker_reset(self, TRUE);
   return _move_point_internal(self, widget, dx, dy, event->state);
 }
+#endif
 
 #undef RGBCURVE_DEFAULT_STEP
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_leave_notify_callback(GtkWidget *widget,
                                             GdkEventCrossing *event,
                                             dt_iop_module_t *self)
@@ -756,7 +789,9 @@ static gboolean _area_leave_notify_callback(GtkWidget *widget,
   gtk_widget_queue_draw(widget);
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_draw_callback(GtkWidget *widget,
                                     cairo_t *crf,
                                     dt_iop_module_t *self)
@@ -1164,7 +1199,9 @@ finally:
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_motion_notify_callback(GtkWidget *widget,
                                              GdkEventMotion *event,
                                              dt_iop_module_t *self)
@@ -1287,7 +1324,9 @@ finally:
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_button_press_callback(GtkWidget *widget,
                                             GdkEventButton *event,
                                             dt_iop_module_t *self)
@@ -1430,7 +1469,9 @@ static gboolean _area_button_press_callback(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_rgbcurve_gui_data_t *g = self->gui_data;
@@ -1445,6 +1486,7 @@ void gui_reset(dt_iop_module_t *self)
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
 void change_image(dt_iop_module_t *self)
 {
@@ -1460,6 +1502,7 @@ void change_image(dt_iop_module_t *self)
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_rgbcurve_gui_data_t *g = IOP_GUI_ALLOC(rgbcurve);
@@ -1568,7 +1611,9 @@ void gui_init(dt_iop_module_t *self)
   gtk_widget_set_tooltip_text(g->cmb_preserve_colors,
                               _("method to preserve colors when applying contrast"));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_rgbcurve_gui_data_t *g = self->gui_data;
@@ -1585,7 +1630,9 @@ void gui_update(dt_iop_module_t *self)
   // that's all, gui curve is read directly from params during expose event.
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_rgbcurve_gui_data_t *g = self->gui_data;
@@ -1593,6 +1640,7 @@ void gui_cleanup(dt_iop_module_t *self)
   for(int k = 0; k < DT_IOP_RGBCURVE_MAX_CHANNELS; k++)
     dt_draw_curve_destroy(g->minmax_curve[k]);
 }
+#endif
 
 void init_pipe(dt_iop_module_t *self,
                dt_dev_pixelpipe_t *pipe,

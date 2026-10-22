@@ -19,7 +19,9 @@
 #include "bauhaus/bauhaus.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
@@ -27,7 +29,9 @@
 #include "common/gaussian.h"
 #include "common/math.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 
 DT_MODULE_INTROSPECTION(1, dt_iop_blurs_params_t)
@@ -864,6 +868,7 @@ void cleanup_global(dt_iop_module_so_t *self)
 #endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   const dt_iop_blurs_params_t *p = self->params;
@@ -913,7 +918,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     gtk_widget_queue_draw(GTK_WIDGET(g->area));
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _dt_iop_tonecurve_draw(GtkWidget *widget, cairo_t *crf, const dt_iop_module_t *self)
 {
   dt_iop_blurs_gui_data_t *g = self->gui_data;
@@ -953,13 +960,17 @@ static gboolean _dt_iop_tonecurve_draw(GtkWidget *widget, cairo_t *crf, const dt
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
 // FIXME check why needed
   gui_changed(self, NULL, NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_blurs_gui_data_t *g = IOP_GUI_ALLOC(blurs);
@@ -1016,12 +1027,15 @@ void gui_init(dt_iop_module_t *self)
   gtk_widget_set_tooltip_text(g->offset, _("select which portion of the path to use,\n"
                                            "allowing the path to become asymmetric"));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   const dt_iop_blurs_gui_data_t *g = self->gui_data;
   if(g->img) dt_free_align(g->img);
 }
+#endif
 
 
 // clang-format off

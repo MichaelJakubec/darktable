@@ -16,9 +16,7 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
-#endif
 #include "common/custom_primaries.h"
 #include "common/math.h"
 #include "common/matrices.h"

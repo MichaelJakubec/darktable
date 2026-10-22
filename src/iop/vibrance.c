@@ -26,10 +26,14 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 
 DT_MODULE_INTROSPECTION(2, dt_iop_vibrance_params_t)
@@ -183,13 +187,16 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_vibrance_gui_data_t *g = self->gui_data;
   dt_iop_vibrance_params_t *p = self->params;
   dt_bauhaus_slider_set(g->amount_scale, p->amount);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_vibrance_gui_data_t *g = IOP_GUI_ALLOC(vibrance);
@@ -198,6 +205,7 @@ void gui_init(dt_iop_module_t *self)
   dt_bauhaus_slider_set_format(g->amount_scale, "%");
   gtk_widget_set_tooltip_text(g->amount_scale, _("the amount of vibrance"));
 }
+#endif
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

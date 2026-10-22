@@ -22,7 +22,9 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
@@ -31,7 +33,9 @@
 #endif
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
@@ -214,13 +218,16 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void update_saturation_slider_end_color(GtkWidget *slider, float hue)
 {
   dt_aligned_pixel_t rgb;
   hsl2rgb(rgb, hue, 1.0, 0.5);
   dt_bauhaus_slider_set_stop(slider, 1.0, rgb[0], rgb[1], rgb[2]);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_colorize_params_t *p = self->params;
@@ -232,7 +239,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     gtk_widget_queue_draw(g->saturation);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -265,11 +274,14 @@ void color_picker_apply(dt_iop_module_t *self,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
 void commit_params(dt_iop_module_t *self,
                    dt_iop_params_t *p1,
@@ -321,6 +333,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_colorize_gui_data_t *g = self->gui_data;
@@ -330,6 +343,7 @@ void gui_update(dt_iop_module_t *self)
 
   update_saturation_slider_end_color(g->saturation, p->hue);
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -338,6 +352,7 @@ void init(dt_iop_module_t *self)
   ((dt_iop_colorize_params_t *)self->default_params)->version = self->version();
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_colorize_gui_data_t *g = IOP_GUI_ALLOC(colorize);
@@ -369,6 +384,7 @@ void gui_init(dt_iop_module_t *self)
   dt_bauhaus_slider_set_format(g->source_mix, "%");
   gtk_widget_set_tooltip_text(g->source_mix, _("mix value of source lightness"));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

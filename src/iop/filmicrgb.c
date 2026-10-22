@@ -39,11 +39,21 @@
 #include "develop/imageop_math.h"
 #include "develop/noise_generator.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/expander.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/paint.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "gui/gtk.h"
 #include "gui/presets.h"
@@ -220,10 +230,14 @@ typedef struct dt_iop_filmicrgb_gui_button_data_t
 
   // properties
   gint mouse_hover; // whether it should be acted on / mouse is over it
+#ifndef DARKTABLE_ENGINE_ONLY
   GtkStateFlags state;
+#endif
 
   // icon drawing, function as set in dtgtk/paint.h
+#ifndef DARKTABLE_ENGINE_ONLY
   DTGTKCairoPaintIconFunc icon;
+#endif
 
 } dt_iop_filmicrgb_gui_button_data_t;
 
@@ -276,8 +290,12 @@ typedef struct dt_iop_filmicrgb_gui_data_t
   int inset;
   int inner_padding;
 
+#ifndef DARKTABLE_ENGINE_ONLY
   GtkAllocation allocation;
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
   PangoRectangle ink;
+#endif
   GtkStyleContext *context;
 } dt_iop_filmicrgb_gui_data_t;
 
@@ -2579,6 +2597,7 @@ static inline void _compute_output_power(const dt_iop_module_t *self,
            min, max);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_grey(dt_iop_module_t *self)
 {
   dt_iop_filmicrgb_params_t *p = self->params;
@@ -2605,7 +2624,9 @@ static void apply_auto_grey(dt_iop_module_t *self)
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_black(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -2631,8 +2652,10 @@ static void apply_auto_black(dt_iop_module_t *self)
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_white_point_source(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -2658,7 +2681,9 @@ static void apply_auto_white_point_source(dt_iop_module_t *self)
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_autotune(dt_iop_module_t *self)
 {
   const dt_iop_filmicrgb_gui_data_t *g = self->gui_data;
@@ -2697,7 +2722,9 @@ static void apply_autotune(dt_iop_module_t *self)
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -2712,7 +2739,9 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
   else if(picker == g->auto_button)
     apply_autotune(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void show_mask_callback(GtkToggleButton *button, GdkEventButton *event, const dt_iop_module_t *self)
 {
   DT_TRY_GUI_UPDATE();
@@ -2722,6 +2751,7 @@ static void show_mask_callback(GtkToggleButton *button, GdkEventButton *event, c
   DT_LEAVE_GUI_UPDATE();
   dt_dev_reprocess_center(self->dev);
 }
+#endif
 
 #define ORDER_4 5
 #define ORDER_3 4
@@ -3101,6 +3131,7 @@ void commit_params(dt_iop_module_t *self, dt_iop_params_t *p1, dt_dev_pixelpipe_
   d->enable_highlight_reconstruction = p->enable_highlight_reconstruction;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, gboolean in)
 {
   dt_iop_filmicrgb_gui_data_t *g = self->gui_data;
@@ -3114,6 +3145,7 @@ void gui_focus(dt_iop_module_t *self, gboolean in)
     if(mask_was_shown) dt_dev_reprocess_center(self->dev);
   }
 }
+#endif
 
 void init_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelpipe_iop_t *piece)
 {
@@ -3126,6 +3158,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_filmicrgb_gui_data_t *g = self->gui_data;
@@ -3147,6 +3180,7 @@ void gui_update(dt_iop_module_t *self)
 
   gui_changed(self, NULL, NULL);
 }
+#endif
 
 void reload_defaults(dt_iop_module_t *self)
 {
@@ -3241,10 +3275,12 @@ void cleanup_global(dt_iop_module_so_t *self)
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
 #define LOGBASE 20.f
 
@@ -3275,6 +3311,7 @@ static inline void dt_cairo_draw_arrow(cairo_t *cr, const double origin_x, const
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void filmic_gui_draw_icon(cairo_t *cr, const dt_iop_filmicrgb_gui_button_data_t *button,
                           const dt_iop_filmicrgb_gui_data_t *g)
 {
@@ -3313,8 +3350,10 @@ void filmic_gui_draw_icon(cairo_t *cr, const dt_iop_filmicrgb_gui_button_data_t 
   button->icon(cr, -scale * button->w / 2., -scale * button->h / 2., scale * button->w, scale * button->h, 0, NULL);
   cairo_restore(cr);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   dt_iop_filmicrgb_params_t *p = self->params;
@@ -4163,7 +4202,9 @@ static gboolean dt_iop_tonecurve_draw(GtkWidget *widget, cairo_t *crf, dt_iop_mo
   pango_font_description_free(desc);
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_button_press(GtkWidget *widget, const GdkEventButton *event, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE(TRUE);
@@ -4249,7 +4290,9 @@ static gboolean area_button_press(GtkWidget *widget, const GdkEventButton *event
 
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_enter_leave_notify(GtkWidget *widget, const GdkEventCrossing *event, const dt_iop_module_t *self)
 {
   dt_iop_filmicrgb_gui_data_t *g = self->gui_data;
@@ -4257,7 +4300,9 @@ static gboolean area_enter_leave_notify(GtkWidget *widget, const GdkEventCrossin
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_motion_notify(GtkWidget *widget, const GdkEventMotion *event, const dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE(1);
@@ -4334,7 +4379,9 @@ static gboolean area_motion_notify(GtkWidget *widget, const GdkEventMotion *even
     return FALSE;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_filmicrgb_gui_data_t *g = IOP_GUI_ALLOC(filmicrgb);
@@ -4626,7 +4673,9 @@ void gui_init(dt_iop_module_t *self)
   // start building top level widget
   self->widget = dt_gui_vbox(g->area, g->notebook);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_filmicrgb_params_t *p = self->params;
@@ -4749,6 +4798,7 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

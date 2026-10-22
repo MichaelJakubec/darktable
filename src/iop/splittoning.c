@@ -24,16 +24,26 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/gradientslider.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "gui/color_picker_proxy.h"
 #include "iop/iop_api.h"
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
@@ -250,6 +260,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void update_colorpicker_color(GtkWidget *colorpicker, float hue, float sat)
 {
   dt_aligned_pixel_t rgb;
@@ -258,14 +269,18 @@ static inline void update_colorpicker_color(GtkWidget *colorpicker, float hue, f
   GdkRGBA color = (GdkRGBA){.red = rgb[0], .green = rgb[1], .blue = rgb[2], .alpha = 1.0 };
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(colorpicker), &color);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void update_saturation_slider_end_color(GtkWidget *slider, float hue)
 {
   dt_aligned_pixel_t rgb;
   hsl2rgb(rgb, hue, 1.0, 0.5);
   dt_bauhaus_slider_set_stop(slider, 1.0, rgb[0], rgb[1], rgb[2]);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void update_balance_slider_colors(
     GtkWidget *slider,
     float shadow_hue,
@@ -285,7 +300,9 @@ static inline void update_balance_slider_colors(
 
   gtk_widget_queue_draw(GTK_WIDGET(slider));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_splittoning_params_t *p = self->params;
@@ -316,7 +333,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     }
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void colorpick_callback(GtkColorButton *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -350,7 +369,9 @@ static void colorpick_callback(GtkColorButton *widget, dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -403,6 +424,7 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 void commit_params(dt_iop_module_t *self, dt_iop_params_t *p1, dt_dev_pixelpipe_t *pipe,
                    dt_dev_pixelpipe_iop_t *piece)
@@ -429,6 +451,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_splittoning_gui_data_t *g = self->gui_data;
@@ -448,7 +471,9 @@ void gui_update(dt_iop_module_t *self)
 
   update_balance_slider_colors(g->balance_scale, p->shadow_hue, p->highlight_hue);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void gui_init_section(dt_iop_module_t *self,
                                     const char *section,
                                     GtkWidget *slider_box,
@@ -480,7 +505,9 @@ static inline void gui_init_section(dt_iop_module_t *self,
   dt_gui_box_add(self->widget, dt_ui_section_label_new(Q_(section)),
                  dt_gui_hbox(dt_gui_expand(slider_box), *picker));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_splittoning_gui_data_t *g = IOP_GUI_ALLOC(splittoning);
@@ -528,6 +555,7 @@ void gui_init(dt_iop_module_t *self)
   dt_bauhaus_slider_set_format(g->compress_scale, "%");
   gtk_widget_set_tooltip_text(g->compress_scale, _("compress the effect on highlights/shadows and\npreserve mid-tones"));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

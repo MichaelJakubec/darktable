@@ -27,8 +27,12 @@
 #include "develop/imageop_math.h"
 #include "develop/openmp_maths.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
@@ -39,7 +43,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 
 DT_MODULE_INTROSPECTION(2, dt_iop_colorchecker_params_t)
@@ -974,11 +980,14 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void _colorchecker_rebuild_patch_list(dt_iop_module_t *self)
 {
   dt_iop_colorchecker_params_t *p = self->params;
@@ -1005,7 +1014,9 @@ void _colorchecker_rebuild_patch_list(dt_iop_module_t *self)
     g->drawn_patch = dt_bauhaus_combobox_get(g->combobox_patch);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void _colorchecker_update_sliders(dt_iop_module_t *self)
 {
   dt_iop_colorchecker_params_t *p = self->params;
@@ -1042,7 +1053,9 @@ void _colorchecker_update_sliders(dt_iop_module_t *self)
     dt_bauhaus_slider_set(g->scale_C, Cout-Cin);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_colorchecker_gui_data_t *g = self->gui_data;
@@ -1052,6 +1065,7 @@ void gui_update(dt_iop_module_t *self)
 
   gtk_widget_queue_draw(g->area);
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -1088,6 +1102,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -1126,7 +1141,9 @@ void color_picker_apply(dt_iop_module_t *self,
     gtk_widget_queue_draw(g->area);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void target_L_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   dt_iop_colorchecker_params_t *p = self->params;
@@ -1141,7 +1158,9 @@ static void target_L_callback(GtkWidget *slider, dt_iop_module_t *self)
       dt_bauhaus_slider_get(slider);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void target_a_callback(GtkWidget *slider,
                               dt_iop_module_t *self)
 {
@@ -1180,7 +1199,9 @@ static void target_a_callback(GtkWidget *slider,
   }
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void target_b_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   dt_iop_colorchecker_params_t *p = self->params;
@@ -1216,7 +1237,9 @@ static void target_b_callback(GtkWidget *slider, dt_iop_module_t *self)
   }
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void target_C_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   dt_iop_colorchecker_params_t *p = self->params;
@@ -1262,7 +1285,9 @@ static void target_C_callback(GtkWidget *slider, dt_iop_module_t *self)
   }
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void target_callback(GtkWidget *combo,
                             dt_iop_module_t *self)
 {
@@ -1276,7 +1301,9 @@ static void target_callback(GtkWidget *combo,
   dt_iop_color_picker_reset(self, TRUE);
   gtk_widget_queue_draw(g->area);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void patch_callback(GtkWidget *combo, dt_iop_module_t *self)
 {
   dt_iop_colorchecker_gui_data_t *g = self->gui_data;
@@ -1289,7 +1316,9 @@ static void patch_callback(GtkWidget *combo, dt_iop_module_t *self)
   dt_iop_color_picker_reset(self, TRUE);
   gtk_widget_queue_draw(g->area);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean checker_draw(GtkWidget *widget,
                              cairo_t *crf,
                              dt_iop_module_t *self)
@@ -1378,7 +1407,9 @@ static gboolean checker_draw(GtkWidget *widget,
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean checker_motion_notify(
     GtkWidget *widget,
     GdkEventMotion *event,
@@ -1417,7 +1448,9 @@ static gboolean checker_motion_notify(
   gtk_widget_set_tooltip_text(g->area, tooltip);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean checker_button_press(
     GtkWidget *widget, GdkEventButton *event,
     dt_iop_module_t *self)
@@ -1525,7 +1558,9 @@ static gboolean checker_button_press(
   dt_bauhaus_combobox_set(g->combobox_patch, patch);
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_colorchecker_gui_data_t *g = IOP_GUI_ALLOC(colorchecker);
@@ -1628,6 +1663,7 @@ void gui_init(dt_iop_module_t *self)
   g_signal_connect(G_OBJECT(g->combobox_target), "value-changed",
                    G_CALLBACK(target_callback), self);
 }
+#endif
 
 #undef MAX_PATCHES
 

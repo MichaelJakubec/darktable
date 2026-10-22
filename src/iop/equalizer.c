@@ -207,11 +207,13 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   // nothing to do, gui curve is read directly from params during expose event.
   // gtk_widget_queue_draw(self->widget);
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -229,6 +231,7 @@ void init(dt_iop_module_t *self)
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   IOP_GUI_ALLOC(equalizer);
@@ -236,6 +239,7 @@ void gui_init(dt_iop_module_t *self)
   self->widget = dt_ui_label_new(_("this module will be removed in the future\nand is only here so you can "
                                    "switch it off\nand move to the new equalizer."));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

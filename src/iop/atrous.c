@@ -26,8 +26,12 @@
 #include "develop/imageop_gui.h"
 #include "develop/imageop_math.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/draw.h"
 #include "gui/gtk.h"
 #include "gui/presets.h"
@@ -1017,6 +1021,7 @@ void init_presets(dt_iop_module_so_t *self)
   dt_database_release_transaction(darktable.db);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void reset_mix(dt_iop_module_t *self)
 {
   dt_iop_atrous_gui_data_t *g = self->gui_data;
@@ -1027,15 +1032,19 @@ static void reset_mix(dt_iop_module_t *self)
   DT_LEAVE_GUI_UPDATE();
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   reset_mix(self);
 }
+#endif
 
 
 // gui stuff:
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_enter_leave_notify(GtkWidget *widget,
                                         GdkEventCrossing *event,
                                         dt_iop_module_t *self)
@@ -1048,8 +1057,10 @@ static gboolean area_enter_leave_notify(GtkWidget *widget,
   gtk_widget_queue_draw(widget);
   return FALSE;
 }
+#endif
 
 // fills in new parameters based on mouse position (in 0,1)
+#ifndef DARKTABLE_ENGINE_ONLY
 static void get_params(dt_iop_atrous_params_t *p,
                        const int ch,
                        const double mouse_x,
@@ -1062,7 +1073,9 @@ static void get_params(dt_iop_atrous_params_t *p,
     p->y[ch][k] = MAX(0.0f, MIN(1.0f, (1 - f) * p->y[ch][k] + f * mouse_y));
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_draw(GtkWidget *widget,
                           cairo_t *crf,
                           dt_iop_module_t *self)
@@ -1382,7 +1395,9 @@ static gboolean area_draw(GtkWidget *widget,
   cairo_surface_destroy(cst);
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_motion_notify(GtkWidget *widget,
                                    GdkEventMotion *event,
                                    dt_iop_module_t *self)
@@ -1465,7 +1480,9 @@ static gboolean area_motion_notify(GtkWidget *widget,
   }
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_button_press(GtkWidget *widget,
                                   GdkEventButton *event,
                                   dt_iop_module_t *self)
@@ -1503,7 +1520,9 @@ static gboolean area_button_press(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_button_release(GtkWidget *widget,
                                     GdkEventButton *event,
                                     dt_iop_module_t *self)
@@ -1517,7 +1536,9 @@ static gboolean area_button_release(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_scrolled(GtkWidget *widget,
                               GdkEventScroll *event,
                               dt_iop_module_t *self)
@@ -1537,7 +1558,9 @@ static gboolean area_scrolled(GtkWidget *widget,
   }
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void tab_switch(GtkNotebook *notebook,
                        GtkWidget *page,
                        const guint page_num,
@@ -1548,7 +1571,9 @@ static void tab_switch(GtkNotebook *notebook,
   g->channel = g->channel2 = (atrous_channel_t)page_num;
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void mix_callback(GtkWidget *slider,
                          dt_iop_module_t *self)
 {
@@ -1559,7 +1584,9 @@ static void mix_callback(GtkWidget *slider,
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
   dt_dev_add_history_item_target(darktable.develop, self, TRUE, slider);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 enum
 {
   DT_ACTION_EFFECT_ATROUS_RESET = DT_ACTION_EFFECT_DEFAULT_KEY,
@@ -1591,6 +1618,7 @@ const dt_action_element_def_t _action_elements_equalizer[]
       { N_("finest"  ), dt_action_effect_equalizer },
       { } };
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _action_process_equalizer(gpointer target,
                                        const dt_action_element_t element,
                                        const dt_action_effect_t effect,
@@ -1711,6 +1739,7 @@ static float _action_process_equalizer(gpointer target,
     : p->y[ch1][node] != d->y[ch1][node] || p->y[ch2][node] != d->y[ch2][node]
     : g->mouse_radius + DT_VALUE_PATTERN_PERCENTAGE;
 }
+#endif
 
 static const dt_shortcut_fallback_t _action_fallbacks_equalizer[]
   = { { .mods = GDK_SHIFT_MASK,   .effect = DT_ACTION_EFFECT_RAISE },
@@ -1722,21 +1751,27 @@ const dt_action_def_t _action_def_equalizer
       _action_process_equalizer,
       _action_elements_equalizer,
       _action_fallbacks_equalizer };
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _ui_pipe_done(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_atrous_gui_data_t *g = self->gui_data;
   if(g && !DT_IN_GUI_UPDATE() && self->enabled && self->expanded)
     gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, const gboolean in)
 {
   dt_iop_atrous_gui_data_t *g = self->gui_data;
   if(in && g)
     gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_atrous_gui_data_t *g = IOP_GUI_ALLOC(atrous);
@@ -1802,13 +1837,16 @@ void gui_init(dt_iop_module_t *self)
   g_signal_connect(G_OBJECT(g->mix), "value-changed", G_CALLBACK(mix_callback), self);
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_DEVELOP_UI_PIPE_FINISHED, _ui_pipe_done);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_atrous_gui_data_t *g = self->gui_data;
   dt_conf_set_int("plugins/darkroom/atrous/gui_channel", g->channel);
   dt_draw_curve_destroy(g->minmax_curve);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

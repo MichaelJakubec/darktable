@@ -24,12 +24,16 @@
 #include "common/dttypes.h"
 #include "develop/develop.h"
 #include "develop/imageop.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
@@ -249,6 +253,7 @@ void process(dt_iop_module_t *self,
 #undef BINS
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void radius_callback(GtkWidget *slider,
                             dt_iop_module_t *self)
 {
@@ -257,7 +262,9 @@ static void radius_callback(GtkWidget *slider,
   p->radius = dt_bauhaus_slider_get(slider);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void slope_callback(GtkWidget *slider,
                            dt_iop_module_t *self)
 {
@@ -266,6 +273,7 @@ static void slope_callback(GtkWidget *slider,
   p->slope = dt_bauhaus_slider_get(slider);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 
 
@@ -296,6 +304,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_rlce_gui_data_t *g = self->gui_data;
@@ -303,6 +312,7 @@ void gui_update(dt_iop_module_t *self)
   dt_bauhaus_slider_set(g->scale1, p->radius);
   dt_bauhaus_slider_set(g->scale2, p->slope);
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -314,6 +324,7 @@ void init(dt_iop_module_t *self)
   *((dt_iop_rlce_params_t *)self->default_params) = (dt_iop_rlce_params_t){ 64, 1.25 };
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_rlce_gui_data_t *g = IOP_GUI_ALLOC(rlce);
@@ -333,6 +344,7 @@ void gui_init(dt_iop_module_t *self)
 
   self->widget = dt_gui_vbox(g->scale1, g->scale2);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

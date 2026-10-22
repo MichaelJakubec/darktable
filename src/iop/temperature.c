@@ -22,9 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
-#endif
 #include "common/colorspaces_inline_conversions.h"
 #include "common/darktable.h"
 #include "common/opencl.h"

@@ -28,15 +28,23 @@
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/guides.h"
+#endif
 #include "gui/presets.h"
 #include "iop/iop_api.h"
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gdk/gdkkeysyms.h>
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
@@ -97,7 +105,9 @@ typedef enum _grab_region_t
 } _grab_region_t;
 
 /* calculate the aspect ratios for current image */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void keystone_type_populate(dt_iop_module_t *self, gboolean with_applied, int select);
+#endif
 
 int legacy_params(dt_iop_module_t *self,
                   const void *const old_params,
@@ -318,7 +328,9 @@ typedef struct dt_iop_clipping_global_data_t
   int kernel_clip_rotate_lanczos3;
 } dt_iop_clipping_global_data_t;
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void commit_box(dt_iop_module_t *self, dt_iop_clipping_gui_data_t *g, dt_iop_clipping_params_t *p);
+#endif
 
 
 // helper to count corners in for loops:
@@ -680,6 +692,7 @@ void distort_mask(dt_iop_module_t *self,
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _iop_clipping_set_max_clip(dt_iop_module_t *self)
 {
   dt_iop_clipping_gui_data_t *g = self->gui_data;
@@ -718,6 +731,7 @@ static int _iop_clipping_set_max_clip(dt_iop_module_t *self)
   g->clip_max_pipe_hash = self->dev->preview_pipe->backbuf_hash;
   return 1;
 }
+#endif
 
 void modify_roi_out(dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, dt_iop_roi_t *roi_out,
                     const dt_iop_roi_t *roi_in_orig)
@@ -1337,6 +1351,7 @@ void commit_params(dt_iop_module_t *self, dt_iop_params_t *p1, dt_dev_pixelpipe_
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _event_preview_updated_callback(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_clipping_gui_data_t *g = self->gui_data;
@@ -1346,7 +1361,9 @@ static void _event_preview_updated_callback(gpointer instance, dt_iop_module_t *
   // force max size to be recomputed
   g->clip_max_pipe_hash = DT_INVALID_HASH;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, gboolean in)
 {
   dt_iop_clipping_gui_data_t *g = self->gui_data;
@@ -1388,6 +1405,7 @@ void gui_focus(dt_iop_module_t *self, gboolean in)
   else if(in)
     g->preview_ready = TRUE;
 }
+#endif
 
 
 void init_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelpipe_iop_t *piece)
@@ -1401,6 +1419,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _ratio_get_aspect(dt_iop_module_t *self, GtkWidget *combo)
 {
   dt_iop_clipping_params_t *p = self->params;
@@ -1532,7 +1551,9 @@ static float _ratio_get_aspect(dt_iop_module_t *self, GtkWidget *combo)
   else
     return dn / nn;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_box_aspect(dt_iop_module_t *self, const _grab_region_t grab)
 {
   dt_iop_clipping_gui_data_t *g = self->gui_data;
@@ -1639,6 +1660,7 @@ static void apply_box_aspect(dt_iop_module_t *self, const _grab_region_t grab)
     g->clip_h = fminf(clip_h, 1.0f);
   }
 }
+#endif
 
 void reload_defaults(dt_iop_module_t *self)
 {
@@ -1652,6 +1674,7 @@ void reload_defaults(dt_iop_module_t *self)
   d->ch = img->usercrop[2];
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _float_to_fract(const char *num, int *n, int *d)
 {
   char tnum[100];
@@ -1687,7 +1710,9 @@ static void _float_to_fract(const char *num, int *n, int *d)
 
   *n = atoi(tnum);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void aspect_presets_changed(GtkWidget *combo, dt_iop_module_t *self)
 {
   const dt_iop_clipping_gui_data_t *g = self->gui_data;
@@ -1823,7 +1848,9 @@ static void aspect_presets_changed(GtkWidget *combo, dt_iop_module_t *self)
 
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_clipping_gui_data_t *g = self->gui_data;
@@ -1860,7 +1887,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 
   if(w == g->crop_auto) dt_control_queue_redraw_center();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_clipping_gui_data_t *g = self->gui_data;
@@ -1869,7 +1898,9 @@ void gui_reset(dt_iop_module_t *self)
   dt_conf_set_int("plugins/darkroom/clipping/ratio_n", 0);
   g->k_show = -1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void keystone_type_changed(GtkWidget *combo, dt_iop_module_t *self)
 {
   dt_iop_clipping_gui_data_t *g = self->gui_data;
@@ -1907,7 +1938,9 @@ static void keystone_type_changed(GtkWidget *combo, dt_iop_module_t *self)
   commit_box(self, g, p);
   dt_control_queue_redraw_center();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void keystone_type_populate(dt_iop_module_t *self, const gboolean with_applied, const int select)
 {
   const dt_iop_clipping_gui_data_t *g = self->gui_data;
@@ -1933,7 +1966,9 @@ static void keystone_type_populate(dt_iop_module_t *self, const gboolean with_ap
   // we have to be sure that the event is called...
   keystone_type_changed(g->keystone_type, self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_clipping_gui_data_t *g = self->gui_data;
@@ -2017,7 +2052,9 @@ void gui_update(dt_iop_module_t *self)
   g->clip_w = CLAMPF(fabsf(p->cw) - p->cx, 0.1f, 1.0f - g->clip_x);
   g->clip_h = CLAMPF(fabsf(p->ch) - p->cy, 0.1f, 1.0f - g->clip_y);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void hvflip_callback(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -2028,7 +2065,9 @@ static void hvflip_callback(GtkWidget *widget, dt_iop_module_t *self)
   p->ch = copysignf(p->ch, (flip & 2) ? -1.0 : 1.0);
   commit_box(self, g, p);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void aspect_flip(GtkWidget *button, dt_iop_module_t *self)
 {
   dt_iop_clipping_params_t *p = self->params;
@@ -2036,7 +2075,9 @@ static void aspect_flip(GtkWidget *button, dt_iop_module_t *self)
   apply_box_aspect(self, GRAB_HORIZONTAL);
   dt_control_queue_redraw_center();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gint _aspect_ratio_cmp(const dt_iop_clipping_aspect_t *a, const dt_iop_clipping_aspect_t *b)
 {
   // want most square at the end, and the most non-square at the beginning
@@ -2057,8 +2098,10 @@ static gint _aspect_ratio_cmp(const dt_iop_clipping_aspect_t *a, const dt_iop_cl
 
   return 1;
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gchar *format_aspect(gchar *original, const int adim, const int bdim)
 {
   // Special ratios:  freehand, original image
@@ -2066,7 +2109,9 @@ static gchar *format_aspect(gchar *original, const int adim, const int bdim)
 
   return g_strdup_printf("%s  %4.2f", original, (float)adim / (float)bdim);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_clipping_gui_data_t *g = IOP_GUI_ALLOC(clipping);
@@ -2266,7 +2311,9 @@ void gui_init(dt_iop_module_t *self)
 
   self->widget = GTK_WIDGET(g->notebook);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void free_aspect(const gpointer data)
 {
   dt_iop_clipping_aspect_t *aspect = (dt_iop_clipping_aspect_t *)data;
@@ -2274,14 +2321,18 @@ static void free_aspect(const gpointer data)
   aspect->name = NULL;
   g_free(aspect);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_clipping_gui_data_t *g = self->gui_data;
   g_list_free_full(g->aspect_list, free_aspect);
   g->aspect_list = NULL;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static _grab_region_t get_grab(const float pzx, const float pzy, const dt_iop_clipping_gui_data_t *g, const float border,
                                const float wd, const float ht)
 {
@@ -2299,8 +2350,10 @@ static _grab_region_t get_grab(const float pzx, const float pzy, const dt_iop_cl
   }
   return grab;
 }
+#endif
 
 // draw symmetry signs
+#ifndef DARKTABLE_ENGINE_ONLY
 static void gui_draw_sym(cairo_t *cr, const float x, const float y, const float scale, const gboolean active)
 {
   PangoLayout *layout;
@@ -2325,8 +2378,10 @@ static void gui_draw_sym(cairo_t *cr, const float x, const float y, const float 
   pango_font_description_free(desc);
   g_object_unref(layout);
 }
+#endif
 
 // draw guides and handles over the image
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_post_expose(dt_iop_module_t *self,
                      cairo_t *cr,
                      const float wd,
@@ -2696,8 +2751,10 @@ void gui_post_expose(dt_iop_module_t *self,
     }
   }
 }
+#endif
 
 // determine the distance between the segment [(xa,ya)(xb,yb)] and the point (xc,yc)
+#ifndef DARKTABLE_ENGINE_ONLY
 static float dist_seg(const float xa, const float ya, const float xb, const float yb, const float xc, const float yc)
 {
   if(xa == xb && ya == yb) return (xc - xa) * (xc - xa) + (yc - ya) * (yc - ya);
@@ -2718,7 +2775,9 @@ static float dist_seg(const float xa, const float ya, const float xb, const floa
   const float un2 = ux * ux + uy * uy;
   return un2 - ah2;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int mouse_moved(dt_iop_module_t *self,
                 const float pzx,
                 const float pzy,
@@ -3074,7 +3133,9 @@ int mouse_moved(dt_iop_module_t *self,
   }
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void commit_box(dt_iop_module_t *self, dt_iop_clipping_gui_data_t *g, dt_iop_clipping_params_t *p)
 {
   DT_GUARD_GUI_UPDATE();
@@ -3109,7 +3170,9 @@ static void commit_box(dt_iop_module_t *self, dt_iop_clipping_gui_data_t *g, dt_
   // dt_print(DT_DEBUG_ALWAYS, "[crop commit box] %i:  %e %e %e %e", changed, p->cx - old[0], p->cy - old[1], p->cw - old[2], p->ch - old[3]);
   if(changed) dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_released(dt_iop_module_t *self,
                     const float pzx,
                     const float pzy,
@@ -3160,7 +3223,9 @@ int button_released(dt_iop_module_t *self,
   g->ctrl_hold = FALSE;
   return 1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_pressed(dt_iop_module_t *self,
                    const float pzx,
                    const float pzy,
@@ -3322,7 +3387,9 @@ int button_pressed(dt_iop_module_t *self,
   else
     return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 GSList *mouse_actions(dt_iop_module_t *self)
 {
   GSList *lm = NULL;
@@ -3332,6 +3399,7 @@ GSList *mouse_actions(dt_iop_module_t *self)
   lm = dt_mouse_action_create_format(lm, DT_MOUSE_ACTION_RIGHT_DRAG, 0, _("[%s] define/rotate horizon"), self->name());
   return lm;
 }
+#endif
 
 #undef PHI
 #undef INVPHI

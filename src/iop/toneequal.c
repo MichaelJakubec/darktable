@@ -107,9 +107,15 @@
 #include "develop/imageop.h"
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/expander.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "gui/draw.h"
 #include "gui/gtk.h"
@@ -268,11 +274,15 @@ typedef struct dt_iop_toneequalizer_gui_data_t
   int inset;
   int inner_padding;
 
+#ifndef DARKTABLE_ENGINE_ONLY
   GtkAllocation allocation;
+#endif
   cairo_surface_t *cst;
   cairo_t *cr;
   PangoLayout *layout;
+#ifndef DARKTABLE_ENGINE_ONLY
   PangoRectangle ink;
+#endif
   PangoFontDescription *desc;
   GtkStyleContext *context;
 
@@ -308,7 +318,9 @@ typedef struct dt_iop_toneequalizer_gui_data_t
 
 /* the signal DT_SIGNAL_DEVELOP_DISTORT is used to refresh the internal
    cached image buffer used for the on-canvas luminance picker. */
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _set_distort_signal(dt_iop_module_t *self);
+#endif
 static void _unset_distort_signal(dt_iop_module_t *self);
 
 const char *name()
@@ -602,11 +614,13 @@ void init_presets(dt_iop_module_so_t *self)
  * Helper functions
  **/
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean in_mask_editing(const dt_iop_module_t *self)
 {
   const dt_develop_t *dev = self->dev;
   return dev->form_gui && dev->form_visible;
 }
+#endif
 
 static void hash_set_get(const dt_hash_t *hash_in,
                          dt_hash_t *hash_out,
@@ -619,6 +633,7 @@ static void hash_set_get(const dt_hash_t *hash_in,
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void invalidate_luminance_cache(dt_iop_module_t *const self)
 {
   // Invalidate the private luminance cache and histogram when
@@ -634,6 +649,7 @@ static void invalidate_luminance_cache(dt_iop_module_t *const self)
   dt_iop_gui_leave_critical_section(self);
   dt_iop_refresh_all(self);
 }
+#endif
 
 // gaussian-ish kernel - sum is == 1.0f so we don't care much about actual coeffs
 static const dt_colormatrix_t gauss_kernel =
@@ -641,6 +657,7 @@ static const dt_colormatrix_t gauss_kernel =
     { 0.124401914f, 0.196172249f, 0.124401914f },
     { 0.076555024f, 0.124401914f, 0.076555024f } };
 
+#ifndef DARKTABLE_ENGINE_ONLY
 __DT_CLONE_TARGETS__
 static float get_luminance_from_buffer(const float *const buffer,
                                        const size_t width,
@@ -688,7 +705,9 @@ static float get_luminance_from_buffer(const float *const buffer,
   }
   return luminance;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _get_point(const dt_iop_module_t *self,
                        const int c_x,
                        const int c_y,
@@ -715,7 +734,9 @@ static void _get_point(const dt_iop_module_t *self,
   *x = pts[0];
   *y = pts[1];
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _luminance_from_module_buffer(const dt_iop_module_t *self)
 {
   const dt_iop_toneequalizer_gui_data_t *g = self->gui_data;
@@ -735,6 +756,7 @@ static float _luminance_from_module_buffer(const dt_iop_module_t *self)
                                    b_x,
                                    b_y);
 }
+#endif
 
 /***
  * Exposure compensation computation
@@ -1329,6 +1351,7 @@ static void commit_channels_gains(const float factors[CHANNELS],
  ***/
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void gui_cache_init(dt_iop_module_t *self)
 {
   dt_iop_toneequalizer_gui_data_t *g = self->gui_data;
@@ -1374,6 +1397,7 @@ static void gui_cache_init(dt_iop_module_t *self)
   g->pipe_order = 0;
   dt_iop_gui_leave_critical_section(self);
 }
+#endif
 
 
 static inline void build_interpolation_matrix(float A[CHANNELS * PIXEL_CHAN],
@@ -1658,6 +1682,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void show_guiding_controls(const dt_iop_module_t *self)
 {
   const dt_iop_toneequalizer_gui_data_t *g = self->gui_data;
@@ -1698,7 +1723,9 @@ static void show_guiding_controls(const dt_iop_module_t *self)
     }
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void update_exposure_sliders(const dt_iop_toneequalizer_gui_data_t *g,
                              const dt_iop_toneequalizer_params_t *p)
 {
@@ -1714,8 +1741,10 @@ void update_exposure_sliders(const dt_iop_toneequalizer_gui_data_t *g,
   dt_bauhaus_slider_set(g->speculars, p->speculars);
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   const dt_iop_toneequalizer_gui_data_t *g = self->gui_data;
@@ -1728,7 +1757,9 @@ void gui_update(dt_iop_module_t *self)
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g->show_luminance_mask), g->mask_display);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self,
                  GtkWidget *w,
                  void *previous)
@@ -1755,7 +1786,9 @@ void gui_changed(dt_iop_module_t *self,
     dt_bauhaus_widget_set_quad_active(w, FALSE);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void smoothing_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1780,7 +1813,9 @@ static void smoothing_callback(GtkWidget *slider, dt_iop_module_t *self)
   // Unlock the colour picker so we can display our own custom cursor
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void auto_adjust_exposure_boost(GtkWidget *quad, dt_iop_module_t *self)
 {
   dt_iop_toneequalizer_params_t *p = self->params;
@@ -1845,8 +1880,10 @@ static void auto_adjust_exposure_boost(GtkWidget *quad, dt_iop_module_t *self)
   // Unlock the colour picker so we can display our own custom cursor
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void auto_adjust_contrast_boost(GtkWidget *quad, dt_iop_module_t *self)
 {
   dt_iop_toneequalizer_params_t *p = self->params;
@@ -1923,8 +1960,10 @@ static void auto_adjust_contrast_boost(GtkWidget *quad, dt_iop_module_t *self)
   // Unlock the colour picker so we can display our own custom cursor
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void show_luminance_mask_callback(GtkWidget *togglebutton,
                                          GdkEventButton *event,
                                          dt_iop_module_t *self)
@@ -1954,12 +1993,14 @@ static void show_luminance_mask_callback(GtkWidget *togglebutton,
   // Unlock the colour picker so we can display our own custom cursor
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
 
 /***
  * GUI Interactivity
  **/
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void switch_cursors(dt_iop_module_t *self)
 {
   dt_iop_toneequalizer_gui_data_t *g = self->gui_data;
@@ -2038,7 +2079,9 @@ static void switch_cursors(dt_iop_module_t *self)
     g_object_unref(cursor);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int mouse_moved(dt_iop_module_t *self,
                 const float pzx,
                 const float pzy,
@@ -2085,8 +2128,10 @@ int mouse_moved(dt_iop_module_t *self,
 
   return 1;
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int mouse_leave(dt_iop_module_t *self)
 {
   dt_iop_toneequalizer_gui_data_t *g = self->gui_data;
@@ -2108,6 +2153,7 @@ int mouse_leave(dt_iop_module_t *self)
 
   return 1;
 }
+#endif
 
 
 static inline gboolean set_new_params_interactive(const float control_exposure,
@@ -2169,6 +2215,7 @@ static inline gboolean set_new_params_interactive(const float control_exposure,
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int scrolled(dt_iop_module_t *self,
              const float x,
              const float y,
@@ -2239,14 +2286,17 @@ int scrolled(dt_iop_module_t *self,
 
   return 1;
 }
+#endif
 
 /***
  * GTK/Cairo drawings and custom widgets
  **/
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline gboolean _init_drawing(dt_iop_module_t *const restrict self,
                                      GtkWidget *widget,
                                      dt_iop_toneequalizer_gui_data_t *const restrict g);
+#endif
 
 
 void cairo_draw_hatches(cairo_t *cr,
@@ -2277,6 +2327,7 @@ void cairo_draw_hatches(cairo_t *cr,
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void get_shade_from_luminance(cairo_t *cr,
                                      const float luminance,
                                      const float alpha)
@@ -2286,8 +2337,10 @@ static void get_shade_from_luminance(cairo_t *cr,
   const float shade = powf(luminance, gamma);
   cairo_set_source_rgba(cr, shade, shade, shade, alpha);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void draw_exposure_cursor(cairo_t *cr,
                                  const double pointerx,
                                  const double pointery,
@@ -2318,8 +2371,10 @@ static void draw_exposure_cursor(cairo_t *cr,
   }
   cairo_restore(cr);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void match_color_to_background(cairo_t *cr,
                                       const float exposure,
                                       const float alpha)
@@ -2335,8 +2390,10 @@ static void match_color_to_background(cairo_t *cr,
 
   get_shade_from_luminance(cr, exp2f(shade), alpha);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_post_expose(dt_iop_module_t *self,
                      cairo_t *cr,
                      const float width,
@@ -2501,6 +2558,7 @@ void gui_post_expose(dt_iop_module_t *self,
     gtk_widget_queue_draw(GTK_WIDGET(g->area));
   }
 }
+#endif
 
 static void _develop_distort_callback(gpointer instance,
                                       dt_iop_module_t *self)
@@ -2520,6 +2578,7 @@ static void _develop_distort_callback(gpointer instance,
     dt_dev_reprocess_preview(darktable.develop);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _set_distort_signal(dt_iop_module_t *self)
 {
   dt_iop_toneequalizer_gui_data_t *g = self->gui_data;
@@ -2529,6 +2588,7 @@ static void _set_distort_signal(dt_iop_module_t *self)
     g->distort_signal_actif = TRUE;
   }
 }
+#endif
 
 static void _unset_distort_signal(dt_iop_module_t *self)
 {
@@ -2540,6 +2600,7 @@ static void _unset_distort_signal(dt_iop_module_t *self)
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, const gboolean in)
 {
   dt_iop_toneequalizer_gui_data_t *g = self->gui_data;
@@ -2569,8 +2630,10 @@ void gui_focus(dt_iop_module_t *self, const gboolean in)
     _set_distort_signal(self);
   }
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline gboolean _init_drawing(dt_iop_module_t *const restrict self,
                                      GtkWidget *widget,
                                      dt_iop_toneequalizer_gui_data_t *const restrict g)
@@ -2711,6 +2774,7 @@ static inline gboolean _init_drawing(dt_iop_module_t *const restrict self,
 
   return TRUE;
 }
+#endif
 
 
 // must be called while holding self->gui_lock
@@ -2742,6 +2806,7 @@ static inline void init_nodes_y(dt_iop_toneequalizer_gui_data_t *g)
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_draw(GtkWidget *widget,
                           cairo_t *cr,
                           dt_iop_module_t *self)
@@ -2938,8 +3003,10 @@ static gboolean area_draw(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_enter_leave_notify(GtkWidget *widget,
                                         const GdkEventCrossing *event,
                                         dt_iop_module_t *self)
@@ -2972,8 +3039,10 @@ static gboolean area_enter_leave_notify(GtkWidget *widget,
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
   return FALSE;
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_button_press(GtkWidget *widget,
                                   const GdkEventButton *event,
                                   dt_iop_module_t *self)
@@ -3028,8 +3097,10 @@ static gboolean area_button_press(GtkWidget *widget,
 
   return FALSE;
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_motion_notify(GtkWidget *widget,
                                    const GdkEventMotion *event,
                                    dt_iop_module_t *self)
@@ -3082,8 +3153,10 @@ static gboolean area_motion_notify(GtkWidget *widget,
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
   return TRUE;
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_button_release(GtkWidget *widget,
                                     const GdkEventButton *event,
                                     dt_iop_module_t *self)
@@ -3116,7 +3189,9 @@ static gboolean area_button_release(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean area_scroll(GtkWidget *widget,
                             GdkEventScroll *event,
                             gpointer user_data)
@@ -3124,7 +3199,9 @@ static gboolean area_scroll(GtkWidget *widget,
   // do not propagate to tab bar unless scrolling sidebar
   return !dt_gui_ignore_scroll(event);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean notebook_button_press(GtkWidget *widget,
                                       GdkEventButton *event,
                                       dt_iop_module_t *self)
@@ -3139,7 +3216,9 @@ static gboolean notebook_button_press(GtkWidget *widget,
 
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 GSList *mouse_actions(dt_iop_module_t *self)
 {
   GSList *lm = NULL;
@@ -3154,11 +3233,13 @@ GSList *mouse_actions(dt_iop_module_t *self)
      _("[%s over image] change tone exposure in small steps"), self->name());
   return lm;
 }
+#endif
 
 /**
  * Post pipe events
  **/
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _develop_ui_pipe_started_callback(gpointer instance,
                                               dt_iop_module_t *self)
 {
@@ -3181,8 +3262,10 @@ static void _develop_ui_pipe_started_callback(gpointer instance,
   dt_iop_gui_leave_critical_section(self);
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _develop_preview_pipe_finished_callback(gpointer instance,
                                                     dt_iop_module_t *self)
 {
@@ -3198,8 +3281,10 @@ static void _develop_preview_pipe_finished_callback(gpointer instance,
   switch_cursors(self);
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _develop_ui_pipe_finished_callback(gpointer instance,
                                                dt_iop_module_t *self)
 {
@@ -3207,7 +3292,9 @@ static void _develop_ui_pipe_finished_callback(gpointer instance,
   if(g == NULL) return;
   switch_cursors(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   const dt_iop_toneequalizer_gui_data_t *g = self->gui_data;
@@ -3220,8 +3307,10 @@ void gui_reset(dt_iop_module_t *self)
   // Redraw graph
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_toneequalizer_gui_data_t *g = IOP_GUI_ALLOC(toneequalizer);
@@ -3420,7 +3509,9 @@ void gui_init(dt_iop_module_t *self)
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_DEVELOP_UI_PIPE_FINISHED, _develop_ui_pipe_finished_callback);
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_DEVELOP_HISTORY_CHANGE, _develop_ui_pipe_started_callback);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   const dt_iop_toneequalizer_gui_data_t *g = self->gui_data;
@@ -3437,6 +3528,7 @@ void gui_cleanup(dt_iop_module_t *self)
   if(g->cr)     cairo_destroy(g->cr);
   if(g->cst)    cairo_surface_destroy(g->cst);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

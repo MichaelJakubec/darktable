@@ -30,15 +30,23 @@
 #include "develop/imageop.h"
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/paint.h"
+#endif
 #include "gui/draw.h"
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "gui/color_picker_proxy.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "libs/colorpicker.h"
+#endif
 
 #define DT_GUI_CURVE_EDITOR_INSET DT_PIXEL_APPLY_DPI(1)
 
@@ -47,21 +55,31 @@
 
 DT_MODULE_INTROSPECTION(5, dt_iop_tonecurve_params_t)
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_draw(GtkWidget *widget,
                                       cairo_t *crf,
                                       dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_motion_notify(GtkWidget *widget,
                                                GdkEventMotion *event,
                                                dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_button_press(GtkWidget *widget,
                                               GdkEventButton *event,
                                               dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_leave_notify(GtkWidget *widget,
                                               GdkEventCrossing *event,
                                               dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_key_press(GtkWidget *widget,
                                            GdkEventKey *event,
                                            dt_iop_module_t *self);
+#endif
 
 
 typedef enum tonecurve_channel_t
@@ -886,6 +904,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_tonecurve_gui_data_t *g = self->gui_data;
@@ -899,7 +918,9 @@ void gui_reset(dt_iop_module_t *self)
   g->channel = (tonecurve_channel_t)ch_L;
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_tonecurve_gui_data_t *g = self->gui_data;
@@ -912,6 +933,7 @@ void gui_update(dt_iop_module_t *self)
   // that's all, gui curve is read directly from params during expose event.
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -955,6 +977,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void logbase_callback(GtkWidget *slider,
                              dt_iop_module_t *self)
 {
@@ -963,7 +986,9 @@ static void logbase_callback(GtkWidget *slider,
   g->loglogscale = eval_grey(dt_bauhaus_slider_get(g->logbase));
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self,
                  GtkWidget *w,
                  void *previous)
@@ -984,7 +1009,9 @@ void gui_changed(dt_iop_module_t *self,
     gtk_widget_queue_draw(GTK_WIDGET(g->area));
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void interpolator_callback(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1003,7 +1030,9 @@ static void interpolator_callback(GtkWidget *widget, dt_iop_module_t *self)
   dt_dev_add_history_item_target(darktable.develop, self, TRUE, widget);
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void tab_switch(GtkNotebook *notebook,
                        GtkWidget *page,
                        const guint page_num,
@@ -1015,7 +1044,9 @@ static void tab_switch(GtkNotebook *notebook,
   g->channel = (tonecurve_channel_t)page_num;
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float to_log(const float x,
                     const float base,
                     const int ch,
@@ -1045,7 +1076,9 @@ static float to_log(const float x,
     return x;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float to_lin(const float x,
                     const float base,
                     const int ch,
@@ -1075,7 +1108,9 @@ static float to_lin(const float x,
     return x;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -1091,7 +1126,9 @@ void color_picker_apply(dt_iop_module_t *self,
   }
   dt_control_queue_redraw_widget(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void dt_iop_tonecurve_sanity_check(dt_iop_module_t *self,
                                           GtkWidget *widget)
 {
@@ -1127,7 +1164,9 @@ static void dt_iop_tonecurve_sanity_check(dt_iop_module_t *self,
     p->tonecurve_nodes[ch]--;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _move_point_internal(dt_iop_module_t *self,
                                      GtkWidget *widget,
                                      float dx,
@@ -1154,9 +1193,11 @@ static gboolean _move_point_internal(dt_iop_module_t *self,
   dt_dev_add_history_item_target(darktable.develop, self, TRUE, widget + ch);
   return TRUE;
 }
+#endif
 
 #define TONECURVE_DEFAULT_STEP (0.001f)
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _scrolled(GtkWidget *widget,
                           GdkEventScroll *event,
                           dt_iop_module_t *self)
@@ -1186,7 +1227,9 @@ static gboolean _scrolled(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_key_press(GtkWidget *widget,
                                            GdkEventKey *event,
                                            dt_iop_module_t *self)
@@ -1231,9 +1274,11 @@ static gboolean dt_iop_tonecurve_key_press(GtkWidget *widget,
 
   return _move_point_internal(self, widget, dx, dy, event->state);
 }
+#endif
 
 #undef TONECURVE_DEFAULT_STEP
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_tonecurve_gui_data_t *g = IOP_GUI_ALLOC(tonecurve);
@@ -1332,7 +1377,9 @@ void gui_init(dt_iop_module_t *self)
   gtk_size_group_add_widget(g->sizegroup, GTK_WIDGET(g->area));
   gtk_size_group_add_widget(g->sizegroup, GTK_WIDGET(g->channel_tabs));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_tonecurve_gui_data_t *g = self->gui_data;
@@ -1342,7 +1389,9 @@ void gui_cleanup(dt_iop_module_t *self)
   dt_draw_curve_destroy(g->minmax_curve[ch_a]);
   dt_draw_curve_destroy(g->minmax_curve[ch_b]);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_leave_notify(GtkWidget *widget,
                                               GdkEventCrossing *event,
                                               dt_iop_module_t *self)
@@ -1353,14 +1402,18 @@ static gboolean dt_iop_tonecurve_leave_notify(GtkWidget *widget,
   gtk_widget_queue_draw(widget);
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void picker_scale(const float *in, float *out)
 {
   out[0] = CLAMP(in[0] / 100.0f, 0.0f, 1.0f);
   out[1] = CLAMP((in[1] + 128.0f) / 256.0f, 0.0f, 1.0f);
   out[2] = CLAMP((in[2] + 128.0f) / 256.0f, 0.0f, 1.0f);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_draw(GtkWidget *widget,
                                       cairo_t *crf,
                                       dt_iop_module_t *self)
@@ -1715,6 +1768,7 @@ static gboolean dt_iop_tonecurve_draw(GtkWidget *widget,
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
 static inline int _add_node(dt_iop_tonecurve_node_t *tonecurve,
                             int *nodes,
@@ -1751,6 +1805,7 @@ static inline int _add_node(dt_iop_tonecurve_node_t *tonecurve,
   return selected;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_motion_notify(GtkWidget *widget,
                                                GdkEventMotion *event,
                                                dt_iop_module_t *self)
@@ -1827,7 +1882,9 @@ finally:
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_button_press(GtkWidget *widget,
                                               GdkEventButton *event,
                                               dt_iop_module_t *self)
@@ -1962,6 +2019,7 @@ static gboolean dt_iop_tonecurve_button_press(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

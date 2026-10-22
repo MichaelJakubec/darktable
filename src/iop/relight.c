@@ -183,6 +183,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void center_callback(GtkDarktableGradientSlider *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -191,6 +192,7 @@ static void center_callback(GtkDarktableGradientSlider *slider, dt_iop_module_t 
   p->center = dtgtk_gradient_slider_get_value(slider);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 void commit_params(dt_iop_module_t *self, dt_iop_params_t *p1, dt_dev_pixelpipe_t *pipe,
                    dt_dev_pixelpipe_iop_t *piece)
@@ -214,13 +216,16 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_relight_gui_data_t *g = self->gui_data;
   dt_iop_relight_params_t *p = self->params;
   dtgtk_gradient_slider_set_value(g->center, p->center);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -240,7 +245,9 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
 
   dtgtk_gradient_slider_set_picker_meanminmax(DTGTK_GRADIENT_SLIDER(g->center), mean, min, max);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_relight_gui_data_t *g = IOP_GUI_ALLOC(relight);
@@ -264,6 +271,7 @@ void gui_init(dt_iop_module_t *self)
   g->width = dt_bauhaus_slider_from_params(self, N_("width"));
   gtk_widget_set_tooltip_text(g->width, _("width of fill-light area defined in zones"));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

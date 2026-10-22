@@ -29,9 +29,15 @@
 #include "develop/imageop_math.h"
 #include "develop/openmp_maths.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/gradientslider.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/draw.h"
 #include "gui/gtk.h"
 #include "gui/presets.h"
@@ -1275,6 +1281,7 @@ void pipe_RGB_to_Ych(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, const dt_a
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -1335,8 +1342,10 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
   gui_changed(self, picker, NULL);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _YchToRGB(dt_aligned_pixel_t *RGB_out, const float chroma, const float hue,
                       const dt_iop_order_iccprofile_info_t *output_profile,
                       const dt_colormatrix_t output_matrix_LMS_to_RGB)
@@ -1359,7 +1368,9 @@ static void _YchToRGB(dt_aligned_pixel_t *RGB_out, const float chroma, const flo
   else
     memcpy(*RGB_out, RGB_linear, sizeof(RGB_linear));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void paint_chroma_slider(const dt_iop_order_iccprofile_info_t *output_profile,
                                 const dt_colormatrix_t output_matrix_LMS_to_RGB,
                                 GtkWidget *w, const float hue)
@@ -1387,8 +1398,10 @@ static void paint_chroma_slider(const dt_iop_order_iccprofile_info_t *output_pro
 
   gtk_widget_queue_draw(w);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void paint_hue_sliders(const dt_iop_order_iccprofile_info_t *output_profile,
                               const dt_colormatrix_t output_matrix_LMS_to_RGB,
                               const dt_iop_colorbalancergb_gui_data_t *const g)
@@ -1406,8 +1419,10 @@ static void paint_hue_sliders(const dt_iop_order_iccprofile_info_t *output_profi
     dt_bauhaus_slider_set_stop(g->midtones_H, stop, RGB[0], RGB[1], RGB[2]);
   }
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void mask_callback(GtkWidget *togglebutton, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1445,8 +1460,10 @@ static void mask_callback(GtkWidget *togglebutton, dt_iop_module_t *self)
 
   dt_iop_refresh_center(self);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_draw(GtkWidget *widget, cairo_t *crf, const dt_iop_module_t *self)
 {
   const dt_iop_colorbalancergb_params_t *p = self->params;
@@ -1598,8 +1615,10 @@ static gboolean dt_iop_tonecurve_draw(GtkWidget *widget, cairo_t *crf, const dt_
   pango_font_description_free(desc);
   return FALSE;
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void checker_1_picker_callback(GtkColorButton *widget, const dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1611,8 +1630,10 @@ static void checker_1_picker_callback(GtkColorButton *widget, const dt_iop_modul
   dt_conf_set_float("plugins/darkroom/colorbalancergb/checker1/blue", color.blue);
   dt_iop_refresh_center(self);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void checker_2_picker_callback(GtkColorButton *widget, const dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1624,8 +1645,10 @@ static void checker_2_picker_callback(GtkColorButton *widget, const dt_iop_modul
   dt_conf_set_float("plugins/darkroom/colorbalancergb/checker2/blue", color.blue);
   dt_iop_refresh_center(self);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void checker_size_callback(GtkWidget *widget, const dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1633,8 +1656,10 @@ static void checker_size_callback(GtkWidget *widget, const dt_iop_module_t *self
   dt_conf_set_int("plugins/darkroom/colorbalancergb/checker/size", size);
   dt_iop_refresh_center(self);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_colorbalancergb_gui_data_t *g = self->gui_data;
@@ -1687,7 +1712,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 
   g->sliders_output_profile = output_profile;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_colorbalancergb_gui_data_t *g = self->gui_data;
@@ -1761,14 +1788,18 @@ void gui_update(dt_iop_module_t *self)
 
   dt_bauhaus_slider_set(g->checker_size, dt_conf_get_int("plugins/darkroom/colorbalancergb/checker/size"));
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   //dt_iop_colorbalancergb_gui_data_t *g = self->gui_data;
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_colorbalancergb_gui_data_t *g = IOP_GUI_ALLOC(colorbalancergb);
@@ -2081,6 +2112,7 @@ void gui_init(dt_iop_module_t *self)
   // main widget is the notebook
   self->widget = GTK_WIDGET(g->notebook);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

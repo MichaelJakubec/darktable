@@ -26,7 +26,9 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 #include <assert.h>
@@ -34,7 +36,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "iop/Permutohedral.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 
 G_BEGIN_DECLS
@@ -360,6 +364,7 @@ void tiling_callback(dt_iop_module_t *self,
   tiling->maxbuf = 1.0f;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_bilateral_gui_data_t *g = IOP_GUI_ALLOC(bilateral);
@@ -383,6 +388,7 @@ void gui_init(dt_iop_module_t *self)
   dt_bauhaus_slider_set_soft_max(g->blue, 0.1);
   dt_bauhaus_slider_set_digits(g->blue, 4);
 }
+#endif
 
 G_END_DECLS
 

@@ -25,8 +25,12 @@
 #include "develop/develop.h"
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "gui/color_picker_proxy.h"
@@ -319,6 +323,7 @@ void process(dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, const void *c
     dt_iop_alpha_copy(ivoid, ovoid, roi_out->width, roi_out->height);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_grey(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -334,7 +339,9 @@ static void apply_auto_grey(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_black(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -356,7 +363,9 @@ static void apply_auto_black(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_dynamic_range(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -381,7 +390,9 @@ static void apply_auto_dynamic_range(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_autotune(dt_iop_module_t *self)
 {
   dt_iop_profilegamma_params_t *p = self->params;
@@ -414,8 +425,10 @@ static void apply_autotune(dt_iop_module_t *self)
 
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_profilegamma_gui_data_t *g = self->gui_data;
@@ -452,7 +465,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     DT_LEAVE_GUI_UPDATE();
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -468,6 +483,7 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
   else
     dt_print(DT_DEBUG_ALWAYS, "[profile_gamma] unknown color picker");
 }
+#endif
 
 void commit_params(dt_iop_module_t *self, dt_iop_params_t *p1, dt_dev_pixelpipe_t *pipe,
                    dt_dev_pixelpipe_iop_t *piece)
@@ -553,11 +569,14 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_profilegamma_gui_data_t *g = self->gui_data;
@@ -566,6 +585,7 @@ void gui_update(dt_iop_module_t *self)
 
   gui_changed(self, g->mode, 0);
 }
+#endif
 
 void init_global(dt_iop_module_so_t *self)
 {
@@ -587,6 +607,7 @@ void cleanup_global(dt_iop_module_so_t *self)
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_profilegamma_gui_data_t *g = IOP_GUI_ALLOC(profilegamma);
@@ -651,6 +672,7 @@ void gui_init(dt_iop_module_t *self)
 
   dt_gui_box_add(self->widget, g->mode_stack);
 }
+#endif
 
 
 // clang-format off

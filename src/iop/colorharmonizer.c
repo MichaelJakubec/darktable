@@ -19,8 +19,12 @@
 #include "common/iop_profile.h"
 #include "common/math.h"
 #include "bauhaus/bauhaus.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/paint.h"
+#endif
 #include "common/colorspaces.h"
 #include "common/colorspaces_inline_conversions.h"
 #include "common/chromatic_adaptation.h"
@@ -29,15 +33,21 @@
 #include "gui/color_picker_proxy.h"
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "libs/lib.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "libs/scopes.h"
+#endif
 #include "common/color_harmony.h"
 #include "common/color_ryb.h"
 #include "common/opencl.h"
 #include "common/gaussian.h"
 #include "control/conf.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <math.h>
 #include <stdlib.h>
 
@@ -116,9 +126,13 @@ typedef struct dt_iop_colorharmonizer_global_data_t
 static float _ucs_hue_to_ryb_hue(const float ucs_hue);
 static float _ucs_to_ryb_fast(const float ucs);
 static float _ryb_to_ucs_fast(const float yrb);
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _sync_custom_sliders(const dt_iop_colorharmonizer_params_t *p,
                                  dt_iop_colorharmonizer_gui_data_t *g);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _auto_detect_button_enable_idle(gpointer user_data);
+#endif
 
 const char *name()
 {
@@ -266,6 +280,7 @@ static void _update_histogram(dt_iop_module_t *self,
   if(!self->gui_data || !dt_pipe_is_preview(piece->pipe))
     return;
 
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_colorharmonizer_gui_data_t *g = self->gui_data;
   const dt_iop_order_iccprofile_info_t *const work_profile = dt_ioppr_get_pipe_work_profile_info(piece->pipe);
   if(!work_profile) return;
@@ -305,6 +320,7 @@ static void _update_histogram(dt_iop_module_t *self,
     g_object_ref(g->auto_detect);
     gdk_threads_add_idle(_auto_detect_button_enable_idle, g->auto_detect);
   }
+#endif
 }
 
 void process(dt_iop_module_t *self,
@@ -737,6 +753,7 @@ static void _hue_to_srgb(const float hue,
   *b = CLAMP(sRGB[2], 0.f, 1.f);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _paint_hue_slider(GtkWidget *slider)
 {
   for(int i = 0; i < DT_BAUHAUS_SLIDER_MAX_STOPS; i++)
@@ -748,15 +765,19 @@ static void _paint_hue_slider(GtkWidget *slider)
     dt_bauhaus_slider_set_stop(slider, stop, r, g, b);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _paint_all_hue_sliders(const dt_iop_colorharmonizer_gui_data_t *const g)
 {
   _paint_hue_slider(g->anchor_hue);
   for(int i = 0; i < COLORHARMONIZER_MAX_NODES; i++)
     _paint_hue_slider(g->custom_hue_slider[i]);
 }
+#endif
 
 // Paint a saturation slider with a gray→full-color gradient at the given UCS hue.
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _paint_sat_slider(GtkWidget *slider, const float hue)
 {
   const float L_white = Y_to_dt_UCS_L_star(1.0f);
@@ -786,7 +807,9 @@ static void _paint_sat_slider(GtkWidget *slider, const float hue)
   }
   gtk_widget_queue_draw(slider);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _paint_all_sat_sliders(const dt_iop_colorharmonizer_gui_data_t *const g,
                                    const dt_iop_colorharmonizer_params_t *const p)
 {
@@ -796,6 +819,7 @@ static void _paint_all_sat_sliders(const dt_iop_colorharmonizer_gui_data_t *cons
   for(int i = 0; i < num_nodes; i++)
     _paint_sat_slider(g->sat_slider[i], nodes[i]);
 }
+#endif
 
 // Convert a UCS anchor_hue [0,1) to the RYB hue fraction [0,1) that the vectorscope uses.
 // Path: UCS hue → gamut-clipped sRGB → linearize → RGB HSV hue → RYB hue.
@@ -811,6 +835,7 @@ static float _ucs_hue_to_ryb_hue(const float ucs_hue)
   return dt_rgb_hue_to_ryb_hue(HCV[0]);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _push_to_vectorscope(dt_iop_module_t *self)
 {
   dt_iop_colorharmonizer_params_t *p = self->params;
@@ -846,7 +871,9 @@ static void _push_to_vectorscope(dt_iop_module_t *self)
   dt_lib_histogram_set_type(darktable.lib, 2);    // 2 = DT_LIB_HISTOGRAM_VECTORSCOPE_RYB
   dt_lib_histogram_set_harmony(darktable.lib, &guide);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _anchor_hue_slider_changed(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -856,9 +883,11 @@ static void _anchor_hue_slider_changed(GtkWidget *widget, dt_iop_module_t *self)
   gui_changed(self, widget, NULL);
   dt_dev_add_history_item(self->dev, self, TRUE);
 }
+#endif
 
 // Apply a vectorscope harmony guide (rule + rotation) to params and refresh the GUI.
 // Precondition: guide->type != DT_COLOR_HARMONY_NONE.
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _apply_harmony_guide(dt_iop_module_t *self,
                                  dt_iop_colorharmonizer_params_t *p,
                                  dt_iop_colorharmonizer_gui_data_t *g,
@@ -875,7 +904,9 @@ static void _apply_harmony_guide(dt_iop_module_t *self,
   gui_changed(self, NULL, NULL);
   dt_dev_add_history_item(self->dev, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _on_vectorscope_harmony_changed(const dt_color_harmony_guide_t *guide, void *user_data)
 {
   dt_iop_module_t *self = (dt_iop_module_t *)user_data;
@@ -908,7 +939,9 @@ static void _on_vectorscope_harmony_changed(const dt_color_harmony_guide_t *guid
   // the resulting push-back will not cause another callback invocation.
   _apply_harmony_guide(self, self->params, self->gui_data, guide);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _sync_to_vectorscope_toggled(GtkToggleButton *button, dt_iop_module_t *self)
 {
   dt_iop_colorharmonizer_gui_data_t *g = self->gui_data;
@@ -939,7 +972,9 @@ static void _sync_to_vectorscope_toggled(GtkToggleButton *button, dt_iop_module_
   if(g && g->set_from_vectorscope)
     gtk_widget_set_sensitive(g->set_from_vectorscope, !active);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _swatch_draw_callback(GtkWidget *widget,
                                       cairo_t *cr,
                                       gpointer user_data)
@@ -979,7 +1014,9 @@ static gboolean _swatch_draw_callback(GtkWidget *widget,
   cairo_paint(cr);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _custom_hue_changed(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1002,7 +1039,9 @@ static void _custom_hue_changed(GtkWidget *widget, dt_iop_module_t *self)
      && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(g->sync_to_vectorscope)))
     _push_to_vectorscope(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _node_saturation_changed(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1011,9 +1050,11 @@ static void _node_saturation_changed(GtkWidget *widget, dt_iop_module_t *self)
   p->node_saturation[idx] = dt_bauhaus_slider_get(widget);
   dt_dev_add_history_item(self->dev, self, TRUE);
 }
+#endif
 
 // Initialize custom nodes when switching from a predefined rule to custom mode.
 // Reads the current vectorscope guide's sector positions and converts them to UCS.
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _init_custom_nodes_from_rule(dt_iop_module_t *self,
                                          const dt_iop_colorharmonizer_rule_t old_rule,
                                          dt_iop_colorharmonizer_gui_data_t *g,
@@ -1044,8 +1085,10 @@ static void _init_custom_nodes_from_rule(dt_iop_module_t *self,
   dt_bauhaus_slider_set(g->num_custom_nodes_slider, p->num_custom_nodes);
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
 // Update widget visibility based on current mode (custom vs. predefined) and node count.
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_visibility(const dt_iop_colorharmonizer_params_t *p,
                                const gboolean is_custom,
                                dt_iop_colorharmonizer_gui_data_t *g)
@@ -1076,8 +1119,10 @@ static void _update_visibility(const dt_iop_colorharmonizer_params_t *p,
   for(int i = 0; i < COLORHARMONIZER_MAX_NODES; i++)
     gtk_widget_set_visible(g->sat_row[i], i < num_nodes);
 }
+#endif
 
 // Sync custom hue slider display values from params.
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _sync_custom_sliders(const dt_iop_colorharmonizer_params_t *p,
                                  dt_iop_colorharmonizer_gui_data_t *g)
 {
@@ -1086,9 +1131,11 @@ static void _sync_custom_sliders(const dt_iop_colorharmonizer_params_t *p,
     dt_bauhaus_slider_set(g->custom_hue_slider[i], _ucs_to_ryb_fast(p->custom_hue[i]) * 360.0f);
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
 // Push the current harmony to the vectorscope if sync is enabled and the changed
 // widget is one that affects the harmony guide (rule, hue sliders, or full refresh).
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _sync_vectorscope_if_enabled(dt_iop_module_t *self,
                                          dt_iop_colorharmonizer_gui_data_t *g,
                                          GtkWidget *widget)
@@ -1111,7 +1158,9 @@ static void _sync_vectorscope_if_enabled(dt_iop_module_t *self,
     }
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *widget, void *previous)
 {
   dt_iop_colorharmonizer_gui_data_t *g = self->gui_data;
@@ -1143,7 +1192,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *widget, void *previous)
   _paint_all_sat_sliders(g, p);
   _sync_vectorscope_if_enabled(self, g, widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_colorharmonizer_gui_data_t *g = self->gui_data;
@@ -1165,9 +1216,11 @@ void gui_update(dt_iop_module_t *self)
   gui_changed(self, NULL, NULL);
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
 // Convert a picked pixel color (pipeline RGB) to a normalized darktable UCS hue [0, 1).
 // Returns FALSE only if the work profile is unavailable.
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _picked_color_to_hue(dt_iop_module_t *self,
                                      dt_dev_pixelpipe_t *pipe,
                                      float *out_hue)
@@ -1194,7 +1247,9 @@ static gboolean _picked_color_to_hue(dt_iop_module_t *self,
   *out_hue = (px_JCH[2] + M_PI_F) / DT_2PI_F;
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -1238,11 +1293,13 @@ void color_picker_apply(dt_iop_module_t *self,
     }
   }
 }
+#endif
 
 // Score how well a rule+anchor covers the image's hue histogram.
 // Returns a coverage fraction in [0,1]: the fraction of chromatic energy that
 // falls within the Gaussian attraction zones of the harmony nodes.
 // Uses the same sigma formula as the main algorithm (pull_width_factor = 1.0).
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _score_harmony(const float *histo,
                             const int num_bins,
                             const dt_iop_colorharmonizer_rule_t rule,
@@ -1279,10 +1336,12 @@ static float _score_harmony(const float *histo,
 
   return (total > 1e-6f) ? (covered / total) : 0.0f;
 }
+#endif
 
 // Analyse a chroma-weighted hue histogram and return the harmony rule and
 // anchor hue that best explain the existing color distribution (i.e. the
 // combination that already covers the most chromatic energy).
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _auto_detect_harmony(const float *histo,
                                  const int num_bins,
                                  dt_iop_colorharmonizer_rule_t *best_rule,
@@ -1328,7 +1387,9 @@ static void _auto_detect_harmony(const float *histo,
     }
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _auto_detect_button_enable_idle(gpointer user_data)
 {
   GtkWidget *btn = GTK_WIDGET(user_data);
@@ -1346,7 +1407,9 @@ static gboolean _auto_detect_button_enable_idle(gpointer user_data)
   g_object_unref(btn);
   return G_SOURCE_REMOVE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _auto_detect_callback(GtkButton *button, dt_iop_module_t *self)
 {
   dt_iop_colorharmonizer_gui_data_t *g = self->gui_data;
@@ -1376,7 +1439,9 @@ static void _auto_detect_callback(GtkButton *button, dt_iop_module_t *self)
      && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(g->sync_to_vectorscope)))
     _push_to_vectorscope(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _set_from_vectorscope_callback(GtkButton *button, dt_iop_module_t *self)
 {
   dt_color_harmony_guide_t guide;
@@ -1389,8 +1454,10 @@ static void _set_from_vectorscope_callback(GtkButton *button, dt_iop_module_t *s
   // select vectorscope in histogram view
   dt_lib_histogram_set_scope(darktable.lib, 0); // 0 = DT_LIB_HISTOGRAM_SCOPE_VECTORSCOPE
 }
+#endif
 
 // Create a colored hue swatch (24×24 drawing area) with the standard draw callback.
+#ifndef DARKTABLE_ENGINE_ONLY
 static GtkWidget *_create_swatch(dt_iop_module_t *self, const int index)
 {
   GtkWidget *swatch = gtk_drawing_area_new();
@@ -1399,7 +1466,9 @@ static GtkWidget *_create_swatch(dt_iop_module_t *self, const int index)
   g_signal_connect(G_OBJECT(swatch), "draw", G_CALLBACK(_swatch_draw_callback), self);
   return swatch;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_colorharmonizer_gui_data_t *g = IOP_GUI_ALLOC(colorharmonizer);
@@ -1630,7 +1699,9 @@ void gui_init(dt_iop_module_t *self)
 
   self->widget = main_box;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, gboolean in)
 {
   dt_iop_colorharmonizer_gui_data_t *g = self->gui_data;
@@ -1654,7 +1725,9 @@ void gui_focus(dt_iop_module_t *self, gboolean in)
     dt_lib_histogram_set_harmony_callback(darktable.lib, NULL, NULL);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_colorharmonizer_gui_data_t *g = self->gui_data;
@@ -1665,6 +1738,7 @@ void gui_cleanup(dt_iop_module_t *self)
   }
   dt_iop_default_cleanup(self);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

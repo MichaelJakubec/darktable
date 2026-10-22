@@ -26,13 +26,19 @@
 #include "develop/imageop.h"
 #include "develop/tiling.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
 #include "gui/gtk.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "imageio/imageio_png.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <libgen.h>
 #include <png.h>
 #include <stdio.h>
@@ -1456,6 +1462,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _filepath_callback(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -1484,6 +1491,7 @@ static void _filepath_callback(GtkWidget *widget, dt_iop_module_t *self)
     dt_dev_add_history_item(darktable.develop, self, TRUE);
   }
 }
+#endif
 
 #ifdef HAVE_GMIC
 static void _entry_callback(GtkEntry *entry, dt_iop_module_t *self)
@@ -1539,6 +1547,7 @@ static gboolean _mouse_scroll(GtkWidget *view, GdkEventScroll *event, dt_lib_mod
 #endif // HAVE_GMIC
 
 // remove root lut folder from path
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _remove_root_from_path(const char *const lutfolder, char *const filepath)
 {
   const int j = strlen(lutfolder) + 1;
@@ -1547,7 +1556,9 @@ static void _remove_root_from_path(const char *const lutfolder, char *const file
     filepath[i] = filepath[i+j];
   filepath[i] = '\0';
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _check_extension(const struct dirent *namestruct)
 {
   const char *filename = namestruct->d_name;
@@ -1565,8 +1576,10 @@ static int _check_extension(const struct dirent *namestruct)
   g_free(fext);
   return res;
 }
+#endif
 
 // update filepath combobox with all files in the current folder
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_filepath_combobox(dt_iop_lut3d_gui_data_t *g, char *filepath, char *lutfolder)
 {
   if(!filepath[0])
@@ -1605,7 +1618,9 @@ static void _update_filepath_combobox(dt_iop_lut3d_gui_data_t *g, char *filepath
     g_free(folder);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _button_clicked(GtkWidget *widget, dt_iop_module_t *self)
 {
   dt_iop_lut3d_gui_data_t *g = self->gui_data;
@@ -1675,7 +1690,9 @@ static void _button_clicked(GtkWidget *widget, dt_iop_module_t *self)
   g_free(lutfolder);
   g_object_unref(filechooser);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _show_hide_colorspace(dt_iop_module_t *self)
 {
   dt_iop_lut3d_gui_data_t *g = self->gui_data;
@@ -1692,7 +1709,9 @@ static void _show_hide_colorspace(dt_iop_module_t *self)
     gtk_widget_show(g->colorspace);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_lut3d_gui_data_t *g = self->gui_data;
@@ -1722,12 +1741,16 @@ void gui_update(dt_iop_module_t *self)
   _show_hide_controls(self);
 #endif // HAVE_GMIC
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _module_moved_callback(gpointer instance, dt_iop_module_t *self)
 {
   _show_hide_colorspace(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_lut3d_gui_data_t *g = IOP_GUI_ALLOC(lut3d);
@@ -1799,6 +1822,7 @@ void gui_init(dt_iop_module_t *self)
 
   DT_CONTROL_SIGNAL_HANDLE(DT_SIGNAL_DEVELOP_MODULE_MOVED, _module_moved_callback);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

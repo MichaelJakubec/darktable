@@ -28,9 +28,15 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_math.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/gradientslider.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/togglebutton.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
@@ -373,30 +379,49 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_zonesystem_gui_data_t *g = self->gui_data;
   gtk_widget_queue_draw(GTK_WIDGET(g->zones));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _iop_zonesystem_redraw_preview_callback(gpointer instance,
                                                     dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_preview_draw(GtkWidget *widget, cairo_t *crf,
                                                dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_bar_draw(GtkWidget *widget, cairo_t *crf,
                                            dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_bar_motion_notify(GtkWidget *widget, GdkEventMotion *event,
                                                     dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_bar_leave_notify(GtkWidget *widget, GdkEventCrossing *event,
                                                    dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_bar_button_press(GtkWidget *widget, GdkEventButton *event,
                                                    dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_bar_button_release(GtkWidget *widget, GdkEventButton *event,
                                                      dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_bar_scrolled(GtkWidget *widget, GdkEventScroll *event,
                                                dt_iop_module_t *self);
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void size_allocate_callback(GtkWidget *widget, GtkAllocation *allocation, dt_iop_module_t *self)
 {
   dt_iop_zonesystem_gui_data_t *g = self->gui_data;
@@ -419,7 +444,9 @@ static void size_allocate_callback(GtkWidget *widget, GtkAllocation *allocation,
     g->image_height = 0;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_zonesystem_gui_data_t *g = IOP_GUI_ALLOC(zonesystem);
@@ -466,7 +493,9 @@ void gui_init(dt_iop_module_t *self)
   g->image_width = 0;
   g->image_height = 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_zonesystem_gui_data_t *g = self->gui_data;
@@ -475,10 +504,12 @@ void gui_cleanup(dt_iop_module_t *self)
   if(g->image) cairo_surface_destroy(g->image);
   free(g->image_buffer);
 }
+#endif
 
 #define DT_ZONESYSTEM_INSET DT_PIXEL_APPLY_DPI(5)
 #define DT_ZONESYSTEM_BAR_SPLIT_WIDTH 0.0
 #define DT_ZONESYSTEM_REFERENCE_SPLIT 0.30
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_bar_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   dt_iop_zonesystem_gui_data_t *g = self->gui_data;
@@ -570,7 +601,9 @@ static gboolean dt_iop_zonesystem_bar_draw(GtkWidget *widget, cairo_t *crf, dt_i
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_bar_button_press(GtkWidget *widget, GdkEventButton *event,
                                                    dt_iop_module_t *self)
 {
@@ -610,7 +643,9 @@ static gboolean dt_iop_zonesystem_bar_button_press(GtkWidget *widget, GdkEventBu
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_bar_button_release(GtkWidget *widget, GdkEventButton *event,
                                                      dt_iop_module_t *self)
 {
@@ -621,7 +656,9 @@ static gboolean dt_iop_zonesystem_bar_button_release(GtkWidget *widget, GdkEvent
   }
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_bar_scrolled(GtkWidget *widget, GdkEventScroll *event, dt_iop_module_t *self)
 {
   dt_iop_zonesystem_params_t *p = self->params;
@@ -640,7 +677,9 @@ static gboolean dt_iop_zonesystem_bar_scrolled(GtkWidget *widget, GdkEventScroll
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_bar_leave_notify(GtkWidget *widget, GdkEventCrossing *event,
                                                    dt_iop_module_t *self)
 {
@@ -649,7 +688,9 @@ static gboolean dt_iop_zonesystem_bar_leave_notify(GtkWidget *widget, GdkEventCr
   gtk_widget_queue_draw(g->preview);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_bar_motion_notify(GtkWidget *widget, GdkEventMotion *event,
                                                     dt_iop_module_t *self)
 {
@@ -705,8 +746,10 @@ static gboolean dt_iop_zonesystem_bar_motion_notify(GtkWidget *widget, GdkEventM
   gtk_widget_queue_draw(g->preview);
   return TRUE;
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_zonesystem_preview_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   const int inset = DT_PIXEL_APPLY_DPI(2);
@@ -800,13 +843,16 @@ static gboolean dt_iop_zonesystem_preview_draw(GtkWidget *widget, cairo_t *crf, 
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void _iop_zonesystem_redraw_preview_callback(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_zonesystem_gui_data_t *g = self->gui_data;
 
   dt_control_queue_redraw_widget(g->preview);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

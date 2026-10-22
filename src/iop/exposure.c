@@ -22,9 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
-#endif
 #include "common/histogram.h"
 #include "common/image_cache.h"
 #include "common/mipmap_cache.h"

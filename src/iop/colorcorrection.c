@@ -22,8 +22,12 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
@@ -209,6 +213,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_colorcorrection_gui_data_t *g = self->gui_data;
@@ -216,20 +221,34 @@ void gui_update(dt_iop_module_t *self)
   dt_bauhaus_slider_set(g->slider, p->saturation);
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_colorcorrection_draw(GtkWidget *widget, cairo_t *cr,
                                             dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_colorcorrection_motion_notify(GtkWidget *widget, GdkEventMotion *event,
                                                      dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_colorcorrection_button_press(GtkWidget *widget, GdkEventButton *event,
                                                     dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_colorcorrection_leave_notify(GtkWidget *widget, GdkEventCrossing *event,
                                                     dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_colorcorrection_scrolled(GtkWidget *widget, GdkEventScroll *event,
                                                 dt_iop_module_t *self);
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_colorcorrection_key_press(GtkWidget *widget, GdkEventKey *event,
                                                  dt_iop_module_t *self);
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_colorcorrection_gui_data_t *g = IOP_GUI_ALLOC(colorcorrection);
@@ -264,13 +283,17 @@ void gui_init(dt_iop_module_t *self)
   cmsHPROFILE hLab = dt_colorspaces_get_profile(DT_COLORSPACE_LAB, "", DT_PROFILE_DIRECTION_ANY)->profile;
   g->xform = cmsCreateTransform(hLab, TYPE_Lab_DBL, hsRGB, TYPE_RGB_DBL, INTENT_PERCEPTUAL, 0);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_colorcorrection_gui_data_t *g = self->gui_data;
   cmsDeleteTransform(g->xform);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_colorcorrection_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   dt_iop_colorcorrection_gui_data_t *g = self->gui_data;
@@ -345,7 +368,9 @@ static gboolean dt_iop_colorcorrection_draw(GtkWidget *widget, cairo_t *crf, dt_
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_colorcorrection_motion_notify(GtkWidget *widget, GdkEventMotion *event,
                                                      dt_iop_module_t *self)
 {
@@ -389,7 +414,9 @@ static gboolean dt_iop_colorcorrection_motion_notify(GtkWidget *widget, GdkEvent
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_colorcorrection_button_press(GtkWidget *widget, GdkEventButton *event,
                                                     dt_iop_module_t *self)
 {
@@ -419,7 +446,9 @@ static gboolean dt_iop_colorcorrection_button_press(GtkWidget *widget, GdkEventB
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_colorcorrection_leave_notify(GtkWidget *widget, GdkEventCrossing *event,
                                                     dt_iop_module_t *self)
 {
@@ -427,7 +456,9 @@ static gboolean dt_iop_colorcorrection_leave_notify(GtkWidget *widget, GdkEventC
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_colorcorrection_scrolled(GtkWidget *widget, GdkEventScroll *event, dt_iop_module_t *self)
 {
   dt_iop_colorcorrection_gui_data_t *g = self->gui_data;
@@ -445,9 +476,11 @@ static gboolean dt_iop_colorcorrection_scrolled(GtkWidget *widget, GdkEventScrol
 
   return TRUE;
 }
+#endif
 
 #define COLORCORRECTION_DEFAULT_STEP (0.5f)
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_colorcorrection_key_press(GtkWidget *widget, GdkEventKey *event, dt_iop_module_t *self)
 {
   dt_iop_colorcorrection_gui_data_t *g = self->gui_data;
@@ -500,6 +533,7 @@ static gboolean dt_iop_colorcorrection_key_press(GtkWidget *widget, GdkEventKey 
 
   return TRUE;
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

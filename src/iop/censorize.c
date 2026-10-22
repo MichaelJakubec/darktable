@@ -28,12 +28,16 @@
 #include "develop/imageop_gui.h"
 #include "develop/noise_generator.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -409,6 +413,7 @@ void cleanup_global(dt_iop_module_so_t *self)
 
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_censorize_gui_data_t *g = IOP_GUI_ALLOC(censorize);
@@ -426,6 +431,7 @@ void gui_init(dt_iop_module_t *self)
   gtk_widget_set_tooltip_text(g->pixelate, _("radius of the intermediate pixelization"));
   gtk_widget_set_tooltip_text(g->noise, _("amount of noise to add at the end"));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

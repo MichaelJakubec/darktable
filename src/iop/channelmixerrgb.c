@@ -38,9 +38,7 @@
    If enabled there must be $DESCRIPTION: entries in illuminants.h for bauhaus
 */
 
-#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
-#endif
 #include "chart/common.h"
 #include "develop/imageop_gui.h"
 #ifndef DARKTABLE_ENGINE_ONLY

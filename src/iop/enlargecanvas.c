@@ -25,7 +25,9 @@
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 
 DT_MODULE_INTROSPECTION(1, dt_iop_enlargecanvas_params_t)
@@ -400,6 +402,7 @@ void cleanup_global(dt_iop_module_so_t *self)
 }
 
 /** gui setup and update, these are needed. */
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_enlargecanvas_gui_data_t *g = self->gui_data;
@@ -411,7 +414,9 @@ void gui_update(dt_iop_module_t *self)
   dt_bauhaus_slider_set(g->percent_bottom, p->percent_bottom);
   dt_bauhaus_combobox_set(g->color, p->color);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_enlargecanvas_gui_data_t *g = IOP_GUI_ALLOC(enlargecanvas);
@@ -443,6 +448,7 @@ void gui_init(dt_iop_module_t *self)
   g->color = dt_bauhaus_combobox_from_params(self, "color");
   gtk_widget_set_tooltip_text(g->color, _("select the color of the enlarged canvas"));
 }
+#endif
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

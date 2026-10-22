@@ -21,11 +21,15 @@
 #include "control/control.h"
 #include "develop/develop.h"
 #include "develop/imageop.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
@@ -395,10 +399,13 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   IOP_GUI_ALLOC(colortransfer);
@@ -406,6 +413,7 @@ void gui_init(dt_iop_module_t *self)
   self->widget = dt_ui_label_new(_("this module will be removed in the future\nand is only here so you can "
                                    "switch it off\nand move to the new color mapping module."));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

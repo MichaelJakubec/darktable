@@ -29,16 +29,26 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/expander.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/draw.h"
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/guides.h"
+#endif
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
@@ -719,6 +729,7 @@ static inline void _shadow_crop_box(const dt_iop_ashift_params_t *p,
   g->cb = p->cb;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _clear_shadow_crop_box(dt_iop_ashift_gui_data_t *g)
 {
   // reset the crop to the full image
@@ -727,6 +738,7 @@ static void _clear_shadow_crop_box(dt_iop_ashift_gui_data_t *g)
   g->ct = 0.0f;
   g->cb = 1.0f;
 }
+#endif
 
 static inline void _commit_crop_box(dt_iop_ashift_params_t *p,
                                     const dt_iop_ashift_gui_data_t *g)
@@ -1286,6 +1298,7 @@ void modify_roi_in(dt_iop_module_t *self,
 // simple conversion of rgb image into greyscale variant suitable for
 // line segment detection the lsd routines expect input as *double,
 // roughly in the range [0.0; 256.0]
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rgb2grey256(const float *const in,
                         double *const out,
                         const int width,
@@ -1301,8 +1314,10 @@ static void rgb2grey256(const float *const in,
                   + 0.11f * in[4*index+2]) * 256.0;
   }
 }
+#endif
 
 // sobel edge enhancement in one direction
+#ifndef DARKTABLE_ENGINE_ONLY
 static void edge_enhance_1d(const double *in, double *out,
                             const int width,
                             const int height,
@@ -1368,8 +1383,10 @@ static void edge_enhance_1d(const double *in, double *out,
       if(i == khwidth && j >= khwidth && j < height - khwidth) i = width - khwidth;
     }
 }
+#endif
 
 // edge enhancement in both directions
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean edge_enhance(const double *in,
                         double *out,
                         const int width,
@@ -1404,9 +1421,11 @@ error:
   if(Gy) free(Gy);
   return FALSE;
 }
+#endif
 
 // detail enhancement via bilateral grid (function arguments in and
 // out may represent identical buffers)
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean detail_enhance(const float *const in,
                           float *const out,
                           const int width,
@@ -1454,9 +1473,11 @@ static gboolean detail_enhance(const float *const in,
 
   return success;
 }
+#endif
 
 // apply gamma correction to RGB buffer (function arguments in and out
 // may represent identical buffers)
+#ifndef DARKTABLE_ENGINE_ONLY
 static void gamma_correct(const float *const in,
                           float *const out,
                           const int width,
@@ -1470,9 +1491,11 @@ static void gamma_correct(const float *const in,
       out[index+c] = powf(in[index+c], LSD_GAMMA);
   }
 }
+#endif
 
 // do actual line_detection based on LSD algorithm and return results according
 // to this module's conventions
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean line_detect(float *in,
                        const int width,
                        const int height,
@@ -1665,8 +1688,10 @@ error:
   free(greyscale);
   return FALSE;
 }
+#endif
 
 // get image from buffer, analyze for structure and save results
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _get_structure(dt_iop_module_t *self,
                           const dt_iop_ashift_enhance_t enhance)
 {
@@ -1738,6 +1763,7 @@ error:
   dt_free_align(buffer);
   return FALSE;
 }
+#endif
 
 
 // swap two integer values
@@ -1749,6 +1775,7 @@ static inline void swap(int *a, int *b)
 }
 
 // do complete permutations
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean quickperm(int *a, int *p, const int N, int *i)
 {
   if(*i >= N) return FALSE;
@@ -1764,8 +1791,10 @@ static gboolean quickperm(int *a, int *p, const int N, int *i)
   }
   return TRUE;
 }
+#endif
 
 // Fisher-Yates shuffle
+#ifndef DARKTABLE_ENGINE_ONLY
 static void shuffle(int *a, const int N)
 {
   for(int i = 0; i < N; i++)
@@ -1774,12 +1803,15 @@ static void shuffle(int *a, const int N)
     swap(&a[j], &a[i]);
   }
 }
+#endif
 
 // factorial function
+#ifndef DARKTABLE_ENGINE_ONLY
 static int fact(const int n)
 {
   return (n == 1 ? 1 : n * fact(n - 1));
 }
+#endif
 
 // We use a pseudo-RANSAC algorithm to elminiate ouliers from our set of lines. The
 // original RANSAC works on linear optimization problems. Our model is nonlinear. We
@@ -1803,6 +1835,7 @@ static int fact(const int n)
 // model with the optimized epsilon and that quality value also
 // encloses the number of good lines.
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void ransac(const dt_iop_ashift_line_t *lines,
                    int *index_set,
                    int *inout_set,
@@ -1985,10 +2018,12 @@ static void ransac(const dt_iop_ashift_line_t *lines,
   free(best_inout);
   free(best_set);
 }
+#endif
 
 
 // try to clean up structural data by eliminating outliers and thereby increasing
 // the chance of a convergent fitting
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _remove_outliers(const dt_iop_module_t *self)
 {
   dt_iop_ashift_gui_data_t *g = self->gui_data;
@@ -2092,6 +2127,7 @@ error:
   free(lines_set);
   return FALSE;
 }
+#endif
 
 // utility function to map a variable in [min; max] to [-INF; + INF]
 static inline double logit(const double x, const double min, const double max)
@@ -2120,6 +2156,7 @@ static inline double ilogit(const double L, const double min, const double max)
 //    * calculate scalar product s of line with perpendicular axis
 //    * sum over weighted s^2 values
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static double model_fitness(double *params, void *data)
 {
   const dt_iop_ashift_fit_params_t *fit = (dt_iop_ashift_fit_params_t *)data;
@@ -2249,8 +2286,10 @@ static double model_fitness(double *params, void *data)
 
   return sum;
 }
+#endif
 
 // setup all data structures for fitting and call NM simplex
+#ifndef DARKTABLE_ENGINE_ONLY
 static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *self,
                                         dt_iop_ashift_params_t *p,
                                         const dt_iop_ashift_fitaxis_t dir)
@@ -2457,6 +2496,7 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *self,
   p->shear = fit.shear;
   return NMS_SUCCESS;
 }
+#endif
 
 #ifdef ASHIFT_DEBUG
 // only used in development phase. call model_fitness() with current parameters and
@@ -2538,6 +2578,7 @@ static void model_probe(dt_iop_module_t *self,
 #endif
 
 // function to keep crop fitting parameters within constraints
+#ifndef DARKTABLE_ENGINE_ONLY
 static void crop_constraint(double *params, const int pcount)
 {
   if(pcount > 0) params[0] = fabs(params[0]);
@@ -2548,6 +2589,7 @@ static void crop_constraint(double *params, const int pcount)
   if(pcount > 1 && params[1] > 1.0)      params[1] = 1.0 - params[1];
   if(pcount > 2 && params[2] > 0.5*M_PI) params[2] = 0.5*M_PI - params[2];
 }
+#endif
 
 // helper function for getting the best fitting crop area;
 // returns the negative area of the largest rectangle that fits within the
@@ -2555,6 +2597,7 @@ static void crop_constraint(double *params, const int pcount)
 // the trick: the rectangle center coordinates are given in the input
 // image coordinates so we know for sure that it also lies within the image after
 // conversion to the output coordinates
+#ifndef DARKTABLE_ENGINE_ONLY
 static double crop_fitness(double *params, void *data)
 {
   const dt_iop_ashift_cropfit_params_t *cropfit = (dt_iop_ashift_cropfit_params_t *)data;
@@ -2634,6 +2677,7 @@ static double crop_fitness(double *params, void *data)
   // and return -A to allow Nelder-Mead simplex to search for the minimum
   return -A;
 }
+#endif
 
 // strategy: for a given center of the crop area and a specific aspect
 // angle we calculate the largest crop area that still lies within the
@@ -2641,6 +2685,7 @@ static double crop_fitness(double *params, void *data)
 // center coordinates (and optionally the aspect angle) that delivers
 // the largest overall crop area.
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void do_crop(const dt_iop_module_t *self, dt_iop_ashift_params_t *p)
 {
   dt_iop_ashift_gui_data_t *g = self->gui_data;
@@ -2804,8 +2849,10 @@ failed:
   dt_control_log(_("automatic cropping failed"));
   return;
 }
+#endif
 
 // manually adjust crop area by shifting its center
+#ifndef DARKTABLE_ENGINE_ONLY
 static void crop_adjust(const dt_iop_module_t *self,
                         const dt_iop_ashift_params_t *const p,
                         const float newx,
@@ -2937,8 +2984,10 @@ static void crop_adjust(const dt_iop_module_t *self,
     g->cl, g->cr, g->ct, g->cb, (int)wd, (int)ht);
   return;
 }
+#endif
 
 // determine if the line is vertical or horizontal
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _draw_retrieve_line_type(dt_iop_ashift_line_t *line)
 {
   dt_iop_ashift_linetype_t linetype = ASHIFT_LINE_VERTICAL_SELECTED;
@@ -2946,8 +2995,10 @@ static void _draw_retrieve_line_type(dt_iop_ashift_line_t *line)
     linetype = ASHIFT_LINE_HORIZONTAL_SELECTED;
   line->type = linetype;
 }
+#endif
 
 // add a basic line. used for drawing perspective method
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _draw_basic_line(dt_iop_ashift_line_t *line,
                              const float x1,
                              const float y1,
@@ -2978,7 +3029,9 @@ static void _draw_basic_line(dt_iop_ashift_line_t *line,
   // register type of line
   line->type = type;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _gui_update_structure_states(const dt_iop_module_t *self, GtkWidget *widget)
 {
   const dt_iop_ashift_gui_data_t *g = self->gui_data;
@@ -3004,7 +3057,9 @@ static void _gui_update_structure_states(const dt_iop_module_t *self, GtkWidget 
   gtk_widget_set_sensitive(g->fit_h, enable);
   gtk_widget_set_sensitive(g->fit_both, enable);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _draw_save_lines_to_params(dt_iop_module_t *self)
 {
   // to save drawn lines in parameters, we only need extremas positions
@@ -3062,6 +3117,8 @@ static void _draw_save_lines_to_params(dt_iop_module_t *self)
     }
   }
 }
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _draw_retrieve_lines_from_params(dt_iop_module_t *self,
                                                  const dt_iop_ashift_method_t method)
 {
@@ -3168,8 +3225,10 @@ static gboolean _draw_retrieve_lines_from_params(dt_iop_module_t *self,
   }
   return FALSE;
 }
+#endif
 
 // helper function to clean structural data
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _do_clean_structure(dt_iop_module_t *self,
                                dt_iop_ashift_params_t *p,
                                const gboolean save_drawn)
@@ -3192,8 +3251,10 @@ static gboolean _do_clean_structure(dt_iop_module_t *self,
   g->fitting = 0;
   return TRUE;
 }
+#endif
 
 // helper function to start analysis for structural data and report about errors
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _do_get_structure_auto(dt_iop_module_t *self,
                                   dt_iop_ashift_params_t *p,
                                   const dt_iop_ashift_enhance_t enhance)
@@ -3248,8 +3309,10 @@ error:
   g->fitting = 0;
   return FALSE;
 }
+#endif
 
 // initialise the lines structure method
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _do_get_structure_lines(dt_iop_module_t *self)
 {
   dt_iop_ashift_params_t *p = self->params;
@@ -3295,8 +3358,10 @@ static void _do_get_structure_lines(dt_iop_module_t *self)
 
   dt_control_queue_redraw_center();
 }
+#endif
 
 // initialise the quad structure method
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _do_get_structure_quad(dt_iop_module_t *self)
 {
   dt_iop_ashift_params_t *p = self->params;
@@ -3384,8 +3449,10 @@ static void _do_get_structure_quad(dt_iop_module_t *self)
     }
   }
 }
+#endif
 
 // helper function to start parameter fit and report about errors
+#ifndef DARKTABLE_ENGINE_ONLY
 static void do_fit(dt_iop_module_t *self,
                    dt_iop_ashift_params_t *p,
                    const dt_iop_ashift_fitaxis_t dir)
@@ -3432,6 +3499,7 @@ static void do_fit(dt_iop_module_t *self,
   dt_bauhaus_slider_set(g->shear, p->shear);
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
 void process(dt_iop_module_t *self,
              dt_dev_pixelpipe_iop_t *piece,
@@ -3716,6 +3784,7 @@ error:
 #endif
 
 // gather information about "near"-ness in g->points_idx
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _get_near(const float *points,
                       dt_iop_ashift_points_idx_t *points_idx,
                       const int lines_count,
@@ -3768,8 +3837,10 @@ static void _get_near(const float *points,
     if(!multiple && points_idx[n].near) break;
   }
 }
+#endif
 
 // mark lines which are inside a rectangular area in isbounding mode
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _get_bounded_inside(const float *points,
                                 dt_iop_ashift_points_idx_t *points_idx,
                                 const int points_lines_count,
@@ -3826,8 +3897,10 @@ static void _get_bounded_inside(const float *points,
     }
   }
 }
+#endif
 
 // generate hash value for lines taking into account only the end point coordinates
+#ifndef DARKTABLE_ENGINE_ONLY
 static dt_hash_t _get_lines_hash(const dt_iop_ashift_line_t *lines,
                                 const int lines_count)
 {
@@ -3842,10 +3915,12 @@ static dt_hash_t _get_lines_hash(const dt_iop_ashift_line_t *lines,
   }
   return hash;
 }
+#endif
 
 // update color information in points_idx if lines have changed in
 // terms of type (but not in terms of number or position)
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _update_colors(const dt_iop_module_t *self,
                                dt_iop_ashift_points_idx_t *points_idx,
                                const int points_lines_count)
@@ -3877,8 +3952,10 @@ static gboolean _update_colors(const dt_iop_module_t *self,
 
   return TRUE;
 }
+#endif
 
 // get all the points to display lines in the gui
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _get_points(const dt_iop_module_t *self,
                             const dt_iop_ashift_line_t *lines,
                             const int lines_count,
@@ -4033,6 +4110,7 @@ error:
   if(my_extremas) free(my_extremas);
   return FALSE;
 }
+#endif
 
 /* this function replaces this sentence, it calls distort_transform()
    for this module on the pipe
@@ -4040,6 +4118,7 @@ error:
                                      self->priority, self->priority + 1,
                                      (float *)V, 4))
 */
+#ifndef DARKTABLE_ENGINE_ONLY
 static int call_distort_transform(const dt_develop_t *dev,
                                   const dt_dev_pixelpipe_t *pipe,
                                   dt_iop_module_t *self,
@@ -4066,7 +4145,9 @@ static int call_distort_transform(const dt_develop_t *dev,
   //  Removing the check appears to have no adverse effects and
   //  eliminates the glitch.
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _calculate_straightening(const dt_iop_module_t *self,
                                       const float pzx, const float pzy,
                                       const float bzx, const float bzy,
@@ -4108,7 +4189,9 @@ static float _calculate_straightening(const dt_iop_module_t *self,
 
   return a;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_post_expose(dt_iop_module_t *self,
                      cairo_t *cr,
                      const float wd,
@@ -4496,8 +4579,10 @@ void gui_post_expose(dt_iop_module_t *self,
 
   cairo_restore(cr);
 }
+#endif
 
 // update the number of selected vertical and horizontal lines
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_lines_count(const dt_iop_ashift_line_t *lines,
                                 const int lines_count,
                                 int *vertical_count,
@@ -4517,8 +4602,10 @@ static void _update_lines_count(const dt_iop_ashift_line_t *lines,
   *vertical_count = vlines;
   *horizontal_count = hlines;
 }
+#endif
 
 // determine if we are near a drawn line extrema
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _draw_near_point(const float x,
                             const float y,
                             const float zoom_scale,
@@ -4537,13 +4624,17 @@ static int _draw_near_point(const float x,
   }
   return -1;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _draw_recompute_line_length(dt_iop_ashift_line_t *line)
 {
   line->length = sqrt((line->p2[0] - line->p1[0]) * (line->p2[0] - line->p1[0])
                       + (line->p2[1] - line->p1[1]) * (line->p2[1] - line->p1[1]));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int mouse_moved(dt_iop_module_t *self,
                 const float pzx,
                 const float pzy,
@@ -4796,7 +4887,9 @@ int mouse_moved(dt_iop_module_t *self,
   // if not in sweeping mode we need to pass the event
   return (g->isdeselecting || g->isselecting);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_pressed(dt_iop_module_t *self,
                    const float pzx,
                    const float pzy,
@@ -5034,7 +5127,9 @@ int button_pressed(dt_iop_module_t *self,
 
   return (take_control || handled);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_released(dt_iop_module_t *self,
                     const float pzx,
                     const float pzy,
@@ -5183,7 +5278,9 @@ int button_released(dt_iop_module_t *self,
 
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int scrolled(dt_iop_module_t *self,
              const float pzx,
              const float pzy,
@@ -5269,7 +5366,9 @@ int scrolled(dt_iop_module_t *self,
 
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_ashift_params_t *p = self->params;
@@ -5295,7 +5394,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     gtk_widget_set_visible(g->specifics, p->mode == ASHIFT_MODE_SPECIFIC);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_ashift_params_t *p = self->params;
@@ -5306,7 +5407,9 @@ void gui_reset(dt_iop_module_t *self)
   dt_dev_invalidate_all(self->dev);
   dt_dev_pixelpipe_cache_flush(self->dev->preview_pipe);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void cropmode_callback(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -5319,7 +5422,9 @@ static void cropmode_callback(GtkWidget *widget, dt_iop_module_t *self)
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   _swap_shadow_crop_box(p,g);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _event_fit_v_button_clicked(GtkWidget *widget,
                                        const GdkEventButton *event,
                                        dt_iop_module_t *self)
@@ -5367,7 +5472,9 @@ static int _event_fit_v_button_clicked(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _event_fit_h_button_clicked(GtkWidget *widget,
                                        const GdkEventButton *event,
                                        dt_iop_module_t *self)
@@ -5415,7 +5522,9 @@ static int _event_fit_h_button_clicked(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _event_fit_both_button_clicked(GtkWidget *widget,
                                           const GdkEventButton *event,
                                           dt_iop_module_t *self)
@@ -5465,7 +5574,9 @@ static int _event_fit_both_button_clicked(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _event_structure_auto_clicked(GtkWidget *widget,
                                          const GdkEventButton *event,
                                          dt_iop_module_t *self)
@@ -5532,10 +5643,12 @@ static int _event_structure_auto_clicked(GtkWidget *widget,
   }
   return FALSE;
 }
+#endif
 
 // routine that is called after preview image has been processed. we
 // use it to perform structure collection or fitting in case those
 // have been triggered while the module had not yet been enabled
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _event_process_after_preview_callback(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_ashift_params_t *p = self->params;
@@ -5586,6 +5699,7 @@ static void _event_process_after_preview_callback(gpointer instance, dt_iop_modu
 
   dt_control_queue_redraw_center();
 }
+#endif
 
 void commit_params(dt_iop_module_t *self,
                    dt_iop_params_t *p1,
@@ -5643,6 +5757,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_ashift_gui_data_t *g = self->gui_data;
@@ -5655,13 +5770,16 @@ void gui_update(dt_iop_module_t *self)
 
   dt_gui_update_collapsible_section(&g->cs);
 }
+#endif
 
 void reload_defaults(dt_iop_module_t *self)
 {
   // our module is disabled by default
   self->default_enabled = FALSE;
 
+#ifndef DARKTABLE_ENGINE_ONLY
   int isflipped = 0;
+#endif
   float f_length = DEFAULT_F_LENGTH;
   float crop_factor = 1.0f;
 
@@ -5670,11 +5788,13 @@ void reload_defaults(dt_iop_module_t *self)
   if(self->dev)
   {
     const dt_image_t *img = &self->dev->image_storage;
+#ifndef DARKTABLE_ENGINE_ONLY
     // orientation only needed as a-priori information to correctly
     // label some sliders before pixelpipe has been set up. later we
     // will get a definite result by assessing the pixelpipe
     isflipped = (img->orientation == ORIENTATION_ROTATE_CCW_90_DEG
                  || img->orientation == ORIENTATION_ROTATE_CW_90_DEG);
+#endif
 
     // focal length should be available in exif data if lens is
     // electronically coupled to the camera
@@ -5692,6 +5812,7 @@ void reload_defaults(dt_iop_module_t *self)
   d->cropmode = dt_conf_get_int("plugins/darkroom/ashift/autocrop_value");
 
   // reset gui elements
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_ashift_gui_data_t *g = self->gui_data;
   if(g)
   {
@@ -5762,6 +5883,7 @@ void reload_defaults(dt_iop_module_t *self)
 
     _gui_update_structure_states(self, NULL);
   }
+#endif
 }
 
 
@@ -5789,6 +5911,7 @@ void cleanup_global(dt_iop_module_so_t *self)
 }
 
 // adjust labels of lens shift parameters according to flip status of image
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _event_draw(GtkWidget *widget,
                             cairo_t *cr,
                             dt_iop_module_t *self)
@@ -5817,7 +5940,9 @@ static gboolean _event_draw(GtkWidget *widget,
 
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, const gboolean in)
 {
   darktable.develop->history_postpone_invalidate = in
@@ -5840,7 +5965,9 @@ void gui_focus(dt_iop_module_t *self, const gboolean in)
     }
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float log2_curve(const float inval, const dt_bauhaus_curve_t dir)
 {
   float outval;
@@ -5854,7 +5981,9 @@ static float log2_curve(const float inval, const dt_bauhaus_curve_t dir)
   }
   return outval;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _event_structure_quad_clicked(GtkWidget *widget,
                                          GdkEventButton *event,
                                          dt_iop_module_t *self)
@@ -5882,7 +6011,9 @@ static int _event_structure_quad_clicked(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _event_structure_lines_clicked(GtkWidget *widget,
                                           GdkEventButton *event,
                                           dt_iop_module_t *self)
@@ -5910,7 +6041,9 @@ static int _event_structure_lines_clicked(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_ashift_gui_data_t *g = IOP_GUI_ALLOC(ashift);
@@ -6148,7 +6281,9 @@ void gui_init(dt_iop_module_t *self)
 
   darktable.develop->proxy.rotate = self;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   if(darktable.develop->proxy.rotate == self)
@@ -6160,7 +6295,9 @@ void gui_cleanup(dt_iop_module_t *self)
   if(g->points) free(g->points);
   if(g->points_idx) free(g->points_idx);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 GSList *mouse_actions(dt_iop_module_t *self)
 {
   GSList *lm = NULL;
@@ -6184,6 +6321,7 @@ GSList *mouse_actions(dt_iop_module_t *self)
 
   return lm;
 }
+#endif
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

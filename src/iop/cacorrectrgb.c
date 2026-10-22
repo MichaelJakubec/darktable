@@ -27,7 +27,9 @@
 #include "common/gaussian.h"
 #include "common/fast_guided_filter.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 
 DT_MODULE_INTROSPECTION(1, dt_iop_cacorrectrgb_params_t)
@@ -680,6 +682,7 @@ void process(dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, const void *c
   reduce_chromatic_aberrations(in, width, height, ch, sigma, sigma2, d->guide_channel, d->mode, d->refine_manifolds, safety, out);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_cacorrectrgb_gui_data_t *g = self->gui_data;
@@ -687,6 +690,7 @@ void gui_update(dt_iop_module_t *self)
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g->refine_manifolds), p->refine_manifolds);
 }
+#endif
 
 void reload_defaults(dt_iop_module_t *self)
 {
@@ -698,6 +702,7 @@ void reload_defaults(dt_iop_module_t *self)
   d->mode = DT_CACORRECT_MODE_STANDARD;
   d->refine_manifolds = FALSE;
 
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_cacorrectrgb_gui_data_t *g = self->gui_data;
   if(g)
   {
@@ -708,8 +713,10 @@ void reload_defaults(dt_iop_module_t *self)
     dt_bauhaus_combobox_set_default(g->mode, d->mode);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g->refine_manifolds), d->refine_manifolds);
   }
+#endif
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_cacorrectrgb_gui_data_t *g = IOP_GUI_ALLOC(cacorrectrgb);
@@ -747,6 +754,7 @@ void gui_init(dt_iop_module_t *self)
                                                     "colors too much on other\n"
                                                     "images."));
 }
+#endif
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

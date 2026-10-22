@@ -31,9 +31,13 @@
 #include "gui/presets.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 
 // this is the version of the modules parameters,
 // and includes version information about compile-time dt
@@ -365,6 +369,7 @@ void process(dt_iop_module_t *self,
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_bilat_gui_data_t *g = self->gui_data;
@@ -400,7 +405,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     gtk_widget_set_visible(g->spatial, p->mode != s_mode_local_laplacian);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_bilat_gui_data_t *g = self->gui_data;
@@ -425,7 +432,9 @@ void gui_update(dt_iop_module_t *self)
 
   gui_changed(self, NULL, NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   // init the slider (more sophisticated layouts are possible with gtk tables and boxes):
@@ -494,6 +503,7 @@ void gui_init(dt_iop_module_t *self)
   g_object_set(G_OBJECT(g->spatial), "no-show-all", TRUE, NULL);
 
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

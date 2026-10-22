@@ -25,12 +25,18 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/openmp_maths.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 #include <strings.h>
 
@@ -508,10 +514,12 @@ void reload_defaults(dt_iop_module_t *self)
   // can't be switched on for non-raw images:
   self->hide_enable_button = !dt_image_is_raw(&self->dev->image_storage);
 
+#ifndef DARKTABLE_ENGINE_ONLY
   if(self->widget)
   {
     gtk_stack_set_visible_child_name(GTK_STACK(self->widget), self->hide_enable_button ? "non_raw" : "raw");
   }
+#endif
 
   self->default_enabled = FALSE;
 }
@@ -560,12 +568,15 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_rawdenoise_gui_data_t *g = self->gui_data;
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void dt_iop_rawdenoise_get_params(dt_iop_rawdenoise_params_t *p, const int ch, const double mouse_x,
                                          const double mouse_y, const float rad)
 {
@@ -575,7 +586,9 @@ static void dt_iop_rawdenoise_get_params(dt_iop_rawdenoise_params_t *p, const in
     p->y[ch][k] = (1 - f) * p->y[ch][k] + f * mouse_y;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rawdenoise_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   dt_iop_rawdenoise_gui_data_t *g = self->gui_data;
@@ -764,7 +777,9 @@ static gboolean rawdenoise_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t
   cairo_surface_destroy(cst);
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rawdenoise_motion_notify(GtkWidget *widget, GdkEventMotion *event, dt_iop_module_t *self)
 {
   dt_iop_rawdenoise_gui_data_t *g = self->gui_data;
@@ -792,7 +807,9 @@ static gboolean rawdenoise_motion_notify(GtkWidget *widget, GdkEventMotion *even
   }
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rawdenoise_button_press(GtkWidget *widget, GdkEventButton *event, dt_iop_module_t *self)
 {
   dt_iop_rawdenoise_gui_data_t *g = self->gui_data;
@@ -825,7 +842,9 @@ static gboolean rawdenoise_button_press(GtkWidget *widget, GdkEventButton *event
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rawdenoise_button_release(GtkWidget *widget, GdkEventButton *event, dt_iop_module_t *self)
 {
   if(event->button == GDK_BUTTON_PRIMARY)
@@ -836,7 +855,9 @@ static gboolean rawdenoise_button_release(GtkWidget *widget, GdkEventButton *eve
   }
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rawdenoise_leave_notify(GtkWidget *widget, GdkEventCrossing *event, dt_iop_module_t *self)
 {
   dt_iop_rawdenoise_gui_data_t *g = self->gui_data;
@@ -844,7 +865,9 @@ static gboolean rawdenoise_leave_notify(GtkWidget *widget, GdkEventCrossing *eve
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean rawdenoise_scrolled(GtkWidget *widget, GdkEventScroll *event, dt_iop_module_t *self)
 {
   dt_iop_rawdenoise_gui_data_t *g = self->gui_data;
@@ -863,7 +886,9 @@ static gboolean rawdenoise_scrolled(GtkWidget *widget, GdkEventScroll *event, dt
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void rawdenoise_tab_switch(GtkNotebook *notebook, GtkWidget *page, guint page_num, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -871,7 +896,9 @@ static void rawdenoise_tab_switch(GtkNotebook *notebook, GtkWidget *page, guint 
   g->channel = (dt_iop_rawdenoise_channel_t)page_num;
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_rawdenoise_gui_data_t *g = IOP_GUI_ALLOC(rawdenoise);
@@ -931,13 +958,16 @@ void gui_init(dt_iop_module_t *self)
   gtk_stack_add_named(GTK_STACK(self->widget), label_non_raw, "non_raw");
   gtk_stack_add_named(GTK_STACK(self->widget), box_raw, "raw");
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_rawdenoise_gui_data_t *g = self->gui_data;
   dt_conf_set_int("plugins/darkroom/rawdenoise/gui_channel", g->channel);
   dt_draw_curve_destroy(g->transition_curve);
 }
+#endif
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py
 // vim: shiftwidth=2 expandtab tabstop=2 cindent

@@ -27,13 +27,17 @@
 #include "develop/develop.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "gui/draw.h"
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <math.h>
 #include <pango/pangocairo.h>
 #include <stdlib.h>
@@ -190,7 +194,9 @@ typedef struct dt_iop_agx_gui_data_t
   dt_iop_basic_curve_controls_t basic_curve_controls;
 
   // curve graph/plot
+#ifndef DARKTABLE_ENGINE_ONLY
   GtkAllocation allocation;
+#endif
   PangoRectangle ink;
   GtkStyleContext *context;
 
@@ -1001,6 +1007,7 @@ static primaries_params_t _get_primaries_params(const dt_iop_agx_params_t *p)
   return primaries_params;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_pivot_slider_settings(GtkWidget* const slider,
                                          const dt_iop_agx_params_t* const p)
 {
@@ -1017,7 +1024,9 @@ static void _update_pivot_slider_settings(GtkWidget* const slider,
 
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_pivot_x(const float old_black_ev, const float old_white_ev, dt_iop_module_t *self, dt_iop_agx_params_t *const p)
 {
   const dt_iop_agx_gui_data_t *g = self->gui_data;
@@ -1038,7 +1047,9 @@ static void _update_pivot_x(const float old_black_ev, const float old_white_ev, 
 
   _update_pivot_slider_settings(g->basic_curve_controls.curve_pivot_x, p);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _adjust_relative_exposure_from_exposure_params(dt_iop_module_t *self)
 {
   dt_iop_agx_params_t *p = self->params;
@@ -1053,6 +1064,7 @@ static void _adjust_relative_exposure_from_exposure_params(dt_iop_module_t *self
 
   _update_pivot_x(old_black_ev, old_white_ev, self, p);
 }
+#endif
 
 static void _agx_tone_mapping(dt_aligned_pixel_t rgb_in_out,
                               const tone_mapping_params_t *params,
@@ -1100,6 +1112,7 @@ static void _agx_tone_mapping(dt_aligned_pixel_t rgb_in_out,
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _apply_auto_black_exposure(const dt_iop_module_t *self)
 {
   dt_iop_agx_params_t *p = self->params;
@@ -1115,7 +1128,9 @@ static void _apply_auto_black_exposure(const dt_iop_module_t *self)
   dt_bauhaus_slider_set(g->black_exposure_picker, p->range_black_relative_ev);
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _apply_auto_white_exposure(const dt_iop_module_t *self)
 {
   dt_iop_agx_params_t *p = self->params;
@@ -1131,7 +1146,9 @@ static void _apply_auto_white_exposure(const dt_iop_module_t *self)
   dt_bauhaus_slider_set(g->white_exposure_picker, p->range_white_relative_ev);
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _apply_auto_tune_exposure(const dt_iop_module_t *self)
 {
   dt_iop_agx_params_t *p = self->params;
@@ -1154,7 +1171,9 @@ static void _apply_auto_tune_exposure(const dt_iop_module_t *self)
   dt_bauhaus_slider_set(g->white_exposure_picker, p->range_white_relative_ev);
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _read_exposure_params_callback(GtkWidget *widget,
                                      dt_iop_module_t *self)
 {
@@ -1166,8 +1185,10 @@ static void _read_exposure_params_callback(GtkWidget *widget,
     dt_dev_add_history_item(darktable.develop, self, TRUE);
   }
 }
+#endif
 
 // move only the pivot's relative (input) exposure, and recalculate its output based on mid-gray
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _apply_auto_pivot_xy(dt_iop_module_t *self, const dt_iop_order_iccprofile_info_t *profile)
 {
   dt_iop_agx_params_t *p = self->params;
@@ -1198,8 +1219,10 @@ static void _apply_auto_pivot_xy(dt_iop_module_t *self, const dt_iop_order_iccpr
                         p->curve_pivot_y_linear_output);
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
 // move only the pivot's relative (input) exposure, but don't change its output
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _apply_auto_pivot_x(dt_iop_module_t *self, const dt_iop_order_iccprofile_info_t *profile)
 {
   dt_iop_agx_params_t *p = self->params;
@@ -1218,6 +1241,7 @@ static void _apply_auto_pivot_x(dt_iop_module_t *self, const dt_iop_order_iccpro
   dt_bauhaus_slider_set(g->basic_curve_controls.curve_pivot_x, p->curve_pivot_x);
   DT_LEAVE_GUI_UPDATE();
 }
+#endif
 
 static void _create_matrices(const primaries_params_t *params,
                              const dt_iop_order_iccprofile_info_t *pipe_work_profile,
@@ -1413,6 +1437,7 @@ void process(dt_iop_module_t *self,
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _agx_draw_curve(GtkWidget *widget,
                                 cairo_t *crf,
                                 const dt_iop_module_t *self)
@@ -1691,6 +1716,7 @@ static gboolean _agx_draw_curve(GtkWidget *widget,
 
   return FALSE;
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -1717,6 +1743,7 @@ void cleanup_pipe(dt_iop_module_t *self,
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_curve_warnings(dt_iop_module_t *self)
 {
   const dt_iop_agx_gui_data_t *g = self->gui_data;
@@ -1734,7 +1761,9 @@ static void _update_curve_warnings(dt_iop_module_t *self)
                                     params.need_concave_shoulder && warnings_enabled
                                     ? dtgtk_cairo_paint_warning : NULL, CPF_ACTIVE, NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_redraw_dynamic_gui(dt_iop_module_t* const self,
                                        const dt_iop_agx_gui_data_t* const g,
                                        const dt_iop_agx_params_t* const p)
@@ -1750,7 +1779,9 @@ static void _update_redraw_dynamic_gui(dt_iop_module_t* const self,
   // Trigger redraw when any parameter changes
   gtk_widget_queue_draw(GTK_WIDGET(g->graph_drawing_area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self,
                  GtkWidget *widget,
                  void *previous)
@@ -1810,7 +1841,9 @@ void gui_changed(dt_iop_module_t *self,
     _update_redraw_dynamic_gui(self, g, p);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GtkWidget* _create_basic_curve_controls_box(dt_iop_module_t *self,
                                                    dt_iop_agx_gui_data_t *g)
 {
@@ -1884,7 +1917,9 @@ static GtkWidget* _create_basic_curve_controls_box(dt_iop_module_t *self,
 
   return box;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _add_look_sliders(dt_iop_module_t *section)
 {
   // Reuse the slider variable for all sliders instead of creating new ones in each scope
@@ -1916,7 +1951,9 @@ static void _add_look_sliders(dt_iop_module_t *section)
   dt_bauhaus_slider_set_factor(slider, 100.f);
   gtk_widget_set_tooltip_text(slider, _("increase to bring hues closer to the original"));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _add_look_box(dt_iop_module_t *self,
                           dt_iop_agx_gui_data_t *g)
 {
@@ -1940,7 +1977,9 @@ static void _add_look_box(dt_iop_module_t *self,
 
   dt_gui_box_add(self->widget, look_box);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GtkWidget* _create_curve_graph_box(dt_iop_module_t *self,
                                           dt_iop_agx_gui_data_t *g)
 {
@@ -1961,7 +2000,9 @@ static GtkWidget* _create_curve_graph_box(dt_iop_module_t *self,
 
   return graph_box;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GtkWidget* _create_advanced_box(dt_iop_module_t *self,
                                        dt_iop_agx_gui_data_t *g)
 {
@@ -2033,7 +2074,9 @@ static GtkWidget* _create_advanced_box(dt_iop_module_t *self,
 
   return advanced_box;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _add_exposure_box(dt_iop_module_t *self, dt_iop_agx_gui_data_t *g, dt_iop_module_t *real_self)
 {
   gchar *section_name = NC_("section", "input exposure range");
@@ -2083,7 +2126,9 @@ static void _add_exposure_box(dt_iop_module_t *self, dt_iop_agx_gui_data_t *g, d
 
   dt_gui_box_add(self->widget, g->range_exposure_picker_group);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _apply_primaries_from_menu_callback(GtkMenuItem *menuitem, dt_iop_module_t *self)
 {
   const char *preset_id = gtk_widget_get_name(GTK_WIDGET(menuitem));
@@ -2096,7 +2141,9 @@ static void _apply_primaries_from_menu_callback(GtkMenuItem *menuitem, dt_iop_mo
   dt_iop_gui_update(self);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _primaries_popupmenu_callback(GtkWidget *button, dt_iop_module_t *self)
 {
   GtkWidget *menu = gtk_menu_new();
@@ -2119,7 +2166,9 @@ static void _primaries_popupmenu_callback(GtkWidget *button, dt_iop_module_t *se
   gtk_widget_show_all(menu);
   dt_gui_menu_popup(GTK_MENU(menu), button, GDK_GRAVITY_SOUTH_WEST, GDK_GRAVITY_NORTH_WEST);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _set_post_curve_primaries_from_pre_callback(GtkWidget *widget, dt_iop_module_t *self)
 {
   dt_iop_agx_params_t *p = self->params;
@@ -2138,9 +2187,11 @@ static void _set_post_curve_primaries_from_pre_callback(GtkWidget *widget, dt_io
   dt_iop_gui_update(self);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 typedef void (*hsv_updater_t)(dt_aligned_pixel_t hsv_out, float position_on_slider, float hue_deg, gboolean reverse_or_attenuate);
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_hsv_for_hue(dt_aligned_pixel_t hsv_out, const float position_on_slider, const float hue_deg, const gboolean reverse)
 {
   const float hue_range_deg = 60.0f;
@@ -2151,14 +2202,18 @@ static void _update_hsv_for_hue(dt_aligned_pixel_t hsv_out, const float position
   hsv_out[1] = 0.7f;
   hsv_out[2] = 1.0f;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _update_hsv_for_purity(dt_aligned_pixel_t hsv_out, const float position_on_slider, const float hue_deg, const gboolean attenuate)
 {
   hsv_out[0] = hue_deg / 360.0f;
   hsv_out[1] = attenuate ? 1.0f - position_on_slider : position_on_slider;
   hsv_out[2] = 1.0f;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _paint_slider_gradient(GtkWidget *slider, const float hue_deg, const hsv_updater_t update_hsv, const gboolean attenuate_or_reverse)
 {
   const float soft_min = dt_bauhaus_slider_get_soft_min(slider);
@@ -2186,7 +2241,9 @@ static void _paint_slider_gradient(GtkWidget *slider, const float hue_deg, const
   }
   gtk_widget_queue_draw(GTK_WIDGET(slider));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GtkWidget *_setup_purity_slider(dt_iop_module_t *self,
                                        const char *param_name,
                                        const char *tooltip,
@@ -2214,7 +2271,9 @@ static GtkWidget *_setup_purity_slider(dt_iop_module_t *self,
 
   return slider;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GtkWidget *_setup_hue_slider(dt_iop_module_t *self,
                                     const char *param_name,
                                     const char *tooltip,
@@ -2233,7 +2292,9 @@ static GtkWidget *_setup_hue_slider(dt_iop_module_t *self,
 
   return slider;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   const dt_iop_agx_gui_data_t* const g = self->gui_data;
@@ -2252,7 +2313,9 @@ void gui_update(dt_iop_module_t *self)
 
   gui_changed(self, NULL, NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _create_primaries_page(dt_iop_module_t *main,
                                    dt_iop_agx_gui_data_t *g)
 {
@@ -2412,7 +2475,9 @@ static void _create_primaries_page(dt_iop_module_t *main,
                              blue_hue,
                              TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _notebook_page_changed(GtkNotebook *notebook,
                                    GtkWidget *page,
                                    const guint page_num,
@@ -2445,7 +2510,9 @@ static void _notebook_page_changed(GtkNotebook *notebook,
     gtk_box_reorder_child(GTK_BOX(target_container), basics, ++position);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_agx_gui_data_t *g = IOP_GUI_ALLOC(agx);
@@ -2481,6 +2548,7 @@ void gui_init(dt_iop_module_t *self)
   _add_look_box(settings_section, g);
   _create_primaries_page(self, g);
 }
+#endif
 
 static void _set_default_curve_and_look_params(dt_iop_agx_params_t *p)
 {
@@ -2654,6 +2722,7 @@ void init_presets(dt_iop_module_so_t *self)
 }
 
 // Callback for color pickers
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -2688,6 +2757,7 @@ void color_picker_apply(dt_iop_module_t *self,
   gtk_widget_queue_draw(GTK_WIDGET(g->graph_drawing_area));
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 void commit_params(dt_iop_module_t *self,
                    dt_iop_params_t *gui_params,
@@ -2711,10 +2781,12 @@ void reload_defaults(dt_iop_module_t *self)
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_color_picker_reset(self, TRUE);
 }
+#endif
 
 #ifdef HAVE_OPENCL
 

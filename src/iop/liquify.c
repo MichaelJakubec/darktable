@@ -26,7 +26,9 @@
 #include "control/control.h"
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 #include <assert.h>
@@ -266,7 +268,9 @@ typedef struct
 
   float complex last_mouse_pos;
   float complex last_button1_pressed_pos;
+#ifndef DARKTABLE_ENGINE_ONLY
   GdkModifierType last_mouse_mods;  ///< GDK modifiers at the time mouse button was pressed.
+#endif
 
   dt_liquify_hit_t last_hit;      ///< Element last hit with mouse button.
   dt_liquify_hit_t dragging;      ///< Element being dragged with mouse button.
@@ -338,6 +342,7 @@ static inline float get_rot(const dt_liquify_warp_type_enum_t warp_type)
     return 0.0f;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static dt_liquify_path_data_t *node_alloc(dt_iop_liquify_params_t *p,
                                           int *node_index)
 {
@@ -352,6 +357,7 @@ static dt_liquify_path_data_t *node_alloc(dt_iop_liquify_params_t *p,
     }
   return NULL;
 }
+#endif
 
 static dt_liquify_path_data_t *node_prev(dt_iop_liquify_params_t *p,
                                          const dt_liquify_path_data_t *n)
@@ -362,6 +368,7 @@ static dt_liquify_path_data_t *node_prev(dt_iop_liquify_params_t *p,
     return &p->nodes[n->header.prev];
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static dt_liquify_path_data_t *node_get(dt_iop_liquify_params_t *p,
                                         const int index)
 {
@@ -370,7 +377,9 @@ static dt_liquify_path_data_t *node_get(dt_iop_liquify_params_t *p,
   else
     return NULL;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static dt_liquify_path_data_t *node_next(dt_iop_liquify_params_t *p,
                                          const dt_liquify_path_data_t *n)
 {
@@ -379,7 +388,9 @@ static dt_liquify_path_data_t *node_next(dt_iop_liquify_params_t *p,
   else
     return &p->nodes[n->header.next];
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void node_insert_before(dt_iop_liquify_params_t *p,
                                dt_liquify_path_data_t *this,
                                dt_liquify_path_data_t *new)
@@ -390,7 +401,9 @@ static void node_insert_before(dt_iop_liquify_params_t *p,
     p->nodes[this->header.prev].header.next = new->header.idx;
   this->header.prev = new->header.idx;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void node_gc(dt_iop_liquify_params_t *p)
 {
   int last=0;
@@ -421,7 +434,9 @@ static void node_gc(dt_iop_liquify_params_t *p)
   for(int l=last+1; l<MAX_NODES; l++)
     p->nodes[l].header.type = DT_LIQUIFY_PATH_INVALIDATED;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void node_delete(dt_iop_liquify_params_t *p,
                         dt_liquify_path_data_t *this)
 {
@@ -445,7 +460,9 @@ static void node_delete(dt_iop_liquify_params_t *p,
   this->header.type = DT_LIQUIFY_PATH_INVALIDATED;
   node_gc(p);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void path_delete(dt_iop_liquify_params_t *p,
                         dt_liquify_path_data_t *this)
 {
@@ -467,6 +484,7 @@ static void path_delete(dt_iop_liquify_params_t *p,
   }
   node_gc(p);
 }
+#endif
 
 /**
  * The functions in this group help transform between coordinate
@@ -1322,6 +1340,7 @@ static gboolean _distort_xtransform(const dt_iop_module_t *self,
   return TRUE;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void start_drag(dt_iop_liquify_gui_data_t *g,
                        const dt_liquify_layer_enum_t layer,
                        dt_liquify_path_data_t *elem)
@@ -1329,16 +1348,21 @@ static void start_drag(dt_iop_liquify_gui_data_t *g,
   g->dragging.layer = layer;
   g->dragging.elem = elem;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void end_drag(dt_iop_liquify_gui_data_t *g)
 {
   g->dragging = NOWHERE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean is_dragging(const dt_iop_liquify_gui_data_t *g)
 {
   return g->dragging.elem != NULL;
 }
+#endif
 
 gboolean distort_transform(dt_iop_module_t *self,
                            dt_dev_pixelpipe_iop_t *piece,
@@ -1611,6 +1635,7 @@ static float cdot(const float complex p0, const float complex p1)
 #endif
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void draw_rectangle(cairo_t *cr,
                            const float complex pt,
                            const double theta,
@@ -1623,7 +1648,9 @@ static void draw_rectangle(cairo_t *cr,
   cairo_rectangle(cr, -size / 2.0, -size / 2.0, size, size);
   cairo_restore(cr);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void draw_triangle(cairo_t *cr,
                           const float complex pt,
                           const double theta,
@@ -1639,7 +1666,9 @@ static void draw_triangle(cairo_t *cr,
   cairo_close_path(cr);
   cairo_restore(cr);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void draw_circle(cairo_t *cr,
                         const float complex pt,
                         const double diameter)
@@ -1650,22 +1679,28 @@ static void draw_circle(cairo_t *cr,
   cairo_arc(cr, x, y, diameter / 2.0, 0, 2 * M_PI);
   cairo_restore(cr);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void set_source_rgba(cairo_t *cr,
                             const dt_liquify_rgba_t rgba)
 {
   cairo_set_source_rgba(cr, rgba.red, rgba.green, rgba.blue, rgba.alpha);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float get_ui_width(const float scale,
                           const dt_liquify_ui_width_enum_t w)
 {
   assert(w >= 0 && w < DT_LIQUIFY_UI_WIDTH_LAST);
   return scale * DT_PIXEL_APPLY_DPI(dt_liquify_ui_widths[w]);
 }
+#endif
 
 #define GET_UI_WIDTH(a) (get_ui_width(scale, DT_LIQUIFY_UI_WIDTH_##a))
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void set_line_width(cairo_t *cr,
                            const double scale,
                            const dt_liquify_ui_width_enum_t w)
@@ -1673,7 +1708,9 @@ static void set_line_width(cairo_t *cr,
   const double width = get_ui_width(scale, w);
   cairo_set_line_width(cr, width * (dt_iop_canvas_not_sensitive(darktable.develop) ? 0.5 : 1.0));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _layers_showing(const dt_iop_liquify_gui_data_t *g)
 {
   return gtk_toggle_button_get_active(g->btn_node_tool)
@@ -1681,7 +1718,9 @@ static gboolean _layers_showing(const dt_iop_liquify_gui_data_t *g)
     || gtk_toggle_button_get_active(g->btn_line_tool)
     || gtk_toggle_button_get_active(g->btn_curve_tool);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean detect_drag(const dt_iop_liquify_gui_data_t *g,
                             const double scale,
                             const float complex pt)
@@ -1690,7 +1729,9 @@ static gboolean detect_drag(const dt_iop_liquify_gui_data_t *g,
   return g->last_button1_pressed_pos != -1.0 &&
     cabsf(pt - g->last_button1_pressed_pos) >= (GET_UI_WIDTH(MIN_DRAG) / scale);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void update_warp_count(const dt_iop_module_t *self)
 {
   const dt_iop_liquify_gui_data_t *g = self->gui_data;
@@ -1714,6 +1755,7 @@ static void update_warp_count(const dt_iop_module_t *self)
   if(strcmp(str,gtk_label_get_text(g->label)) != 0)
     gtk_label_set_text(g->label, str);
 }
+#endif
 
 static GList *interpolate_paths(dt_iop_liquify_params_t *p)
 {
@@ -1795,6 +1837,7 @@ static GList *interpolate_paths(dt_iop_liquify_params_t *p)
 #define THINLINE     set_line_width (cr, scale, DT_LIQUIFY_UI_WIDTH_THINLINE)
 #define THICKLINE    set_line_width (cr, scale, DT_LIQUIFY_UI_WIDTH_THICKLINE)
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _draw_paths(const dt_iop_module_t *self,
                         cairo_t *cr,
                         const float scale,
@@ -2109,6 +2152,7 @@ static void _draw_paths(const dt_iop_module_t *self,
 
   g_list_free_full(interpolated, free);
 }
+#endif
 
 /*
   Find the nearest point on a cubic bezier curve.
@@ -2320,6 +2364,7 @@ void _hit_paths(dt_iop_module_t *self,
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void draw_paths(const dt_iop_module_t *self,
                        cairo_t *cr,
                        const float scale,
@@ -2349,6 +2394,7 @@ static void draw_paths(const dt_iop_module_t *self,
 
   g_list_free(layers);
 }
+#endif
 
 void _hit_test_paths(dt_iop_module_t *self,
                      dt_iop_liquify_params_t *params,
@@ -2422,6 +2468,7 @@ void _hit_test_paths(dt_iop_module_t *self,
  * c2. (You may open your eyes again.)
  */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void smooth_path_linsys(size_t n,
                                 const float complex *k,
                                 float complex *c1,
@@ -2494,7 +2541,9 @@ static void smooth_path_linsys(size_t n,
   free(c);
   free(d);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int path_length(const dt_iop_liquify_params_t *p, const dt_liquify_path_data_t *n)
 {
   int count = 1;
@@ -2505,7 +2554,9 @@ static int path_length(const dt_iop_liquify_params_t *p, const dt_liquify_path_d
   }
   return count;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void smooth_paths_linsys(dt_iop_liquify_params_t *params)
 {
   for(int k = 0; k < MAX_NODES; k++)
@@ -2605,7 +2656,9 @@ static void smooth_paths_linsys(dt_iop_liquify_params_t *params)
     free(eqn);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static dt_liquify_path_data_t *_find_hovered(dt_iop_liquify_params_t *p)
 {
   for(int k=0; k<MAX_NODES; k++)
@@ -2615,7 +2668,9 @@ static dt_liquify_path_data_t *_find_hovered(dt_iop_liquify_params_t *p)
       return &p->nodes[k];
   return NULL;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void init_warp(dt_liquify_warp_t *warp, const float complex point)
 {
   warp->type     = DT_LIQUIFY_WARP_TYPE_LINEAR;
@@ -2626,7 +2681,9 @@ static void init_warp(dt_liquify_warp_t *warp, const float complex point)
   warp->control2 = 0.75;
   warp->status   = DT_LIQUIFY_STATUS_NONE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static dt_liquify_path_data_t *alloc_move_to(const dt_iop_module_t *self,
                                              const float complex start_point)
 {
@@ -2641,7 +2698,9 @@ static dt_liquify_path_data_t *alloc_move_to(const dt_iop_module_t *self,
   }
   return (dt_liquify_path_data_t *)m;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static dt_liquify_path_data_t *alloc_line_to(const dt_iop_module_t *self,
                                              const float complex end_point)
 {
@@ -2656,7 +2715,9 @@ static dt_liquify_path_data_t *alloc_line_to(const dt_iop_module_t *self,
   }
   return (dt_liquify_path_data_t *)l;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static dt_liquify_path_data_t *alloc_curve_to(const dt_iop_module_t *self,
                                               const float complex end_point)
 {
@@ -2672,7 +2733,9 @@ static dt_liquify_path_data_t *alloc_curve_to(const dt_iop_module_t *self,
   }
   return (dt_liquify_path_data_t *)c;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void unselect_all(dt_iop_liquify_params_t *p)
 {
   for(int k=0; k<MAX_NODES; k++)
@@ -2681,7 +2744,9 @@ static void unselect_all(dt_iop_liquify_params_t *p)
     else
       p->nodes[k].header.selected = 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_post_expose(dt_iop_module_t *self,
                      cairo_t *cr,
                      const float bb_width,
@@ -2723,11 +2788,15 @@ void gui_post_expose(dt_iop_module_t *self,
     draw_paths(self, cr, 1.0 / (scale * zoom_scale), &copy_params);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean btn_make_radio_callback(GtkToggleButton *btn,
                                         const GdkEventButton *event,
                                         dt_iop_module_t *self);
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self,
                const gboolean in)
 {
@@ -2737,7 +2806,9 @@ void gui_focus(dt_iop_module_t *self,
     btn_make_radio_callback(NULL, NULL, self);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void sync_pipe(dt_iop_module_t *self,
                       const gboolean history)
 {
@@ -2757,6 +2828,7 @@ static void sync_pipe(dt_iop_module_t *self,
     dt_control_queue_redraw_center();
   }
 }
+#endif
 
 /*
   right-click on node:       Delete node.
@@ -2769,6 +2841,7 @@ static void sync_pipe(dt_iop_module_t *self,
   ctrl+click on strength:    Cycle linear, grow, shrink
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void get_point_scale(const dt_iop_module_t *self,
                             const float pzx,
                             const float pzy,
@@ -2791,7 +2864,9 @@ static void get_point_scale(const dt_iop_module_t *self,
   *pt = (nx * darktable.develop->full.pipe->iwidth)
     +  (ny * darktable.develop->full.pipe->iheight) * I;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int mouse_moved(dt_iop_module_t *self,
                 const float x,
                 const float y,
@@ -2983,7 +3058,9 @@ done:
   }
   return handled;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float dt_conf_get_sanitize_float(const char *name,
                                         const float min,
                                         const float max,
@@ -2999,7 +3076,9 @@ static float dt_conf_get_sanitize_float(const char *name,
   dt_conf_set_float(name, new_value);
   return new_value;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void get_stamp_params(dt_iop_module_t *self,
                              float *radius,
                              float *r_strength,
@@ -3022,9 +3101,11 @@ static void get_stamp_params(dt_iop_module_t *self,
                                            2.0f * *radius, 1.5f * *radius);
   *phi = dt_conf_get_sanitize_float(CONF_ANGLE, -M_PI, M_PI, 0.0f);
 }
+#endif
 /*
   add support for changing the radius and the strength vector for the temp node
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 int scrolled(dt_iop_module_t *self,
              const float x,
              const float y,
@@ -3081,7 +3162,9 @@ int scrolled(dt_iop_module_t *self,
 
   return 0;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_pressed(dt_iop_module_t *self,
                    const float x,
                    const float y,
@@ -3173,7 +3256,9 @@ done:
   dt_iop_gui_leave_critical_section(self);
   return handled;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _start_new_shape(dt_iop_module_t *self)
 {
   dt_iop_liquify_gui_data_t *g = self->gui_data;
@@ -3197,7 +3282,9 @@ static void _start_new_shape(dt_iop_module_t *self)
   start_drag(g, DT_LIQUIFY_LAYER_CENTERPOINT, g->temp);
   g->last_hit = NOWHERE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 int button_released(dt_iop_module_t *self,
                     const float x,
                     const float y,
@@ -3486,7 +3573,9 @@ done:
   }
   return handled;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _liquify_cairo_paint_point_tool(cairo_t *cr,
                                             const gint x,
                                             const gint y,
@@ -3494,7 +3583,9 @@ static void _liquify_cairo_paint_point_tool(cairo_t *cr,
                                             const gint h,
                                             const gint flags,
                                             void *data);
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _liquify_cairo_paint_line_tool(cairo_t *cr,
                                            const gint x,
                                            const gint y,
@@ -3502,7 +3593,9 @@ static void _liquify_cairo_paint_line_tool(cairo_t *cr,
                                            const gint h,
                                            const gint flags,
                                            void *data);
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _liquify_cairo_paint_curve_tool(cairo_t *cr,
                                             const gint x,
                                             const gint y,
@@ -3510,7 +3603,9 @@ static void _liquify_cairo_paint_curve_tool(cairo_t *cr,
                                             const gint h,
                                             const gint flags,
                                             void *data);
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _liquify_cairo_paint_node_tool(cairo_t *cr,
                                            const gint x,
                                            const gint y,
@@ -3518,9 +3613,11 @@ static void _liquify_cairo_paint_node_tool(cairo_t *cr,
                                            const gint h,
                                            const gint flags,
                                            void *data);
+#endif
 
 // we need this only because darktable has no radiobutton support
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean btn_make_radio_callback(GtkToggleButton *btn,
                                         const GdkEventButton *event,
                                         dt_iop_module_t *self)
@@ -3591,12 +3688,16 @@ static gboolean btn_make_radio_callback(GtkToggleButton *btn,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   update_warp_count(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_liquify_gui_data_t *g = IOP_GUI_ALLOC(liquify);
@@ -3668,7 +3769,9 @@ void gui_init(dt_iop_module_t *self)
     _("<b>strength</b>: drag\n"
       "<b>linear, grow, and shrink</b>: ctrl+click");
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_liquify_gui_data_t *g = self->gui_data;
@@ -3677,6 +3780,7 @@ void gui_reset(dt_iop_module_t *self)
   g->status = 0;
   btn_make_radio_callback(NULL, NULL, self);
 }
+#endif
 
 // defgroup Button paint functions
 
@@ -3696,6 +3800,7 @@ void gui_reset(dt_iop_module_t *self)
   cairo_paint_with_alpha(cr, flags & CPF_ACTIVE ? 1.0 : 0.5);  \
   cairo_restore(cr);
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _liquify_cairo_paint_point_tool(cairo_t *cr,
                                             const gint x,
                                             const gint y,
@@ -3710,7 +3815,9 @@ static void _liquify_cairo_paint_point_tool(cairo_t *cr,
   cairo_fill(cr);
   POSTAMBLE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _liquify_cairo_paint_line_tool(cairo_t *cr,
                                            const gint x,
                                            const gint y,
@@ -3725,7 +3832,9 @@ static void _liquify_cairo_paint_line_tool(cairo_t *cr,
   cairo_stroke(cr);
   POSTAMBLE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _liquify_cairo_paint_curve_tool(cairo_t *cr,
                                             const gint x,
                                             const gint y,
@@ -3740,7 +3849,9 @@ static void _liquify_cairo_paint_curve_tool(cairo_t *cr,
   cairo_stroke(cr);
   POSTAMBLE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _liquify_cairo_paint_node_tool(cairo_t *cr,
                                            const gint x,
                                            const gint y,
@@ -3765,6 +3876,7 @@ static void _liquify_cairo_paint_node_tool(cairo_t *cr,
   cairo_fill(cr);
   POSTAMBLE;
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

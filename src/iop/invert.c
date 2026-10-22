@@ -16,16 +16,24 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 #include "common/colorspaces.h"
 #include "control/control.h"
 #include "develop/imageop.h"
 #include "develop/imageop_math.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
 #include "gui/color_picker_proxy.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
@@ -152,6 +160,7 @@ dt_iop_colorspace_type_t default_colorspace(dt_iop_module_t *self,
   return IOP_CS_RAW;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void gui_update_from_coeffs(dt_iop_module_t *self)
 {
   dt_iop_invert_gui_data_t *g = self->gui_data;
@@ -174,7 +183,9 @@ static void gui_update_from_coeffs(dt_iop_module_t *self)
 
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(g->colorpicker), &color);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -196,7 +207,9 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   dt_control_queue_redraw_widget(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void colorpicker_callback(GtkColorButton *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -222,6 +235,7 @@ static void colorpicker_callback(GtkColorButton *widget, dt_iop_module_t *self)
   }
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 void process(dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, const void *const ivoid,
              void *const ovoid, const dt_iop_roi_t *const roi_in, const dt_iop_roi_t *const roi_out)
@@ -399,6 +413,7 @@ finish:
 
 void reload_defaults(dt_iop_module_t *self)
 {
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_invert_gui_data_t *const g = (dt_iop_invert_gui_data_t*)self->gui_data;
 
   if(g)
@@ -427,6 +442,7 @@ void reload_defaults(dt_iop_module_t *self)
       }
     }
   }
+#endif
 }
 
 void init_global(dt_iop_module_so_t *self)
@@ -476,11 +492,14 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   gui_update_from_coeffs(self);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_invert_gui_data_t *g = IOP_GUI_ALLOC(invert);
@@ -499,6 +518,7 @@ void gui_init(dt_iop_module_t *self)
 
   self->widget = dt_gui_hbox(dt_gui_expand(g->label), dt_gui_expand(g->colorpicker), g->picker);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

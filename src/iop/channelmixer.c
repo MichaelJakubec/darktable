@@ -25,13 +25,17 @@
 #include "develop/imageop.h"
 #include "develop/imageop_math.h"
 #include "develop/openmp_maths.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
@@ -436,6 +440,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void red_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -449,7 +454,9 @@ static void red_callback(GtkWidget *slider, dt_iop_module_t *self)
     dt_dev_add_history_item(darktable.develop, self, TRUE);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void green_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -463,7 +470,9 @@ static void green_callback(GtkWidget *slider, dt_iop_module_t *self)
     dt_dev_add_history_item(darktable.develop, self, TRUE);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void blue_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -477,7 +486,9 @@ static void blue_callback(GtkWidget *slider, dt_iop_module_t *self)
     dt_dev_add_history_item(darktable.develop, self, TRUE);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void output_callback(GtkComboBox *combo, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -495,6 +506,7 @@ static void output_callback(GtkComboBox *combo, dt_iop_module_t *self)
     dt_bauhaus_slider_set_default(g->scale_blue, output_channel_index == CHANNEL_BLUE ? 1.0 : 0.0);
   }
 }
+#endif
 
 void commit_params(dt_iop_module_t *self, dt_iop_params_t *p1, dt_dev_pixelpipe_t *pipe,
                    dt_dev_pixelpipe_iop_t *piece)
@@ -572,6 +584,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_channelmixer_gui_data_t *g = self->gui_data;
@@ -585,6 +598,7 @@ void gui_update(dt_iop_module_t *self)
     dt_bauhaus_slider_set(g->scale_blue, p->blue[output_channel_index]);
   }
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -596,6 +610,7 @@ void init(dt_iop_module_t *self)
   d->red[CHANNEL_RED] = d->green[CHANNEL_GREEN] = d->blue[CHANNEL_BLUE] = 1.0;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_channelmixer_gui_data_t *g = IOP_GUI_ALLOC(channelmixer);
@@ -634,6 +649,7 @@ void gui_init(dt_iop_module_t *self)
 
   self->widget = dt_gui_vbox(g->output_channel, g->scale_red, g->scale_green, g->scale_blue);
 }
+#endif
 
 void init_presets(dt_iop_module_so_t *self)
 {

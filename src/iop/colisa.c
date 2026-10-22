@@ -25,7 +25,9 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
@@ -35,7 +37,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 
 DT_MODULE_INTROSPECTION(1, dt_iop_colisa_params_t)
@@ -265,6 +269,7 @@ void cleanup_global(dt_iop_module_so_t *self)
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_colisa_gui_data_t *g = IOP_GUI_ALLOC(colisa);
@@ -277,6 +282,7 @@ void gui_init(dt_iop_module_t *self)
   gtk_widget_set_tooltip_text(g->brightness, _("brightness adjustment"));
   gtk_widget_set_tooltip_text(g->saturation, _("color saturation adjustment"));
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

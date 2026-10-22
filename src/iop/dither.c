@@ -27,8 +27,12 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/gradientslider.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "imageio/imageio_common.h"
@@ -37,7 +41,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 
 DT_MODULE_INTROSPECTION(2, dt_iop_dither_params_t)
@@ -676,6 +682,7 @@ void process(
   }
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_dither_params_t *p = self->params;
@@ -686,6 +693,7 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     gtk_widget_set_visible(g->damping, p->dither_type == DITHER_RANDOM);
   }
 }
+#endif
 
 void commit_params(
         dt_iop_module_t *self,
@@ -714,6 +722,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_dither_gui_data_t *g = self->gui_data;
@@ -729,7 +738,9 @@ void gui_update(dt_iop_module_t *self)
 
   gtk_widget_set_visible(g->damping, p->dither_type == DITHER_RANDOM);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_dither_gui_data_t *g = IOP_GUI_ALLOC(dither);
@@ -741,6 +752,7 @@ void gui_init(dt_iop_module_t *self)
 
   g->dither_type = dt_bauhaus_combobox_from_params(self, "dither_type");
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

@@ -22,12 +22,18 @@
 #include "develop/imageop.h"
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 
 DT_MODULE_INTROSPECTION(1, dt_iop_hotpixels_params_t)
@@ -396,6 +402,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_hotpixels_gui_data_t *g = self->gui_data;
@@ -413,7 +420,9 @@ void gui_update(dt_iop_module_t *self)
 
   gtk_stack_set_visible_child_name(GTK_STACK(self->widget), self->hide_enable_button ? "non_raw" : "raw");
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean draw(GtkWidget *widget, cairo_t *cr, dt_iop_module_t *self)
 {
   dt_iop_hotpixels_gui_data_t *g = self->gui_data;
@@ -432,7 +441,9 @@ static gboolean draw(GtkWidget *widget, cairo_t *cr, dt_iop_module_t *self)
 
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_hotpixels_gui_data_t *g = IOP_GUI_ALLOC(hotpixels);
@@ -469,6 +480,7 @@ void gui_init(dt_iop_module_t *self)
   gtk_stack_add_named(GTK_STACK(self->widget), label_non_raw, "non_raw");
   gtk_stack_add_named(GTK_STACK(self->widget), box_raw, "raw");
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

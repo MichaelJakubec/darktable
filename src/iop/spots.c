@@ -23,10 +23,14 @@
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
 #include "develop/masks.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <stdlib.h>
 
 
@@ -180,6 +184,7 @@ int legacy_params(dt_iop_module_t *self,
   return 1;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _resynch_params(dt_iop_module_t *self)
 {
   dt_iop_spots_params_t *p = self->params;
@@ -217,7 +222,9 @@ static void _resynch_params(dt_iop_module_t *self)
     p->clone_id[i] = nid[i];
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _reset_form_creation(GtkWidget *widget, dt_iop_module_t *self)
 {
   dt_iop_spots_gui_data_t *g = self->gui_data;
@@ -251,7 +258,9 @@ static gboolean _reset_form_creation(GtkWidget *widget, dt_iop_module_t *self)
 
   return (nb < 64);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int _shape_is_being_added(dt_iop_module_t *self, const int shape_type)
 {
   int being_added = 0;
@@ -281,7 +290,9 @@ static int _shape_is_being_added(dt_iop_module_t *self, const int shape_type)
   }
   return being_added;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _add_shape(GtkWidget *widget,
                            const int creation_continuous,
                            dt_iop_module_t *self)
@@ -327,7 +338,9 @@ static gboolean _add_shape(GtkWidget *widget,
   dt_control_queue_redraw_center();
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _add_shape_callback(GtkWidget *widget,
                                     GdkEventButton *e,
                                     dt_iop_module_t *self)
@@ -349,7 +362,9 @@ static gboolean _add_shape_callback(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _edit_masks(GtkWidget *widget,
                             GdkEventButton *e,
                             dt_iop_module_t *self)
@@ -411,6 +426,7 @@ static gboolean _edit_masks(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
 static gboolean masks_form_is_in_roi(dt_iop_module_t *self,
                                      dt_dev_pixelpipe_iop_t *piece,
@@ -759,6 +775,7 @@ void init(dt_iop_module_t *self)
   memcpy(self->default_params, &tmp, sizeof(dt_iop_spots_params_t));
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, gboolean in)
 {
   if(self->enabled && !darktable.develop->full.pipe->loading)
@@ -802,6 +819,7 @@ void gui_focus(dt_iop_module_t *self, gboolean in)
     }
   }
 }
+#endif
 
 void init_pipe(dt_iop_module_t *self,
                dt_dev_pixelpipe_t *pipe,
@@ -819,6 +837,7 @@ void cleanup_pipe(dt_iop_module_t *self,
 }
 
 /** gui callbacks, these are needed. */
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   _resynch_params(self);
@@ -857,7 +876,9 @@ void gui_update(dt_iop_module_t *self)
   }
   dt_control_queue_redraw_center();
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_spots_gui_data_t *g = IOP_GUI_ALLOC(spots);
@@ -888,12 +909,15 @@ void gui_init(dt_iop_module_t *self)
                                          G_CALLBACK(_add_shape_callback), TRUE, 0, 0,
                                          dtgtk_cairo_paint_masks_circle, self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   // hide the previous masks
   dt_masks_reset_form_gui();
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

@@ -25,11 +25,21 @@
 #include "develop/develop.h"
 #include "develop/imageop_math.h"
 #include "develop/openmp_maths.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/expander.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/paint.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "gui/color_picker_proxy.h"
@@ -590,6 +600,7 @@ error:
 }
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void sanitize_latitude(dt_iop_filmic_params_t *p, dt_iop_filmic_gui_data_t *g)
 {
   if(p->latitude_stops > (p->white_point_source - p->black_point_source) * 0.99f)
@@ -602,7 +613,9 @@ static void sanitize_latitude(dt_iop_filmic_params_t *p, dt_iop_filmic_gui_data_
     DT_LEAVE_GUI_UPDATE();
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_grey(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -628,7 +641,9 @@ static void apply_auto_grey(dt_iop_module_t *self)
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_black(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -655,8 +670,10 @@ static void apply_auto_black(dt_iop_module_t *self)
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_auto_white_point_source(dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -683,7 +700,9 @@ static void apply_auto_white_point_source(dt_iop_module_t *self)
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void security_threshold_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -715,7 +734,9 @@ static void security_threshold_callback(GtkWidget *slider, dt_iop_module_t *self
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void apply_autotune(dt_iop_module_t *self)
 {
   dt_iop_filmic_gui_data_t *g = self->gui_data;
@@ -755,7 +776,9 @@ static void apply_autotune(dt_iop_module_t *self)
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
 {
@@ -771,7 +794,9 @@ void color_picker_apply(dt_iop_module_t *self, GtkWidget *picker,
   else
     dt_print(DT_DEBUG_ALWAYS, "[filmic] unknown color picker");
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void grey_point_source_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -794,7 +819,9 @@ static void grey_point_source_callback(GtkWidget *slider, dt_iop_module_t *self)
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void white_point_source_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -809,7 +836,9 @@ static void white_point_source_callback(GtkWidget *slider, dt_iop_module_t *self
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void black_point_source_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -824,7 +853,9 @@ static void black_point_source_callback(GtkWidget *slider, dt_iop_module_t *self
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void grey_point_target_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -834,7 +865,9 @@ static void grey_point_target_callback(GtkWidget *slider, dt_iop_module_t *self)
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void latitude_stops_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -849,7 +882,9 @@ static void latitude_stops_callback(GtkWidget *slider, dt_iop_module_t *self)
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void contrast_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -859,7 +894,9 @@ static void contrast_callback(GtkWidget *slider, dt_iop_module_t *self)
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void saturation_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -868,7 +905,9 @@ static void saturation_callback(GtkWidget *slider, dt_iop_module_t *self)
   dt_iop_color_picker_reset(self, TRUE);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void global_saturation_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -877,7 +916,9 @@ static void global_saturation_callback(GtkWidget *slider, dt_iop_module_t *self)
   dt_iop_color_picker_reset(self, TRUE);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void white_point_target_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -887,7 +928,9 @@ static void white_point_target_callback(GtkWidget *slider, dt_iop_module_t *self
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void black_point_target_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -897,7 +940,9 @@ static void black_point_target_callback(GtkWidget *slider, dt_iop_module_t *self
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void output_power_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -907,7 +952,9 @@ static void output_power_callback(GtkWidget *slider, dt_iop_module_t *self)
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void balance_callback(GtkWidget *slider, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -917,7 +964,9 @@ static void balance_callback(GtkWidget *slider, dt_iop_module_t *self)
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void interpolator_callback(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -957,7 +1006,9 @@ static void interpolator_callback(GtkWidget *widget, dt_iop_module_t *self)
   dt_dev_add_history_item(darktable.develop, self, TRUE);
   gtk_widget_queue_draw(self->widget);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void preserve_color_callback(GtkWidget *widget, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -965,6 +1016,7 @@ static void preserve_color_callback(GtkWidget *widget, dt_iop_module_t *self)
   p->preserve_color = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 void compute_curve_lut(dt_iop_filmic_params_t *p, float *table, float *table_temp, int res,
   dt_iop_filmic_data_t *d, dt_iop_filmic_nodes_t *nodes_data)
@@ -1255,6 +1307,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   dt_iop_filmic_gui_data_t *g = self->gui_data;
@@ -1285,6 +1338,7 @@ void gui_update(dt_iop_module_t *self)
   gtk_widget_queue_draw(self->widget);
 
 }
+#endif
 
 void init(dt_iop_module_t *self)
 {
@@ -1331,6 +1385,7 @@ void cleanup_global(dt_iop_module_so_t *self)
   self->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_reset(dt_iop_module_t *self)
 {
   dt_iop_filmic_gui_data_t *g = self->gui_data;
@@ -1340,7 +1395,9 @@ void gui_reset(dt_iop_module_t *self)
                                CPF_DIRECTION_LEFT, NULL);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g->extra_toggle), FALSE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean dt_iop_tonecurve_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   dt_iop_filmic_gui_data_t *g = self->gui_data;
@@ -1441,7 +1498,9 @@ static gboolean dt_iop_tonecurve_draw(GtkWidget *widget, cairo_t *crf, dt_iop_mo
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _extra_options_button_changed(GtkDarktableToggleButton *widget, dt_iop_module_t *self)
 {
   dt_iop_filmic_gui_data_t *g = self->gui_data;
@@ -1450,7 +1509,9 @@ static void _extra_options_button_changed(GtkDarktableToggleButton *widget, dt_i
   dtgtk_togglebutton_set_paint(DTGTK_TOGGLEBUTTON(g->extra_toggle), dtgtk_cairo_paint_solid_arrow,
                                (active ? CPF_DIRECTION_DOWN : CPF_DIRECTION_LEFT), NULL);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_filmic_gui_data_t *g = IOP_GUI_ALLOC(filmic);
@@ -1663,6 +1724,7 @@ void gui_init(dt_iop_module_t *self)
                              g->extra_expander);
   dt_gui_add_class(self->widget, "dt_transparent_background");
 }
+#endif
 
 
 // clang-format off

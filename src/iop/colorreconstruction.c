@@ -26,13 +26,17 @@
 #include "develop/imageop.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "gui/presets.h"
 #include "iop/iop_api.h"
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
@@ -1130,6 +1134,7 @@ void tiling_callback(dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece,
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_colorreconstruct_params_t *p = self->params;
@@ -1139,6 +1144,7 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     gtk_widget_set_visible(g->hue, p->precedence == COLORRECONSTRUCT_PRECEDENCE_HUE);
   }
 }
+#endif
 
 void commit_params(dt_iop_module_t *self, dt_iop_params_t *p1, dt_dev_pixelpipe_t *pipe,
                    dt_dev_pixelpipe_iop_t *piece)
@@ -1169,6 +1175,7 @@ void cleanup_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelp
   piece->data = NULL;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   const gboolean monochrome = dt_image_is_monochrome(&self->dev->image_storage);
@@ -1186,6 +1193,7 @@ void gui_update(dt_iop_module_t *self)
   g->hash = DT_INVALID_HASH;
   dt_iop_gui_leave_critical_section(self);
 }
+#endif
 
 void init_global(dt_iop_module_so_t *self)
 {
@@ -1210,6 +1218,7 @@ void cleanup_global(dt_iop_module_so_t *self)
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_colorreconstruct_gui_data_t *g = IOP_GUI_ALLOC(colorreconstruct);
@@ -1252,12 +1261,15 @@ void gui_init(dt_iop_module_t *self)
   gtk_stack_add_named(GTK_STACK(self->widget), monochromes, "monochrome");
   gtk_stack_add_named(GTK_STACK(self->widget), box_enabled, "default");
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_colorreconstruct_gui_data_t *g = self->gui_data;
   dt_iop_colorreconstruct_bilateral_dump(g->can);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

@@ -29,13 +29,21 @@
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/resetlabel.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/gtk.h"
 #include "iop/iop_api.h"
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
@@ -172,6 +180,7 @@ dt_iop_colorspace_type_t default_colorspace(dt_iop_module_t *self,
   return IOP_CS_LAB;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void capture_histogram(const float *col, const int width, const int height, int *hist)
 {
   // build separate histogram
@@ -190,7 +199,9 @@ static void capture_histogram(const float *col, const int width, const int heigh
   // for(int i=0;i<100;i++) printf("#[%d] %d \n", (int)CLAMP(HISTN*i/100.0, 0, HISTN-1),
   // hist[(int)CLAMP(HISTN*i/100.0, 0, HISTN-1)]);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void invert_histogram(const int *hist, float *inv_hist)
 {
 // invert non-normalised accumulated hist
@@ -211,6 +222,7 @@ static void invert_histogram(const int *hist, float *inv_hist)
   // hist[(int)CLAMP(HISTN*i/100.0, 0, HISTN-1)]/(float)HISTN, inv_hist[(int)CLAMP(HISTN*i/100.0, 0,
   // HISTN-1)]);
 }
+#endif
 
 static void get_cluster_mapping(const int n, float2 *mi, const float *wi, float2 *mo, const float *wo,
                                 const float dominance, int *mapio)
@@ -264,6 +276,7 @@ static void get_clusters(const float *col, const int n, float2 *mean, float *wei
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static int get_cluster(const float *col, const int n, float2 *mean)
 {
   float mdist = FLT_MAX;
@@ -280,7 +293,9 @@ static int get_cluster(const float *col, const int n, float2 *mean)
   }
   return cluster;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void kmeans(const float *col, const int width, const int height, const int n, float2 *mean_out,
                    float2 *var_out, float *weight_out)
 {
@@ -428,6 +443,7 @@ static void kmeans(const float *col, const int width, const int height, const in
     }
   }
 }
+#endif
 
 void process(dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, const void *const ivoid,
              void *const ovoid, const dt_iop_roi_t *const roi_in, const dt_iop_roi_t *const roi_out)
@@ -739,6 +755,7 @@ void commit_params(dt_iop_module_t *self, dt_iop_params_t *p1, dt_dev_pixelpipe_
 #endif
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_colormapping_params_t *p = self->params;
@@ -760,7 +777,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
     dt_control_queue_redraw_widget(g->target_area);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void acquire_source_button_pressed(GtkButton *button, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -771,7 +790,9 @@ static void acquire_source_button_pressed(GtkButton *button, dt_iop_module_t *se
   dt_iop_request_focus(self);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void acquire_target_button_pressed(GtkButton *button, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -782,6 +803,7 @@ static void acquire_target_button_pressed(GtkButton *button, dt_iop_module_t *se
   dt_iop_request_focus(self);
   dt_dev_add_history_item(darktable.develop, self, TRUE);
 }
+#endif
 
 void init_pipe(dt_iop_module_t *self, dt_dev_pixelpipe_t *pipe, dt_dev_pixelpipe_iop_t *piece)
 {
@@ -828,6 +850,7 @@ void reload_defaults(dt_iop_module_t *self)
 }
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean cluster_preview_draw(GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   dt_iop_colormapping_params_t *p = self->params;
@@ -891,8 +914,10 @@ static gboolean cluster_preview_draw(GtkWidget *widget, cairo_t *crf, dt_iop_mod
   cairo_surface_destroy(cst);
   return TRUE;
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void process_clusters(gpointer instance, dt_iop_module_t *self)
 {
   dt_iop_colormapping_params_t *p = self->params;
@@ -976,8 +1001,10 @@ static void process_clusters(gpointer instance, dt_iop_module_t *self)
 
   dt_control_queue_redraw();
 }
+#endif
 
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_colormapping_gui_data_t *g = IOP_GUI_ALLOC(colormapping);
@@ -1034,7 +1061,9 @@ void gui_init(dt_iop_module_t *self)
     fclose(f);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_colormapping_gui_data_t *g = self->gui_data;
@@ -1042,6 +1071,7 @@ void gui_cleanup(dt_iop_module_t *self)
   cmsDeleteTransform(g->xform);
   dt_free_align(g->buffer);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py

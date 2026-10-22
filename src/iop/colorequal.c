@@ -72,9 +72,15 @@ None;midi:CC24=iop/colorequal/brightness/magenta
 #include "develop/imageop_math.h"
 #include "develop/imageop_gui.h"
 #include "develop/tiling.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/drawingarea.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/expander.h"
+#endif
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "gui/accelerators.h"
+#endif
 #include "gui/color_picker_proxy.h"
 #include "gui/draw.h"
 #include "gui/gtk.h"
@@ -1882,6 +1888,7 @@ static inline void _build_dt_UCS_HSB_gradients
   dt_vector_clip(RGB);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void _draw_sliders_saturation_gradient
   (const float sat_min,
    const float sat_max,
@@ -1942,7 +1949,9 @@ static inline void _draw_sliders_brightness_gradient
     dt_bauhaus_slider_set_stop(slider, stop, RGB[0], RGB[1], RGB[2]);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void _init_sliders(const dt_iop_module_t *self)
 {
   const dt_iop_colorequal_gui_data_t *g = self->gui_data;
@@ -1989,7 +1998,9 @@ static inline void _init_sliders(const dt_iop_module_t *self)
     gtk_widget_queue_draw(slider);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _init_graph_backgrounds(dt_iop_colorequal_gui_data_t *g,
                                     const float graph_width,
                                     const float graph_height,
@@ -2037,12 +2048,14 @@ static void _init_graph_backgrounds(dt_iop_colorequal_gui_data_t *g,
   }
   g->gradients_cached = TRUE;
 }
+#endif
 
 void reload_defaults(dt_iop_module_t *self)
 {
   // we might be called from presets update infrastructure => there is no image
   if(!self->dev || !dt_is_valid_imgid(self->dev->image_storage.id)) return;
 
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_iop_colorequal_gui_data_t *g = self->gui_data;
   if(g)
   {
@@ -2051,6 +2064,7 @@ void reload_defaults(dt_iop_module_t *self)
     dt_bauhaus_widget_set_quad_active(g->threshold, FALSE);
     g->mask_mode = 0;
   }
+#endif
 }
 
 void init_presets(dt_iop_module_so_t *self)
@@ -2232,6 +2246,7 @@ void init_presets(dt_iop_module_so_t *self)
                              TRUE, DEVELOP_BLEND_CS_RGB_SCENE);
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_focus(dt_iop_module_t *self, gboolean in)
 {
   dt_iop_colorequal_gui_data_t *g = self->gui_data;
@@ -2246,6 +2261,7 @@ void gui_focus(dt_iop_module_t *self, gboolean in)
     if(buttons) dt_dev_reprocess_center(self->dev);
   }
 }
+#endif
 
 #define MINJZ 0.0001f
 static inline float _get_hueval(const float hue)
@@ -2254,6 +2270,7 @@ static inline float _get_hueval(const float hue)
   return b < 0.0f ? b + 1.0f : b;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _draw_color_picker(const dt_iop_module_t *self,
                                cairo_t *cr,
                                dt_iop_colorequal_params_t *p,
@@ -2304,8 +2321,10 @@ static void _draw_color_picker(const dt_iop_module_t *self,
   cairo_line_to(cr, xav, height);
   cairo_stroke(cr);
 }
+#endif
 #undef MINJZ
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _iop_colorequalizer_draw(GtkWidget *widget,
                                          cairo_t *crf,
                                          const dt_iop_module_t *self)
@@ -2513,7 +2532,9 @@ static gboolean _iop_colorequalizer_draw(GtkWidget *widget,
   pango_font_description_free(desc);
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _pipe_RGB_to_Ych(dt_iop_module_t *self,
                              dt_dev_pixelpipe_t *pipe,
                              const dt_aligned_pixel_t RGB,
@@ -2537,7 +2558,9 @@ static void _pipe_RGB_to_Ych(dt_iop_module_t *self,
   if(Ych[2] < 0.f)
     Ych[2] = DT_2PI_F + Ych[2];
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void color_picker_apply(dt_iop_module_t *self,
                         GtkWidget *picker,
                         dt_dev_pixelpipe_t *pipe)
@@ -2561,7 +2584,9 @@ void color_picker_apply(dt_iop_module_t *self,
   else
     gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _masking_callback_p(GtkWidget *quad, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -2570,7 +2595,9 @@ static void _masking_callback_p(GtkWidget *quad, dt_iop_module_t *self)
   g->mask_mode = (dt_bauhaus_widget_get_quad_active(quad)) ? g->channel + 1 : 0;
   dt_dev_reprocess_center(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _masking_callback_t(GtkWidget *quad, dt_iop_module_t *self)
 {
   DT_GUARD_GUI_UPDATE();
@@ -2579,7 +2606,9 @@ static void _masking_callback_t(GtkWidget *quad, dt_iop_module_t *self)
   g->mask_mode = (dt_bauhaus_widget_get_quad_active(quad)) ? GRAD_SWITCH + g->channel + 1 : 0;
   dt_dev_reprocess_center(self->dev);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _channel_tabs_switch_callback(GtkNotebook *notebook,
                                           GtkWidget *page,
                                           const guint page_num,
@@ -2611,7 +2640,9 @@ static void _channel_tabs_switch_callback(GtkNotebook *notebook,
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static GtkWidget *_get_slider(const dt_iop_colorequal_gui_data_t *g, const int selected)
 {
   GtkWidget *w = NULL;
@@ -2633,7 +2664,9 @@ static GtkWidget *_get_slider(const dt_iop_colorequal_gui_data_t *g, const int s
   gtk_widget_realize(w);
   return w;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _area_set_value(const dt_iop_colorequal_gui_data_t *g,
                             const float graph_height,
                             const float pos)
@@ -2666,7 +2699,9 @@ static void _area_set_value(const dt_iop_colorequal_gui_data_t *g,
     dt_bauhaus_slider_set_val(w, val);
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _area_set_pos(const dt_iop_colorequal_gui_data_t *g,
                           const float pos)
 {
@@ -2675,7 +2710,9 @@ static void _area_set_pos(const dt_iop_colorequal_gui_data_t *g,
 
   _area_set_value(g, graph_height, y);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _area_reset_nodes(dt_iop_colorequal_gui_data_t *g)
 {
   const float graph_height = MAX(1.0f, g->graph_height);
@@ -2695,7 +2732,9 @@ static void _area_reset_nodes(dt_iop_colorequal_gui_data_t *g)
     g->on_node = FALSE;
   }
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_scrolled_callback(GtkWidget *widget,
                                         GdkEventScroll *event,
                                         const dt_iop_module_t *self)
@@ -2707,7 +2746,9 @@ static gboolean _area_scrolled_callback(GtkWidget *widget,
                : _get_slider(g, g->selected);
   return gtk_widget_event(w, (GdkEvent*)event);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_motion_notify_callback(GtkWidget *widget,
                                              const GdkEventMotion *event,
                                              const dt_iop_module_t *self)
@@ -2732,7 +2773,9 @@ static gboolean _area_motion_notify_callback(GtkWidget *widget,
 
   return TRUE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_button_press_callback(GtkWidget *widget,
                                             GdkEventButton *event,
                                             dt_iop_module_t *self)
@@ -2764,7 +2807,9 @@ static gboolean _area_button_press_callback(GtkWidget *widget,
 
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static gboolean _area_button_release_callback(GtkWidget *widget,
                                               const GdkEventButton *event,
                                               const dt_iop_module_t *self)
@@ -2779,7 +2824,9 @@ static gboolean _area_button_release_callback(GtkWidget *widget,
 
   return FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void _area_size_callback(GtkWidget *widget,
                                 GdkRectangle *allocation,
                                 const dt_iop_module_t *self)
@@ -2787,7 +2834,9 @@ static void _area_size_callback(GtkWidget *widget,
   dt_iop_colorequal_gui_data_t *g = self->gui_data;
   g->gradients_cached = FALSE;
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 {
   dt_iop_colorequal_gui_data_t *g = self->gui_data;
@@ -2838,7 +2887,9 @@ void gui_changed(dt_iop_module_t *self, GtkWidget *w, void *previous)
 
   gtk_widget_queue_draw(GTK_WIDGET(g->area));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_cleanup(dt_iop_module_t *self)
 {
   dt_iop_colorequal_gui_data_t *g = self->gui_data;
@@ -2864,7 +2915,9 @@ void gui_cleanup(dt_iop_module_t *self)
   dt_conf_set_int("plugins/darkroom/colorequal/gui_page",
                   gtk_notebook_get_current_page (g->notebook));
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_update(dt_iop_module_t *self)
 {
   const dt_iop_colorequal_params_t *p = self->params;
@@ -2900,7 +2953,9 @@ void gui_update(dt_iop_module_t *self)
   const char numstr[] = {'0' + (show_sliders ? g->page_num : 3), 0};
   gtk_stack_set_visible_child_name(g->stack, numstr);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static float _action_process_colorequal(const gpointer target,
                                         const dt_action_element_t element,
                                         const dt_action_effect_t effect,
@@ -2917,7 +2972,9 @@ static float _action_process_colorequal(const gpointer target,
 
   return def->process(w, DT_ACTION_ELEMENT_DEFAULT, effect, move_size);
 }
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static const dt_action_element_def_t _action_elements_colorequal[]
   = { { N_("red"      ), dt_action_effect_value },
       { N_("orange"   ), dt_action_effect_value },
@@ -2933,7 +2990,9 @@ static const dt_action_def_t _action_def_coloreq
   = { N_("color equalizer"),
       _action_process_colorequal,
       _action_elements_colorequal };
+#endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_iop_module_t *self)
 {
   dt_iop_colorequal_gui_data_t *g = IOP_GUI_ALLOC(colorequal);
@@ -3160,6 +3219,7 @@ void gui_init(dt_iop_module_t *self)
   g_signal_connect(G_OBJECT(g->notebook), "switch_page",
                    G_CALLBACK(_channel_tabs_switch_callback), self);
 }
+#endif
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py
