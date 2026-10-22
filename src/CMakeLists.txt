@@ -371,7 +371,7 @@ else()
   include_directories(SYSTEM ${GDK_PIXBUF_INCLUDE_DIR})
   # GTK3 used to pull these in transitively; the engine links them directly.
   find_package(PkgConfig REQUIRED)
-  pkg_check_modules(DT_ENGINE_DEPS REQUIRED IMPORTED_TARGET cairo gobject-2.0 gdk-pixbuf-2.0)
+  pkg_check_modules(DT_ENGINE_DEPS REQUIRED IMPORTED_TARGET cairo gobject-2.0 gdk-pixbuf-2.0 pango)
   list(APPEND LIBS PkgConfig::DT_ENGINE_DEPS)
   find_package(Intl REQUIRED)
   include_directories(SYSTEM ${Intl_INCLUDE_DIRS})

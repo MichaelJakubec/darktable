@@ -140,6 +140,16 @@ typedef enum dt_view_image_over_t
 #ifdef DARKTABLE_ENGINE_ONLY
 // engine-only builds have no views; darktable.view_manager is always NULL.
 typedef struct dt_view_t dt_view_t;
+// same cairo-only implementation as views/view.c
+static inline cairo_surface_t *dt_view_create_surface(uint8_t *buffer,
+                                                      const size_t processed_width,
+                                                      const size_t processed_height)
+{
+  const int32_t stride =
+    cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, processed_width);
+  return cairo_image_surface_create_for_data
+    (buffer, CAIRO_FORMAT_RGB24, processed_width, processed_height, stride);
+}
 typedef struct dt_view_manager_t dt_view_manager_t;
 // same result as views/view.c returns when darktable.view_manager is NULL
 static inline dt_view_type_flags_t dt_view_get_current(void)

@@ -27,12 +27,19 @@
 #include "gui/gtk.h"
 
 #include <assert.h>
+#ifndef DARKTABLE_ENGINE_ONLY
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+#endif
 #include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+
+// The engine has no widgets: only the core headers above are provided, so
+// processing code can include this header while any widget call still fails
+// to compile.
+#ifndef DARKTABLE_ENGINE_ONLY
 
 G_BEGIN_DECLS
 
@@ -418,6 +425,8 @@ static inline void set_color(cairo_t *cr, GdkRGBA color)
   while(self && self->actions==DT_ACTION_TYPE_IOP_SECTION) self = (dt_iop_module_t *)self->module
 
 G_END_DECLS
+
+#endif // DARKTABLE_ENGINE_ONLY
 
 // clang-format off
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.py
