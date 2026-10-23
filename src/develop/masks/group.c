@@ -133,6 +133,7 @@ static int _group_events_button_released(dt_iop_module_t *module,
 }
 #endif
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline gboolean _is_handling_form(dt_masks_form_gui_t *gui)
 {
   return gui->form_dragging
@@ -145,6 +146,7 @@ static inline gboolean _is_handling_form(dt_masks_form_gui_t *gui)
     || (gui->point_border_dragging != -1)
     || (gui->seg_dragging != -1);
 }
+#endif
 
 #ifndef DARKTABLE_ENGINE_ONLY
 static int _group_events_mouse_moved(dt_iop_module_t *module,

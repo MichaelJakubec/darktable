@@ -34,6 +34,7 @@ static inline int _nb_ctrl_point(void)
   return 6;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline void _ellipse_point_transform(const float xref,
                                             const float yref,
                                             const float x,
@@ -51,6 +52,7 @@ static inline void _ellipse_point_transform(const float xref,
   *xnew = xref + xtmp;
   *ynew = yref + ytmp;
 }
+#endif
 
 // Jordan's point in polygon test
 static int _ellipse_cross_test(const float x,

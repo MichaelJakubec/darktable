@@ -31,10 +31,12 @@
 #define MIN_CIRCLE_RADIUS 0.0005f
 #define MIN_CIRCLE_BORDER 0.0005f
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline int _nb_ctrl_point(void)
 {
   return 2;
 }
+#endif
 
 static void _circle_get_distance(const float x,
                                  const float y,

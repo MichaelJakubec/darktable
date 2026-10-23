@@ -680,6 +680,7 @@ static int _gradient_events_mouse_moved(dt_iop_module_t *module,
 #endif
 
 // check if(x,y) lies within reasonable limits relative to image frame
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline gboolean _gradient_is_canonical(const float x,
                                               const float y,
                                               const float wd,
@@ -692,6 +693,7 @@ static inline gboolean _gradient_is_canonical(const float x,
           && y >= -ht
           && y <= 2 * ht);
 }
+#endif
 
 static int _gradient_get_points(dt_develop_t *dev,
                                 const float x,

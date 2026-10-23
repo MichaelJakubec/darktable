@@ -550,9 +550,14 @@ if(PNG_VERSION_STRING VERSION_LESS 1.5)
   message(FATAL_ERROR "libpng version 1.5 or newer is required")
 endif()
 
-# Use imported target for curl
-find_package(CURL 7.56 REQUIRED)
-list(APPEND LIBS CURL::libcurl)
+# Use imported target for curl. The engine has no curl users (AI downloads,
+# Piwigo upload and the map/location panel are not part of it).
+if(NOT DARKTABLE_ENGINE_ONLY OR USE_AI)
+  find_package(CURL 7.56 REQUIRED)
+  list(APPEND LIBS CURL::libcurl)
+else()
+  list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/common/curl_tools.c")
+endif()
 
 if(USE_AI)
   # libarchive for AI model ZIP extraction

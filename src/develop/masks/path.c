@@ -194,6 +194,7 @@ float angle_2d(const float x1, const float y1, const float x_ref, const float y_
  *
  * @return The angle in radians between the two lines.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline
 float _get_ctrl_angle(const float x_ref,
                       const float y_ref,
@@ -208,6 +209,7 @@ float _get_ctrl_angle(const float x_ref,
   const float x_refa = x_ref * aspect_ratio;
   return angle_2d(x2a, y2, x_refa, y_ref) - angle_2d(x1a, y1, x_refa, y_ref);
 }
+#endif
 
 /**
  * Set the angle between two bezier control points.
@@ -271,6 +273,7 @@ void _set_ctrl_angle(const float x_ref,
  *
  * @return The length ratio between the two points.
  */
+#ifndef DARKTABLE_ENGINE_ONLY
 static inline
 float _get_ctrl_scale(const float x_ref,
                       const float y_ref,
@@ -288,6 +291,7 @@ float _get_ctrl_scale(const float x_ref,
   const float length2 = dt_fast_hypotf(x2a - x_refa, y2 - y_ref);
   return length1 / length2;
 }
+#endif
 
 /**
  * Scales the distance of one of the two bezier control points.

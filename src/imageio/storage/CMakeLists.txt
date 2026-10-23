@@ -6,6 +6,10 @@ add_definitions(-include common/module_api.h)
 add_definitions(-include imageio/storage/imageio_storage_api.h)
 
 set(MODULES disk email gallery latex piwigo)
+if(DARKTABLE_ENGINE_ONLY AND NOT USE_AI)
+  # piwigo uploads with curl, which engine builds do not link
+  list(REMOVE_ITEM MODULES piwigo)
+endif()
 
 foreach(module ${MODULES})
 	add_library(${module} MODULE "${module}.c")
