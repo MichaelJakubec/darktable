@@ -61,8 +61,26 @@ uint8_t dt_loc_init(const char *datadir,
   // set up absolute pathes based on their relative value
   dt_loc_init_datadir(application_directory, datadir);
   dt_loc_init_plugindir(application_directory, moduledir);
-  dt_loc_init_localedir(application_directory, localedir);
-  dt_loc_init_sharedir(application_directory);
+#ifdef DARKTABLE_ENGINE_ONLY
+  if(datadir)
+  {
+    // The engine runs inside a host process whose executable is not ours (Android: /system/bin/app_process),
+    // so directories relative to the executable do not exist and g_realpath() would exit(). With an
+    // explicit data directory <share>/darktable, the share and locale directories live next to it.
+    gchar *share = g_path_get_dirname(darktable.datadir);
+    gchar *locale = localedir ? g_strdup(localedir) : g_build_filename(share, "locale", NULL);
+    dt_loc_init_localedir(NULL, locale);
+    darktable.sharedir = dt_loc_init_generic(share, NULL, NULL);
+    dt_check_opendir("darktable.sharedir", darktable.sharedir);
+    g_free(locale);
+    g_free(share);
+  }
+  else
+#endif
+  {
+    dt_loc_init_localedir(application_directory, localedir);
+    dt_loc_init_sharedir(application_directory);
+  }
 
   free(application_directory);
 
