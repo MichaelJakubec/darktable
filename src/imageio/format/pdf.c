@@ -17,14 +17,18 @@
 */
 
 #include "common/pdf.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/colorspaces.h"
 #include "common/darktable.h"
 #include "common/variables.h"
 #include "control/control.h"
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "dtgtk/button.h"
 #include "gui/gtkentry.h"
 #include "gui/accelerators.h"
+#endif
 #include "imageio/imageio_common.h"
 #include "imageio/imageio_module.h"
 #include "imageio/format/imageio_format_api.h"
@@ -71,6 +75,7 @@ typedef enum _pdf_mode_t
   MODE_DEBUG  = 2,
 } _pdf_mode_t;
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static const struct
 {
   char *name;
@@ -81,6 +86,7 @@ static const struct
   { N_("16 bit"), 16 },
   { NULL,          0 }
 };
+#endif
 
 typedef struct _pdf_icc_t
 {
@@ -452,6 +458,7 @@ int dimension(struct dt_imageio_module_format_t *self, dt_imageio_module_data_t 
   return 0;
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void size_toggle_callback(GtkWidget *widget, gpointer user_data);
 
 // set the paper size dropdown from the UNTRANSLATED string
@@ -710,6 +717,7 @@ void gui_init(dt_imageio_module_format_t *self)
                                N_("normal"), N_("draft"), N_("debug"));
   gtk_grid_attach(grid, GTK_WIDGET(d->mode), 0, ++line, 2, 1);
 }
+#endif
 
 void gui_cleanup(dt_imageio_module_format_t *self)
 {
@@ -718,6 +726,7 @@ void gui_cleanup(dt_imageio_module_format_t *self)
 
 void gui_reset(dt_imageio_module_format_t *self)
 {
+#ifndef DARKTABLE_ENGINE_ONLY
   pdf_t *d = (pdf_t *)self->gui_data;
 
   dpi_changed_callback(GTK_WIDGET(d->dpi), self);
@@ -730,6 +739,7 @@ void gui_reset(dt_imageio_module_format_t *self)
   title_changed_callback(GTK_WIDGET(d->title), self);
   bpp_toggle_callback(GTK_WIDGET(d->bpp), self);
   compression_toggle_callback(GTK_WIDGET(d->compression), self);
+#endif
 }
 
 size_t params_size(dt_imageio_module_format_t *self)
@@ -796,6 +806,7 @@ int set_params(dt_imageio_module_format_t *self, const void *params, const int s
 {
   if(size != self->params_size(self)) return 1;
   const dt_imageio_pdf_t *d = (dt_imageio_pdf_t *)params;
+#ifndef DARKTABLE_ENGINE_ONLY
   pdf_t *g = (pdf_t *)self->gui_data;
 
   for(int i = 0; _pdf_bpp[i].name; i++)
@@ -814,6 +825,7 @@ int set_params(dt_imageio_module_format_t *self, const void *params, const int s
   dt_bauhaus_combobox_set(g->pages, d->params.pages);
   dt_bauhaus_combobox_set(g->rotate, d->params.rotate);
   _set_paper_size(self, d->params.size);
+#endif
 
   dt_conf_set_string("plugins/imageio/format/pdf/title", d->params.title);
   dt_conf_set_string("plugins/imageio/format/pdf/border", d->params.border);

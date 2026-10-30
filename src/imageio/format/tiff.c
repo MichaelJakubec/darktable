@@ -16,7 +16,9 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/colorspaces.h"
 #include "common/darktable.h"
 #include "common/exif.h"
@@ -761,6 +763,7 @@ void free_params(dt_imageio_module_format_t *self, dt_imageio_module_data_t *par
 int set_params(dt_imageio_module_format_t *self, const void *params, const int size)
 {
   if(size != self->params_size(self)) return 1;
+#ifndef DARKTABLE_ENGINE_ONLY
   const dt_imageio_tiff_t *d = (dt_imageio_tiff_t *)params;
   const dt_imageio_tiff_gui_t *g = self->gui_data;
 
@@ -769,6 +772,7 @@ int set_params(dt_imageio_module_format_t *self, const void *params, const int s
   dt_bauhaus_combobox_set(g->compress, d->compress);
   dt_bauhaus_slider_set(g->compresslevel, d->compresslevel);
   dt_bauhaus_combobox_set(g->shortfiles, d->shortfile);
+#endif
 
   return 0;
 }
@@ -813,6 +817,7 @@ const char *name()
   return _("TIFF");
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void bpp_combobox_changed(GtkWidget *widget, dt_imageio_tiff_gui_t *gui)
 {
   const int bpp_enum = dt_bauhaus_combobox_get(widget);
@@ -848,6 +853,7 @@ static void compress_level_changed(GtkWidget *slider, gpointer user_data)
   const int compresslevel = (int)dt_bauhaus_slider_get(slider);
   dt_conf_set_int("plugins/imageio/format/tiff/compresslevel", compresslevel);
 }
+#endif
 
 void init(dt_imageio_module_format_t *self)
 {
@@ -860,6 +866,7 @@ void cleanup(dt_imageio_module_format_t *self)
 {
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 void gui_init(dt_imageio_module_format_t *self)
 {
   dt_imageio_tiff_gui_t *gui = malloc(sizeof(dt_imageio_tiff_gui_t));
@@ -924,6 +931,7 @@ void gui_init(dt_imageio_module_format_t *self)
 
   self->widget = dt_gui_vbox(gui->bpp, gui->pixelformat, gui->compress, gui->compresslevel, gui->shortfiles);
 }
+#endif
 
 void gui_cleanup(dt_imageio_module_format_t *self)
 {
@@ -932,6 +940,7 @@ void gui_cleanup(dt_imageio_module_format_t *self)
 
 void gui_reset(dt_imageio_module_format_t *self)
 {
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_imageio_tiff_gui_t *gui = self->gui_data;
 
   const int bpp = dt_confgen_get_int("plugins/imageio/format/tiff/bpp", DT_DEFAULT);
@@ -946,6 +955,7 @@ void gui_reset(dt_imageio_module_format_t *self)
   dt_bauhaus_slider_set(gui->compresslevel,
                         dt_confgen_get_int("plugins/imageio/format/tiff/compresslevel", DT_DEFAULT));
   dt_bauhaus_combobox_set(gui->shortfiles, dt_confgen_get_bool("plugins/imageio/format/tiff/shortfile", DT_DEFAULT));
+#endif
 }
 
 int flags(dt_imageio_module_data_t *data)

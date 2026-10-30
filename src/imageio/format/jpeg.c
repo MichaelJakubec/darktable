@@ -16,7 +16,9 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DARKTABLE_ENGINE_ONLY
 #include "bauhaus/bauhaus.h"
+#endif
 #include "common/colorspaces.h"
 #include "common/darktable.h"
 #include "common/exif.h"
@@ -480,10 +482,12 @@ int set_params(dt_imageio_module_format_t *self,
                const int size)
 {
   if(size != self->params_size(self)) return 1;
+#ifndef DARKTABLE_ENGINE_ONLY
   const dt_imageio_jpeg_t *d = (dt_imageio_jpeg_t *)params;
   dt_imageio_jpeg_gui_data_t *g = self->gui_data;
   dt_bauhaus_slider_set(g->quality, d->quality);
   dt_bauhaus_combobox_set(g->subsample, d->subsample);
+#endif
   return 0;
 }
 
@@ -543,6 +547,7 @@ const char *name()
   return _("JPEG (8-bit)");
 }
 
+#ifndef DARKTABLE_ENGINE_ONLY
 static void quality_changed(GtkWidget *slider,
                             gpointer user_data)
 {
@@ -598,6 +603,7 @@ void gui_init(dt_imageio_module_format_t *self)
 
   self->widget = dt_gui_vbox(g->quality, g->subsample);
 }
+#endif
 
 void gui_cleanup(dt_imageio_module_format_t *self)
 {
@@ -606,11 +612,13 @@ void gui_cleanup(dt_imageio_module_format_t *self)
 
 void gui_reset(dt_imageio_module_format_t *self)
 {
+#ifndef DARKTABLE_ENGINE_ONLY
   dt_imageio_jpeg_gui_data_t *g = self->gui_data;
   dt_bauhaus_slider_set(g->quality,
                         dt_confgen_get_int("plugins/imageio/format/jpeg/quality",
                                            DT_DEFAULT));
   dt_bauhaus_combobox_set(g->subsample, DT_SUBSAMPLE_AUTO);
+#endif
 }
 
 // clang-format off
