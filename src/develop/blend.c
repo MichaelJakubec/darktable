@@ -498,7 +498,13 @@ void dt_develop_blend_process(dt_iop_module_t *self,
     return;
   }
 
+#ifdef DARKTABLE_ENGINE_ONLY
+  /* engine build: no GUI focus exists, so the headless host adapter drives mask display
+     through request_mask_display on an export pipe (dd_host_render_mask) */
+  const gboolean valid_request = self->request_mask_display != DT_DEV_PIXELPIPE_DISPLAY_NONE;
+#else
   const gboolean valid_request = dt_iop_has_focus(self) && (piece->pipe == self->dev->full.pipe);
+#endif
 
   // does user want us to display a specific channel?
   const dt_dev_pixelpipe_display_mask_t request_mask_display =
@@ -899,7 +905,13 @@ gboolean dt_develop_blend_process_cl(dt_iop_module_t *self,
   // only non-zero if mask_display was set by an _earlier_ module
   const dt_dev_pixelpipe_display_mask_t mask_display = piece->pipe->mask_display;
 
+#ifdef DARKTABLE_ENGINE_ONLY
+  /* engine build: no GUI focus exists, so the headless host adapter drives mask display
+     through request_mask_display on an export pipe (dd_host_render_mask) */
+  const gboolean valid_request = self->request_mask_display != DT_DEV_PIXELPIPE_DISPLAY_NONE;
+#else
   const gboolean valid_request = dt_iop_has_focus(self) && (piece->pipe == self->dev->full.pipe);
+#endif
 
   const gboolean raster = mask_mode & DEVELOP_MASK_RASTER;
   const gboolean mode_drawn = mask_mode & DEVELOP_MASK_MASK;
